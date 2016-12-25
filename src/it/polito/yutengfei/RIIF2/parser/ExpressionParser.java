@@ -1,6 +1,7 @@
 package it.polito.yutengfei.RIIF2.parser;
 
 import it.polito.yutengfei.RIIF2.RIIF2Parser;
+import it.polito.yutengfei.RIIF2.id.Id;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -96,15 +97,18 @@ abstract class ExpressionParser extends DeclaratorIdParser {
     }
 
     @Override
-    public void exitPrimaryAIS(RIIF2Parser.PrimaryAISContext ctx) {
-        //TODO: aisID has to be stored into EXP-TREE
-        Expression expression = this.getExpression(ctx.aisDeclaratorId());
+    public void exitPrimaryVariableId(RIIF2Parser.PrimaryVariableIdContext ctx) {
+        Expression expression = new Expression();
+
+        Id id = getId(ctx.variableId());
+        expression.setType(RIIF2Grammar.USER_DEFINED);
+        expression.setValue(id);
+
         this.putExpression(ctx,expression);
     }
 
     @Override
     public void exitPrimaryArrayInitializer(RIIF2Parser.PrimaryArrayInitializerContext ctx) {
-        //arrayInitializer has to be stored into EXP-TREE
         Expression expression = this.getExpression(ctx.arrayInitializer());
         this.putExpression(ctx,expression);
     }

@@ -974,17 +974,17 @@ public interface RIIF2Listener extends ParseTreeListener {
 	 */
 	void exitPrimaryFalse(RIIF2Parser.PrimaryFalseContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code primaryAIS}
+	 * Enter a parse tree produced by the {@code primaryVariableId}
 	 * labeled alternative in {@link RIIF2Parser#primary}.
 	 * @param ctx the parse tree
 	 */
-	void enterPrimaryAIS(RIIF2Parser.PrimaryAISContext ctx);
+	void enterPrimaryVariableId(RIIF2Parser.PrimaryVariableIdContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code primaryAIS}
+	 * Exit a parse tree produced by the {@code primaryVariableId}
 	 * labeled alternative in {@link RIIF2Parser#primary}.
 	 * @param ctx the parse tree
 	 */
-	void exitPrimaryAIS(RIIF2Parser.PrimaryAISContext ctx);
+	void exitPrimaryVariableId(RIIF2Parser.PrimaryVariableIdContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code primaryLiteral}
 	 * labeled alternative in {@link RIIF2Parser#primary}.

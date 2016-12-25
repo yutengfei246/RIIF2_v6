@@ -267,6 +267,7 @@ variableId
     : primitiveId
     | associativeId
     | attributeId
+    | tableId
     ;
 
 childComponentId
@@ -367,7 +368,7 @@ primary
     | SELF  #primarySelf
     | TRUE  #primaryTrue
     | FALSE #primaryFalse
-    | aisDeclaratorId   #primaryAIS
+    | variableId   #primaryVariableId
     | literal   #primaryLiteral
     | funcCall  #primaryFuncCall
     | arrayInitializer  #primaryArrayInitializer

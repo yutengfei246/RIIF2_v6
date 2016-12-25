@@ -27,9 +27,12 @@ public class RIIF2Grammar {
     public static final String FIELD_CONSTANT = "constant";
     public static final String TYPE_VECTOR = "vectors";
     public static final String TYPE_FLAT_VECTOR = "flat-vector";
-    public static final String TYPE_ATTRIBUTE = "attribute";
     public static final String TYPE_ASSOCIATIVE_INDEX = "associative-index";
     public static final String TYPE_CC = "child-component";
     public static final String TYPE_HIER = "hierarchy" ;
     public static final String TYPE_PRIMITIVE = "primitive-type";
+    public static final String USER_DEFINED = "user-defined";
+    public static final String TABLE = "table";
+    public static final String TYPE_ATTRIBUTE_INDEX = "attribute-index" ;
+    public static final String TYPE_HIER_INDEX = "hier-index";
 }

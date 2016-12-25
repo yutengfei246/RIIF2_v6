@@ -584,12 +584,12 @@ public interface RIIF2Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitPrimaryFalse(RIIF2Parser.PrimaryFalseContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code primaryAIS}
+	 * Visit a parse tree produced by the {@code primaryVariableId}
 	 * labeled alternative in {@link RIIF2Parser#primary}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitPrimaryAIS(RIIF2Parser.PrimaryAISContext ctx);
+	T visitPrimaryVariableId(RIIF2Parser.PrimaryVariableIdContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code primaryLiteral}
 	 * labeled alternative in {@link RIIF2Parser#primary}.

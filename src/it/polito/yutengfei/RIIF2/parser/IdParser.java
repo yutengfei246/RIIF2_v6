@@ -142,6 +142,8 @@ abstract class IdParser extends TypeParser {
             id = getId(ctx.associativeId());
         if (ctx.attributeId() != null )
             id = getId(ctx.attributeId());
+        if (ctx.tableId() != null)
+            id = getId(ctx.tableId());
 
         this.putId(ctx,id);
 

@@ -1,20 +1,22 @@
 package it.polito.yutengfei.RIIF2.id;
 
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
-
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 public class Id {
     private final String type;
     private final String id;
 
-    private Id associativeIndex;
-    private Id attributeIndex;
+    private List<Id> associativeIndexs = new LinkedList<>();
+    private List<Id> attributeIndexs =  new LinkedList<>();
     private Id primitiveId;
 
     private LinkedList<Id> hierPostfixIds = new LinkedList<>();
-    private Id associaticeIndex;
+
+    private String xx;
+    private String yy;
 
     public Id(String typeAssociativeIndex, String identifier) {
         this.type = typeAssociativeIndex;
@@ -29,30 +31,15 @@ public class Id {
         this.hierPostfixIds.add( primitiveId );
     }
 
-    private Collection<? extends Id> hierPostfixIds() {
-        return this.hierPostfixIds;
-    }
+    public Id(String table, Id attributeId, String identifier1, String identifier2) {
+        this.type = table;
+        this.id = attributeId.id();
+        this.associativeIndexs = attributeId.getAssociativeIndexs();
+        this.attributeIndexs = attributeId.getAttributeIndexs();
+        this.primitiveId = attributeId.getPrimitiveId();
 
-    public String id() {
-        return this.id;
-    }
-
-    private String type(){
-        return this.type;
-    }
-
-    private Id setAttributeIndex(Id attributeIndex) {
-        this.attributeIndex = attributeIndex;
-        return this;
-    }
-
-    private Id setAssociaticeIndex(Id associaticeIndex) {
-        this.associaticeIndex = associaticeIndex;
-        return this;
-    }
-
-    public Id getAttributeIndex() {
-        return attributeIndex;
+        this.xx = identifier1;
+        this.yy = identifier2;
     }
 
     public static Id associativeIndex(String identifier) {
@@ -60,11 +47,11 @@ public class Id {
     }
 
     public static Id attributeIndex(String identifier) {
-        return new Id(RIIF2Grammar.TYPE_ATTRIBUTE, identifier);
+        return new Id(RIIF2Grammar.TYPE_ATTRIBUTE_INDEX, identifier);
     }
 
     public static Id hierIndex(String identifier) {
-        return new Id(RIIF2Grammar.TYPE_HIER, identifier);
+        return new Id(RIIF2Grammar.TYPE_HIER_INDEX, identifier);
     }
 
     public static Id childComponent(String identifier) {
@@ -79,19 +66,50 @@ public class Id {
         return new Id(RIIF2Grammar.TYPE_HIER, primitiveId,hierPostfixId);
     }
 
+    //TODO: this is not correct, it need to retreive and check 
     public static Id associativeId(Id primitiveId, Id associativeIndex) {
-        return primitiveId.setAssociaticeIndex(associativeIndex);
+        return primitiveId.addAssociativeIndex(associativeIndex);
     }
 
     public static Id attributeId(Id primitiveId, Id attributeIndex) {
-        return primitiveId.setAttributeIndex( attributeIndex );
+        return primitiveId.addAttributeIndex( attributeIndex );
     }
 
     public static Id tableId(Id attributeId, String identifier1, String identifier2) {
-        if (attributeId.getAttributeIndex().id() != "Item"){
-            System.err.println(" cannot create table Id  because the attributeIndex is not Irem");
-        }
+        return new Id(RIIF2Grammar.TABLE,attributeId,identifier1,identifier2);
+    }
 
-        return new Id()
+    public List<Id> getAssociativeIndexs() {
+        return associativeIndexs;
+    }
+
+    public Id getPrimitiveId() {
+        return primitiveId;
+    }
+
+    private Collection<? extends Id> hierPostfixIds() {
+        return this.hierPostfixIds;
+    }
+
+    public String id() {
+        return this.id;
+    }
+
+    private String type(){
+        return this.type;
+    }
+
+    private Id addAttributeIndex(Id attributeIndex) {
+        this.attributeIndexs.add(attributeIndex);
+        return this;
+    }
+
+    private Id addAssociativeIndex(Id associativeIndex) {
+        this.associativeIndexs.add(associativeIndex);
+        return this;
+    }
+
+    public List<Id> getAttributeIndexs() {
+        return attributeIndexs;
     }
 }
