@@ -1,0 +1,20 @@
+component VADD implements SW_COMPONENT;
+    set NAME = "Vector ADD";
+    set SIZE = 524;
+    set SIZE'UNITS = instructions;
+    set PROTECTIONS = NODE;
+    constant NUMBER_OF_ITEMS :integer:= 10000;
+    set READ_ACCESS = 76*NUMBER_OF_ITEMS / 10000;
+    set WRITE_ACCESS = 75*NUMBER_OF_ITEMS / 10000;
+    set LOOPS = 3;
+    set executed_on = VECTORCALC_CORE;
+    child_component cpu VPRINT ;
+
+    assign TIMING_CONSTRAINTS'ITEMS = {
+        [ "permanent", "WRONG_DATA", SFB_ITEMS, {0.893, 0.107, 0, 0, 0.891, 0.042, 0.067, 0.413, 0.109,0.052,0.426 } ],
+        [ "permanent", "WRONG_DATA", SFB_ITEMS, {0.893, 0.107, 0, 0, 0.891, 0.042, 0.067, 0.413, 0.109,0.052,0.426 } ],
+        [ "permanent", "WRONG_DATA", SFB_ITEMS, {0.893, 0.107, 0, 0, 0.891, 0.042, 0.067, 0.413, 0.109,0.052,0.426 } ],
+        [ "permanent", "WRONG_DATA", SFB_ITEMS, {0.893, 0.107, 0, 0, 0.891, 0.042, 0.067, 0.413, 0.109,0.052,0.426 } ]
+
+    };
+endcomponent

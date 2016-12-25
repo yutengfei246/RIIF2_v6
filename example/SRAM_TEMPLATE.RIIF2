@@ -1,0 +1,25 @@
+template SRAM_TEMPLATE;
+
+// All SRAMs nyst defube voltage, temperature and size
+abstract constant   NAME : string;
+abstract constant  MANUFATURER : string;
+abstract parameter CORE_VOLTAGE : float;
+abstract parameter NUM_BITS : integer;
+
+// All SRAMs must have radiation induced failure modes
+abstract fail_mode RAD_FM[];
+// All SRAMs must have permanent failure modes
+abstract fail_mode PER_FM[];
+
+abstract fail_mode RAD_FM[SBU]'RATE;
+impose RAD_FM[SBU]'UNITS = FITS;
+abstract fail_mode RAD_FM[MBU]'RATE;
+impose RAD_FM[MBU]'UNIT = FITS;
+abstract fail_mode RAD_FM[SEFI]'RATE;
+impose RAD_FM[SEFI]'UNIT = FITS;
+abstract fail_mode RAD_FM[SEFI]'RATE;
+impose RAD_FM[SEFI]'UNIT = FITS;
+abstract fail_mode RAD_FM[SSAF]'RATE;
+impose RAD_FM[SSAF]'UNIT = FITS;
+
+endtemplate

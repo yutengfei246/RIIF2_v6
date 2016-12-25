@@ -1,0 +1,12 @@
+component VADD_VARIABLE_DUPLICATION_VER1 extends VADD;
+    set NAME = "vector ADD_with_Variable_Duplication";
+    set PROTECTION = VAR_DUP;
+    assign TIMING_CONSTRAINS'ITEMS = {
+        (PROTECTION ==VAR_DUP)?
+        ["TEST_BENCH1",self+0.001,self+0.2,self+0.0015]:
+        ["TEST_BENCH1",self,self,self ],
+        (PROTECTION == VAR_DUP)?
+        ["TEST_BENCH1",self+0.001,self+0.2,self+0.0015]:
+        ["TEST_BENCH1",self,self,self ]
+    };
+endcomponent

@@ -1,0 +1,21 @@
+component SRAM_MEMORY extends SRAM_MEMORY_TEMPLATE;
+  // ------------------ Define Valid Parameter Ranges ---------------------------
+  assign VOLTAGE'min = 0.8;       // Valid range over which RAM is characterized
+  assign VOLTAGE'max = 1.2;
+
+  // --------------------- Constant Declaration -----------------------------
+  constant A_DIFF : float := 3.2;        // Constant obtained from layout
+  constant Q_COL_EFF : float := 0.6;     // Represent Qcrit/Qcoll
+  constant MBE_RATIO : float := 0.25;    // For now, simple ratio of MBEs to SBEs
+
+  // --------------------- Specify Failure Rates  -----------------------------
+  assign SBE'unit = FITS;
+  assign SBE'rate = NEUTRON_ENV'REL_FLUX * A_DIFF * EXP( - VOLTAGE / Q_COL_EFF) ;
+
+  assign MBE'unit = FITS;
+  assign MBE'rate = SBE'RATE * MBE_RATIO;
+
+  assign CHIP_FAIL'unit = MTTF;
+  assign CHIP_FAIL'rate = 1000000;
+
+endcomponent

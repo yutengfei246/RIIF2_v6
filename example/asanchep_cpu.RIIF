@@ -1,0 +1,14 @@
+component FAST_CPU;
+
+// For simple model, MTTF is static constant
+  fail_mode CHIP_FAIL;
+  assign CHIP_FAIL'description = "Permanent hard chip failure. " ;
+  assign CHIP_FAIL'unit = MTTF;
+  assign CHIP_FAIL'rate = 1000000;
+
+  parameter VOLTAGE : float := 1.0;               // Voltage at transistor
+  assign VOLTAGE'unit = volts;
+  assign VOLTAGE'min = 0.8;       
+  assign VOLTAGE'max = 1.2;
+  
+endcomponent

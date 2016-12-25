@@ -1,0 +1,14 @@
+component VECTORCALC_CORE;
+// An hardware component performing vectorial calculations
+
+//parameter fail_mode SBU;
+fail_mode SBU;
+assign SBU'RATE = 10; //obtained from radiation tests
+
+parameter SW_FM: table;
+assign SW_FM'HEADERS = {FAILMODE,SFM,RATE};
+assign SW_FM'ITEMS = { //obtained from fault injection
+    ["SUB", "WRONG_DATA", 0.3*SBU'RATE],
+    ["SBU", "WRONG_INSTRUCTION",0.2*SBU'RATE]
+    } ;
+endcomponent
