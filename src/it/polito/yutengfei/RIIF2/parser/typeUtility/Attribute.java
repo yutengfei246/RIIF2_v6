@@ -25,7 +25,7 @@ public class Attribute {
         this.value = value;
     }
 
-    private String getId(){
+    public String getId(){
         return id;
     }
 

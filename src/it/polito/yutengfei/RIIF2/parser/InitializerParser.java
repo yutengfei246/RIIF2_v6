@@ -1,36 +1,40 @@
 package it.polito.yutengfei.RIIF2.parser;
 
 import it.polito.yutengfei.RIIF2.RIIF2Parser;
+import it.polito.yutengfei.RIIF2.initializer.ArrayInitializer;
+import it.polito.yutengfei.RIIF2.initializer.ArrayWrapperInitializer;
+import it.polito.yutengfei.RIIF2.initializer.ListInitializer;
+import it.polito.yutengfei.RIIF2.initializer.TableInitializer;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
-import it.polito.yutengfei.RIIF2.util.utilityWrapper.ArrayItem;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Row;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.RowItem;
+import it.polito.yutengfei.RIIF2.initializer.Initializer;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.TerminalNode;
+
 
 import java.util.ArrayList;
 import java.util.List;
 
 abstract class InitializerParser extends ExpressionParser {
 
-    // list initializer parser
+    // list initializer parser expressed by ListInitializer
 
     private ParseTreeProperty<String> listItemTree = new ParseTreeProperty<>();
-    private List<String> listInitializer = null;
+    private ListInitializer listInitializer = null;
 
     private void putListItemString(ParseTree node, String value ){
         this.listItemTree.put(node,value);
     }
-
     private String getListItemString(ParseTree node){
         return this.listItemTree.get(node);
     }
 
-    public List<String> getListInitializer(){
-        List<String> returnedList = this.listInitializer;
+    ListInitializer getListInitializer(){
+        ListInitializer returnedList = this.listInitializer;
         this.cleanListInitializer();
         return returnedList;
     }
@@ -69,21 +73,21 @@ abstract class InitializerParser extends ExpressionParser {
         List<RIIF2Parser.ListItemContext> listItemContexts
                 = ctx.listItem();
 
-        List<String> currentListInitializer = new ArrayList<>();
+        ListInitializer listInitializer = new ListInitializer();
         for (RIIF2Parser.ListItemContext listItemContext : listItemContexts){
             String listItem = this.getListItemString(listItemContext);
-            currentListInitializer.add(listItem);
+            listInitializer.addItem( listItem );
         }
-        this.listInitializer = currentListInitializer;
+        this.listInitializer = listInitializer;
     }
 
     // array initializer parser
 
-    private ParseTreeProperty<ArrayItem> arrayItemTree = new ParseTreeProperty<>();
-    private List<ArrayItem> arrayInitializer = null;
+    private ParseTreeProperty<Expression> arrayItemTree = new ParseTreeProperty<>();
+    private ArrayInitializer arrayInitializer = null;
 
-    public List<ArrayItem> getArrayInitializer(){
-        List<ArrayItem> returnedList = this.arrayInitializer;
+    public ArrayInitializer getArrayInitializer(){
+        ArrayInitializer returnedList = this.arrayInitializer;
         this.cleanArrayInitializer();
         return returnedList;
     }
@@ -93,11 +97,10 @@ abstract class InitializerParser extends ExpressionParser {
         this.arrayItemTree = new ParseTreeProperty<>();
     }
 
-    private void putArrayItem(ParseTree node , ArrayItem value){
+    private void putArrayItem(ParseTree node , Expression value){
         this.arrayItemTree.put(node,value);
     }
-
-    private ArrayItem getArrayItem(ParseTree node){
+    private Expression getArrayItem(ParseTree node){
         return this.arrayItemTree.get(node);
     }
 
@@ -107,11 +110,7 @@ abstract class InitializerParser extends ExpressionParser {
                 = ctx.expression();
 
         Expression expression = getExpression(expressionContext);
-
-        ArrayItem arrayItem = new ArrayItem();
-        arrayItem.setItem(expression);
-
-        this.putArrayItem(ctx,arrayItem);
+        this.putArrayItem(ctx,expression);
     }
 
     @Override
@@ -119,14 +118,15 @@ abstract class InitializerParser extends ExpressionParser {
         List<RIIF2Parser.ArrayItemContext> arrayItemContexts
             = ctx.arrayItem();
 
-        List<ArrayItem> currentArrayInitializer = new ArrayList<>();
+        ArrayInitializer arrayInitializer = new ArrayInitializer();
         for (RIIF2Parser.ArrayItemContext arrayItemContext : arrayItemContexts){
-            ArrayItem arrayItem = this.getArrayItem(arrayItemContext);
-            currentArrayInitializer.add(arrayItem);
+            Expression arrayItem = this.getArrayItem(arrayItemContext);
+            arrayInitializer.addArrayItem(arrayItem);
         }
 
-        this.arrayInitializer = currentArrayInitializer;
+        this.arrayInitializer = arrayInitializer;
 
+        // expression ::= arrayInitializer ;
         ParserRuleContext parentContext = ctx.getParent();
         if(parentContext instanceof RIIF2Parser.PrimaryContext){
             Expression expression = new Expression();
@@ -143,21 +143,21 @@ abstract class InitializerParser extends ExpressionParser {
 
     // array wrapper initializer
 
-    private ParseTreeProperty< List<ArrayItem> > arrayWrapperParseTreeProperty
+    private ParseTreeProperty< ArrayInitializer > arrayWrapperParseTreeProperty
             = new ParseTreeProperty<>();
 
-    private List< List<ArrayItem> > arrayWrapperInitializer = null;
+    private ArrayWrapperInitializer arrayWrapperInitializer = null;
 
-    private List<ArrayItem> getArrayWrapperListInitializer( ParseTree node ){
+    private ArrayInitializer getArrayInitializerItem( ParseTree node ){
         return  this.arrayWrapperParseTreeProperty.get(node);
     }
 
-    private void putArrayWrapperListInitializer(ParseTree node, List<ArrayItem> value ){
+    private void putArrayWrapperListInitializer(ParseTree node, ArrayInitializer value ){
         this.arrayWrapperParseTreeProperty.put(node, value);
     }
 
-    public List< List<ArrayItem> > getArrayWrapperInitializer(){
-        List< List<ArrayItem> > returnedInitializer = this.arrayWrapperInitializer;
+    public ArrayWrapperInitializer getArrayWrapperInitializer(){
+        ArrayWrapperInitializer returnedInitializer = this.arrayWrapperInitializer;
         this.cleanArrayWrapperInitializer();
         return returnedInitializer;
     }
@@ -172,23 +172,28 @@ abstract class InitializerParser extends ExpressionParser {
         List<RIIF2Parser.ArrayInitializerContext> arrayInitializerContexts
                 = ctx.arrayInitializer();
 
-        List< List<ArrayItem> > currentArrayWrapperInitializer
-                = new ArrayList<>();
-        for(RIIF2Parser.ArrayInitializerContext arrayInitializerContext : arrayInitializerContexts){
-            List<ArrayItem> arrayListInitializer = this.getArrayWrapperListInitializer(arrayInitializerContext);
-            currentArrayWrapperInitializer.add(arrayListInitializer);
+        ArrayWrapperInitializer currentArrayWrapperInitializer
+                = new ArrayWrapperInitializer();
+
+        for (RIIF2Parser.ArrayInitializerContext
+                arrayInitializerContext : arrayInitializerContexts) {
+            ArrayInitializer arrayListInitializer
+                    = this.getArrayInitializerItem(arrayInitializerContext);
+            currentArrayWrapperInitializer.addArrayInitializerItem(arrayListInitializer);
         }
 
         this.arrayWrapperInitializer = currentArrayWrapperInitializer;
     }
 
-
-
     //table Item Initializer
 
-    private ParseTreeProperty<Row> rowParseTreeProperty = new ParseTreeProperty<>();
-    private ParseTreeProperty<RowItem> rowItemParseTreeProperty = new ParseTreeProperty<>();
-    private List<Row> tableInitializer = null;
+    private ParseTreeProperty<Row> rowParseTreeProperty
+            = new ParseTreeProperty<>();
+
+    private ParseTreeProperty<RowItem> rowItemParseTreeProperty
+            = new ParseTreeProperty<>();
+
+    private TableInitializer tableInitializer = null;
 
     private void putRowParseTree(ParseTree node , Row value ){
         this.rowParseTreeProperty.put(node,value);
@@ -206,8 +211,8 @@ abstract class InitializerParser extends ExpressionParser {
         return this.rowItemParseTreeProperty.get(node );
     }
 
-    public List<Row> getTableInitializer(){
-        List<Row> returnedTable = this.tableInitializer;
+    public TableInitializer getTableInitializer(){
+        TableInitializer returnedTable = this.tableInitializer;
         this.cleanTable();
         return returnedTable;
     }
@@ -234,7 +239,7 @@ abstract class InitializerParser extends ExpressionParser {
 
     @Override
     public void exitRowItemListInitializer(RIIF2Parser.RowItemListInitializerContext ctx) {
-        List<String> list = this.getListInitializer();
+        ListInitializer list = this.getListInitializer();
 
         RowItem rowItem = new RowItem();
         rowItem.setType(RowItem.LIST_STRING);
@@ -249,11 +254,6 @@ abstract class InitializerParser extends ExpressionParser {
                 = ctx.expression();
 
         Expression expression = getExpression(expressionContext);
-
-        if (!expression.isArray()){
-            //TODO: exception
-            return;
-        }
 
         Row row = new Row();
         row.setType(Row.EXPRESSION);
@@ -285,11 +285,55 @@ abstract class InitializerParser extends ExpressionParser {
         List<RIIF2Parser.RowContext> rowContexts
                 = ctx.row();
 
-        List<Row> currentTableInitializer = new ArrayList<>();
+        TableInitializer currentTableInitializer = new TableInitializer();
         for (RIIF2Parser.RowContext rowContext : rowContexts){
             Row row = this.getRowParseTree(rowContext);
-            currentTableInitializer.add(row);
+            currentTableInitializer.addRow(row);
         }
         this.tableInitializer = currentTableInitializer;
+    }
+
+
+    private ParseTreeProperty<Initializer> initializerParseTreeProperty
+            = new ParseTreeProperty<>();
+
+    private void putInitializer( ParseTree node , Initializer initializer){
+        this.initializerParseTreeProperty.put(node, initializer);
+    }
+
+    public Initializer getInitializer( ParseTree node ){
+        return this.initializerParseTreeProperty.get( node );
+    }
+
+    @Override
+    public void exitFieldInitializer(RIIF2Parser.FieldInitializerContext ctx) {
+
+        Initializer initializer = null;
+
+        if (ctx.arrayInitializerWrapper() != null)
+            initializer = getArrayWrapperInitializer();
+        if (ctx.expression() != null )
+            initializer = getExpression(ctx.expression());
+        if (ctx.listInitializer() != null)
+            initializer = getListInitializer();
+
+        this.putInitializer(ctx,initializer);
+    }
+
+    @Override
+    public void exitAisInitializer(RIIF2Parser.AisInitializerContext ctx) {
+
+        Initializer initializer = null;
+
+        if (ctx.listInitializer() != null)
+            initializer = getListInitializer();
+        if (ctx.expression() != null)
+            initializer = getExpression(ctx.expression());
+        if (ctx.arrayInitializerWrapper() != null)
+            initializer = getArrayWrapperInitializer();
+        if (ctx.tableItemInitializer() != null)
+            initializer = getTableInitializer();
+
+        this.putInitializer(ctx,initializer);
     }
 }

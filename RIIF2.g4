@@ -188,13 +188,6 @@ listItem
     | Identifier  #listItemIdentifier // Identifier means nothing in List expressed as String in JAVA
     ;
 
-aisInitializer
-    : listInitializer
-    | expression
-    | arrayInitializerWrapper
-    | tableItemInitializer
-    ;
-
 tableItemInitializer
     : '{' row ( ',' row )* '}'
     ;
@@ -207,6 +200,13 @@ row
 rowItem
     : expression #rowItemExpression
     | listInitializer #rowItemListInitializer
+    ;
+
+aisInitializer
+    : listInitializer
+    | expression
+    | arrayInitializerWrapper
+    | tableItemInitializer
     ;
 
 // §RIIF-2 version 6 Identifier

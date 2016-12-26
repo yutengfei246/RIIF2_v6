@@ -3,27 +3,27 @@ package it.polito.yutengfei.RIIF2.id;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
+import java.util.Objects;
 
 public class Id {
-    private final String type;
-    private final String id;
+    private String type;
+    private String id;
 
-    private List<Id> associativeIndexs = new LinkedList<>();
-    private List<Id> attributeIndexs =  new LinkedList<>();
-    private Id primitiveId;
-
+    // for hierarchy
     private LinkedList<Id> hierPostfixIds = new LinkedList<>();
 
     private String xx;
     private String yy;
 
-    public Id(String typeAssociativeIndex, String identifier) {
+    private Id attributeIndex = null;  // current attribute index
+    private Id associativeIndex = null; // current attribute index
+
+    public Id(/* Simple index Id and primitive Id */String typeAssociativeIndex, String identifier) {
         this.type = typeAssociativeIndex;
         this.id = identifier;
     }
 
-    public Id(String typeHier, Id primitiveId, Id hierPostfixId) {
+    public Id(/* Hierarchy primitive index typically is a assign Id */String typeHier, Id primitiveId, Id hierPostfixId) {
         this.type = typeHier;
         this.id = hierPostfixId.id();
 
@@ -34,9 +34,12 @@ public class Id {
     public Id(String table, Id attributeId, String identifier1, String identifier2) {
         this.type = table;
         this.id = attributeId.id();
-        this.associativeIndexs = attributeId.getAssociativeIndexs();
-        this.attributeIndexs = attributeId.getAttributeIndexs();
-        this.primitiveId = attributeId.getPrimitiveId();
+
+        if (attributeId.attributeIndex() == null
+                || !Objects.equals(attributeId.attributeIndex().id(), "Item")) {
+            System.err.print("Error: table Id can not be created ");
+            System.exit(1);
+        }
 
         this.xx = identifier1;
         this.yy = identifier2;
@@ -66,7 +69,6 @@ public class Id {
         return new Id(RIIF2Grammar.TYPE_HIER, primitiveId,hierPostfixId);
     }
 
-    //TODO: this is not correct, it need to retreive and check 
     public static Id associativeId(Id primitiveId, Id associativeIndex) {
         return primitiveId.addAssociativeIndex(associativeIndex);
     }
@@ -79,19 +81,11 @@ public class Id {
         return new Id(RIIF2Grammar.TABLE,attributeId,identifier1,identifier2);
     }
 
-    public List<Id> getAssociativeIndexs() {
-        return associativeIndexs;
-    }
-
-    public Id getPrimitiveId() {
-        return primitiveId;
-    }
-
     private Collection<? extends Id> hierPostfixIds() {
         return this.hierPostfixIds;
     }
 
-    public String id() {
+    private String id() {
         return this.id;
     }
 
@@ -100,16 +94,22 @@ public class Id {
     }
 
     private Id addAttributeIndex(Id attributeIndex) {
-        this.attributeIndexs.add(attributeIndex);
+        this.type = RIIF2Grammar.ID_ATTRIBUTE;
+        this.attributeIndex = attributeIndex;
         return this;
     }
 
     private Id addAssociativeIndex(Id associativeIndex) {
-        this.associativeIndexs.add(associativeIndex);
+        this.type = RIIF2Grammar.ID_ASSOCIATIVE;
+        this.associativeIndex = associativeIndex;
         return this;
     }
 
-    public List<Id> getAttributeIndexs() {
-        return attributeIndexs;
+    private Id attributeIndex() {
+        return this.attributeIndex;
+    }
+
+    public String getId() {
+        return id;
     }
 }

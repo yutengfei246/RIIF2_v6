@@ -1,13 +1,12 @@
 package it.polito.yutengfei.RIIF2.factory.partsFactory;
 
-import it.polito.yutengfei.RIIF2.factory.Factory;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class ImplExFactory implements Factory {
+public class ImplExFactory  {
 
     private List<String> eXIdentifiers = null ;
     private List<String> implIdentifiers = null;
@@ -54,8 +53,4 @@ public class ImplExFactory implements Factory {
         this.recorder.setImplIdentifiers( this.implIdentifiers );
     }
 
-    @Override
-    public RIIF2Recorder getRIIF2Recorder() {
-        return this.recorder;
-    }
 }

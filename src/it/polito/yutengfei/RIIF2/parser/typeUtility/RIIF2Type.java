@@ -7,10 +7,11 @@ public class RIIF2Type {
 
 
     private final String type;
-    private String attributeIndex;
 
     private EnumType enumType;
     private Vector vector;
+
+
 
     private RIIF2Type(String aBoolean) {
         this.type = aBoolean;
@@ -24,11 +25,6 @@ public class RIIF2Type {
     private RIIF2Type(String typeVector, Vector vector) {
         this.type = typeVector;
         this.vector = vector;
-    }
-
-    public RIIF2Type(String typeAttribute, String identifier) {
-        type = typeAttribute;
-        this.attributeIndex = identifier;
     }
 
     public static RIIF2Type primitiveTypeBoolean() {
@@ -79,13 +75,11 @@ public class RIIF2Type {
         return new RIIF2Type(RIIF2Grammar.TYPE_FLAT_VECTOR, vector);
     }
 
-    public static RIIF2Type childComponentType(String identifier) {
-        return new RIIF2Type(RIIF2Grammar.TYPE_CC, identifier);
-    }
-
-
     public String getType() {
         return type;
     }
 
+    public Vector getVector() {
+        return vector;
+    }
 }

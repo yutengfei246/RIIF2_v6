@@ -148,6 +148,9 @@ abstract class DeclaratorIdParser extends IdParser {
     public void exitAisDeclaratorId1(RIIF2Parser.AisDeclaratorId1Context ctx) {
         Identifier identifier = new Identifier();
 
+        Id primitiveId = getId(ctx.primitiveId());
+        identifier.setPrimitiveId( primitiveId );
+
         if (ctx.aisType() != null ){
             RIIF2Type type = getRIIF2Type( ctx.aisType() );
             identifier.setAisType( type );

@@ -1,30 +1,28 @@
 package it.polito.yutengfei.RIIF2.RIIF2Modules.parts;
 
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
+import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
+import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public abstract class Label<T> {
 
-    private Boolean isAbstract;
-    private Boolean isAssociative;
+    private Boolean isAssociative = false;
+    private Boolean vector = false;
 
     private String name;
+
     private T value;
+    private LinkedList<T> vectorValue ;
+
     private String type;
 
-    private List<Attribute> attributes = null;
+    private List<Attribute> attributes =  new LinkedList<>();
     private Map<String,AssocIndex> assocs = null;
+    private int vectorLength = 0;
 
-    public Boolean isAbstract() {
-        return isAbstract;
-    }
-
-    public void setAbstract(Boolean anAbstract) {
-        isAbstract = anAbstract;
-    }
 
     public Boolean isAssociative() {
         return isAssociative;
@@ -32,6 +30,9 @@ public abstract class Label<T> {
 
     public void setAssociative(Boolean associative) {
         isAssociative = associative;
+
+        if (associative)
+            this.assocs = new HashMap<>();
     }
 
     public String getName() {
@@ -74,5 +75,36 @@ public abstract class Label<T> {
         this.assocs.put(name,assocValue);
     }
 
+    public void setVector(Vector vector) {
+        this.vector = true;
 
+        Expression exp = vector.getLeft();
+        int left = (int) exp.getValue();
+        exp = vector.getRight();
+        int right = (int) exp.getValue();
+
+        this.vectorValue = new LinkedList<T>();
+        this.vectorLength = right*left;
+
+    }
+
+    public boolean containsAssociativeIndex(String index) {
+        return this.assocs.containsKey( index );
+    }
+
+    public boolean containsAttributeIndex(String atIndex) {
+        for (Attribute attribute : this.attributes){
+            if (Objects.equals(attribute.getId(), atIndex))
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isVector() {
+        return vector;
+    }
+
+    public void addVectorItem(Object value) {
+        this.vectorValue.add((T) value);
+    }
 }

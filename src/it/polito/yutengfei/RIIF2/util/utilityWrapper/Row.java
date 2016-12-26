@@ -11,6 +11,7 @@ public class Row {
 
     public static final int EXPRESSION = 1;
     public static final int ROW_ITEMS_ARRAY = 2;
+
     private int type;
     private Object value;
 
@@ -27,6 +28,14 @@ public class Row {
     }
 
     public void setValue(Object value) {
+        if (this.type == EXPRESSION){
+            Expression expression = ( Expression )value;
+            if( !expression.isArray() ){
+                System.out.println("The expression is not array type ");
+                System.exit(1);
+            }
+        }
+
         this.value = value;
     }
 

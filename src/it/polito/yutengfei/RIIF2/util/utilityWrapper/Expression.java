@@ -1,6 +1,7 @@
 package it.polito.yutengfei.RIIF2.util.utilityWrapper;
 
 
+import it.polito.yutengfei.RIIF2.initializer.Initializer;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 
 import java.util.LinkedList;
@@ -15,7 +16,7 @@ import java.util.Queue;
  *
  * perform the operation that in the operation stack.
  */
-public class Expression {
+public class Expression implements Initializer {
 
     public static final int OP_NEGATIVE = 11;
     public static final int OP_POSITIVE = 12;

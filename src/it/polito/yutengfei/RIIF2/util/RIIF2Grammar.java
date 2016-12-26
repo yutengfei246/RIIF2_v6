@@ -35,4 +35,6 @@ public class RIIF2Grammar {
     public static final String TABLE = "table";
     public static final String TYPE_ATTRIBUTE_INDEX = "attribute-index" ;
     public static final String TYPE_HIER_INDEX = "hier-index";
+    public static final String ID_ASSOCIATIVE = "id-associative";
+    public static final String ID_ATTRIBUTE = "id-attribute";
 }

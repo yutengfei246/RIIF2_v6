@@ -11,6 +11,10 @@ import org.antlr.v4.runtime.tree.ParseTree;
  */
 public class TemplateParser extends  InitializerParser implements Recorder{
 
+    public TemplateParser(RIIF2Recorder recorder) {
+
+    }
+
     @Override
     public RIIF2Recorder getRIIF2Recorder() {
         return null;

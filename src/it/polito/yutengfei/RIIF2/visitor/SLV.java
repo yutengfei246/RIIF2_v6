@@ -36,13 +36,13 @@ public class SLV extends RIIF2BaseVisitor<Boolean> implements Recorder{
         super.visitComponentDeclaration(ctx);
 
         this.recorder.setTemplate(false);
-        this.componentParser = new ComponentParser(this.parser,this.recorder);
+        this.componentParser = new ComponentParser(this.recorder);
 
         this.moduleCounter++;
         ParseTree componentTree = this.parseTree.getChild(this.moduleCounter);
         walker.walk(this.componentParser,componentTree);
 
-        this.recorder = this.componentParser.getRIIF2Recorder().getRIIF2Recorder();
+        this.recorder = this.recorder.getRIIF2Recorder();
         return true;
     }
 
@@ -52,7 +52,7 @@ public class SLV extends RIIF2BaseVisitor<Boolean> implements Recorder{
         super.visitTemplateDeclaration(ctx);
 
         this.recorder.setTemplate(true);
-        this.templateParser = new TemplateParser(this.parser,recorder);
+        this.templateParser = new TemplateParser(this.recorder);
 
         this.moduleCounter++;
         ParseTree templateTree = this.parseTree.getChild(this.moduleCounter);

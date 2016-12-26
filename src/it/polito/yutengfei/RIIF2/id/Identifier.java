@@ -1,24 +1,18 @@
 package it.polito.yutengfei.RIIF2.id;
 
-import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.RIIF2Type;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Identifier {
 
     private String id;
-    private String identifier = null;
 
-    private Identifier primitiveId;
+    private Id primitiveId;
 
-    private List<Attribute> attributes = new ArrayList<>();
-    private RIIF2Type typeType;
+    private RIIF2Type typeType = null;
     private RIIF2Type aisType;
 
-    private Id attributeIndex;
-    private Id associativeIndex;
+    private Id attributeIndex = null;
+    private Id associativeIndex = null;
     private Id tableId;
     private Id hierPostfix;
 
@@ -31,7 +25,7 @@ public class Identifier {
         this.id = id;
     }
 
-    public void setId(Identifier primitiveId) {
+    public void setPrimitiveId(Id primitiveId) {
         this.primitiveId = primitiveId;
     }
 
@@ -53,5 +47,33 @@ public class Identifier {
 
     public void setHierPostfix(Id id) {
         this.hierPostfix = id ;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public RIIF2Type getTypeType() {
+        return typeType;
+    }
+
+    public boolean hasAttributeIndex() {
+        return this.attributeIndex == null ? false :true;
+    }
+
+    public boolean hasTypeType() {
+        return this.typeType == null ? false : true ;
+    }
+
+    public boolean hasAssociativeIndex() {
+        return this.associativeIndex == null ? false: true ;
+    }
+
+    public Id getAssociativeIndex() {
+        return associativeIndex;
+    }
+
+    public Id getAttributeIndex() {
+        return attributeIndex;
     }
 }

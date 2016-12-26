@@ -4,10 +4,7 @@ import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Constant;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Label;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Parameter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RIIF2Recorder implements Recorder{
 
@@ -56,11 +53,11 @@ public class RIIF2Recorder implements Recorder{
         return this.tempRecorderMap.containsKey(implId);
     }
 
-    public Map<String,RIIF2Recorder> getTempRecorderMap() {
+    private Map<String,RIIF2Recorder> getTempRecorderMap() {
         return tempRecorderMap;
     }
 
-    public Map<String,RIIF2Recorder> getComponentRecorderMap() {
+    private Map<String,RIIF2Recorder> getComponentRecorderMap() {
         return componentRecorderMap;
     }
 
@@ -74,19 +71,6 @@ public class RIIF2Recorder implements Recorder{
 
     public void setImplIdentifiers(List<String> implIdentifiers) {
         this.implIdentifiers = implIdentifiers;
-    }
-
-    public void addConstant(Label<Object> fieldLabel) {
-        if (this.constants == null)
-            this.constants = new ArrayList<>();
-        this.constants.add((Constant) fieldLabel);
-    }
-
-    public void addParameter(Label<Object> fieldLabel) {
-        if( this.parameters == null)
-            this.parameters = new ArrayList<>();
-
-        this.parameters.add((Parameter) fieldLabel);
     }
 
     public void print(int level){
@@ -131,7 +115,6 @@ public class RIIF2Recorder implements Recorder{
         }
     }
 
-
     @Override
     public RIIF2Recorder getRIIF2Recorder() {
         if( this.getIdentifier() == null)
@@ -140,7 +123,73 @@ public class RIIF2Recorder implements Recorder{
         return this.flash();
     }
 
+
     public void setTemplate(boolean template) {
         this.template = template;
+    }
+
+    public boolean containsParameter(String id) {
+        for (Parameter parameter : this.parameters){
+            String name = parameter.getName();
+            if (Objects.equals(name, id)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean containsConstant(String id ){
+        for (Constant constant : this.constants){
+            String name = constant.getName();
+            if (Objects.equals(name, id)){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public Constant getConstant(String id) {
+        for (Constant constant : this.constants){
+            String name = constant.getName();
+            if (Objects.equals(name, id)){
+                return constant;
+            }
+        }
+
+        return null;
+    }
+
+    public Parameter getParameter(String id) {
+        for (Parameter parameter : this.parameters){
+            String name = parameter.getName();
+            if (Objects.equals(name, id)){
+                return  parameter;
+            }
+        }
+        return null;
+
+    }
+
+    public void addLabel(Label<Object> fieldLabel) {
+
+        if (fieldLabel instanceof Constant)
+            this.addConstant( fieldLabel );
+
+        if (fieldLabel instanceof Parameter)
+            this.addParameter( fieldLabel );
+    }
+
+    private void addConstant(Label<Object> fieldLabel) {
+        if (this.constants == null)
+            this.constants = new ArrayList<>();
+        this.constants.add((Constant) fieldLabel);
+    }
+
+    private void addParameter(Label<Object> fieldLabel) {
+        if( this.parameters == null)
+            this.parameters = new ArrayList<>();
+
+        this.parameters.add((Parameter) fieldLabel);
     }
 }

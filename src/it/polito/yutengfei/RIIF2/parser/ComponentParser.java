@@ -1,34 +1,30 @@
 package it.polito.yutengfei.RIIF2.parser;
 
+import it.polito.yutengfei.RIIF2.Declarator.Declarator;
 import it.polito.yutengfei.RIIF2.RIIF2Parser;
 import it.polito.yutengfei.RIIF2.factory.*;
+import it.polito.yutengfei.RIIF2.parser.typeUtility.RIIF2Type;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
-import it.polito.yutengfei.RIIF2.recoder.Recorder;
-import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
-import it.polito.yutengfei.RIIF2.util.utilityWrapper.ArrayItem;
-import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
-import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.List;
 
 
-public class ComponentParser extends InitializerParser implements Recorder {
+public class ComponentParser extends DeclaratorParser {
 
     private ComponentFactory componentFactory = null;
 
-    public ComponentParser(RIIF2Parser parser, RIIF2Recorder recorder){
+    public ComponentParser(RIIF2Recorder recorder){
         this.componentFactory = Factory.newComponentFactory(recorder);
     }
 
     @Override
     public void enterComponentDeclaration(RIIF2Parser.ComponentDeclarationContext ctx) {
-        this.componentFactory.start();
 
         TerminalNode Identifier = ctx.Identifier();
         String identifier = Identifier.getText();
 
-        this.componentFactory.setCurrentComponentIdentifier(identifier);
+        this.componentFactory.start( identifier );
     }
 
     @Override
@@ -64,123 +60,25 @@ public class ComponentParser extends InitializerParser implements Recorder {
     }
 
     @Override
-    public void enterFieldType(RIIF2Parser.FieldTypeContext ctx) {
-        TerminalNode parameter = ctx.PARAMETER();
-        TerminalNode constant = ctx.CONSTANT();
-
-        if (parameter != null)
-            this.componentFactory.setFieldType( RIIF2Grammar.PARAMETER );
-        if (constant != null)
-            this.componentFactory.setFieldType( RIIF2Grammar.CONSTANT );
-    }
-
-    @Override
-    public void enterPrimitiveFieldDeclarator(RIIF2Parser.PrimitiveFieldDeclaratorContext ctx) {
-        this.componentFactory.setFieldAttribute(false);
-    }
-
-    @Override
-    public void enterPrimitiveFieldDeclaratorId(RIIF2Parser.PrimitiveFieldDeclaratorIdContext ctx) {
-        TerminalNode Identifier = ctx.Identifier();
-        String identifier = Identifier.getText();
-
-        this.componentFactory.setFieldIdentifier( identifier );
-    }
-
-    @Override
-    public void enterAssociativeType(RIIF2Parser.AssociativeTypeContext ctx) {
-        this.componentFactory.setFieldTypeType(RIIF2Grammar.TYPE_TYPE_ASSOCIATIVE);
-    }
-
-    @Override
-    public void enterVector(RIIF2Parser.VectorContext ctx) {
-        ParserRuleContext parentContext = ctx.getParent();
-
-        if( parentContext instanceof RIIF2Parser.TypeTypeContext){
-            this.componentFactory.setFieldTypeType(RIIF2Grammar.TYPE_TYPE_VECTOR);
-        }
-    }
-
-
-
-    @Override
-    public void enterAttributeIndex(RIIF2Parser.AttributeIndexContext ctx) {
-        ParserRuleContext parentContext = ctx.getParent();
-        TerminalNode Identifier = ctx.Identifier();
-        String identifier = Identifier.getText();
-
-        if( parentContext instanceof RIIF2Parser.PrimitiveFieldDeclaratorContext){
-            this.componentFactory.setFieldAttribute(true);
-            this.componentFactory.setFieldAttributeIndex(identifier);
-        }
-    }
-
-    //TODO: going to be deleting
-    @Override
-    public void enterAssociativeIndex(RIIF2Parser.AssociativeIndexContext ctx) {
-        ParserRuleContext parentContext = ctx.getParent();
-        TerminalNode Identifier = ctx.Identifier();
-        String identifier = Identifier.getText();
-
-        if( parentContext instanceof RIIF2Parser.PrimitiveFieldDeclaratorContext ){
-            this.componentFactory.setFieldAssociative(true);
-            this.componentFactory.setFieldAssociativeIndex(identifier);
-        }
-    }
-
-
-
-    @Override
-    public void exitFieldInitializer(RIIF2Parser.FieldInitializerContext ctx) {
-        ParserRuleContext parentContext = ctx.getParent();
-
-        RIIF2Parser.ListInitializerContext listInitializerContext
-                = ctx.listInitializer();
-
-        RIIF2Parser.ExpressionContext expressionContext
-                = ctx.expression();
-
-        RIIF2Parser.ArrayInitializerWrapperContext arrayInitializerWrapperContext
-                = ctx.arrayInitializerWrapper();
-
-        if( parentContext instanceof RIIF2Parser.PrimitiveFieldDeclaratorContext) {
-            if (listInitializerContext != null) {
-                this.componentFactory.setFieldInitializerType(RIIF2Grammar.LIST_INITIALIZER);
-
-                List<String> listInitializer = super.getListInitializer();
-                this.componentFactory.setFieldInitializer(listInitializer);
-            }
-
-            if (arrayInitializerWrapperContext != null) {
-                this.componentFactory.setFieldInitializerType(RIIF2Grammar.ARRAY_INITIALIZER);
-
-                List<List<ArrayItem>> arrayWrapperInitializer = super.getArrayWrapperInitializer();
-                this.componentFactory.setFieldInitializer(arrayWrapperInitializer);
-            }
-
-            if (expressionContext != null) {
-                this.componentFactory.setFieldInitializerType(RIIF2Grammar.EXPRESSION);
-
-                Expression expression = super.getExpression(expressionContext);
-                this.componentFactory.setFieldInitializer(expression);
-            }
-        }
-    }
-
-    @Override
     public void exitFieldDeclaration(RIIF2Parser.FieldDeclarationContext ctx) {
-        this.componentFactory.commitField();
+
+        RIIF2Type fieldType = getRIIF2Type( ctx.fieldType() );
+
+        Declarator fieldDeclarator = getDeclarator( ctx.fieldDeclaratorType() );
+
+        this.componentFactory.setFieldType( fieldType );
+        this.componentFactory.setFieldDeclarator( fieldDeclarator );
+    }
+
+    @Override
+    public void exitComponentBodyElement(RIIF2Parser.ComponentBodyElementContext ctx) {
+
+        if (ctx.fieldDeclaration() != null)
+            this.componentFactory.commitField();
     }
 
     @Override
     public void exitComponentDeclaration(RIIF2Parser.ComponentDeclarationContext ctx) {
         this.componentFactory.commit();
-        this.componentFactory.productComponent();
-    }
-
-
-    @Override
-    public RIIF2Recorder getRIIF2Recorder() {
-        return this.componentFactory.getRIIF2Recorder();
     }
 }
