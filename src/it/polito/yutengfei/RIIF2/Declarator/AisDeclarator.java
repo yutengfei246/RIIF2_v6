@@ -4,14 +4,24 @@ import it.polito.yutengfei.RIIF2.id.DeclaratorId;
 import it.polito.yutengfei.RIIF2.initializer.Initializer;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.RIIF2Type;
 
-/**
- * Created by yutengfei on 27/12/16.
- */
 public class AisDeclarator implements  Declarator{
     private DeclaratorId declaratorId;
     private RIIF2Type aisType;
     private RIIF2Type associativeIndex;
     private RIIF2Type attributeIndex;
+
+    public RIIF2Type getAisType() {
+        return aisType;
+    }
+
+    public RIIF2Type getAssociativeIndex() {
+        return associativeIndex;
+    }
+
+    public RIIF2Type getAttributeIndex() {
+        return attributeIndex;
+    }
+
     private Initializer initializer;
 
     @Override
@@ -45,4 +55,6 @@ public class AisDeclarator implements  Declarator{
     public void setAttributeIndex(RIIF2Type attributeIndex) {
         this.attributeIndex = attributeIndex;
     }
+
+
 }

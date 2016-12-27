@@ -6,7 +6,6 @@ public class RIIF2Grammar {
     public static final int PARAMETER = 2;
     public static final int CONSTANT = 4;
 
-    public static final int LIST_INITIALIZER = 30;
     public static final int ARRAY_INITIALIZER = 31;
     public static final int EXPRESSION = 32;
     public static final int TYPE_TYPE_VECTOR = 33;
@@ -37,4 +36,5 @@ public class RIIF2Grammar {
     public static final String TYPE_HIER_INDEX = "hier-index";
     public static final String ID_ASSOCIATIVE = "id-associative";
     public static final String ID_ATTRIBUTE = "id-attribute";
+    public static final String LIST_INITIALIZER = "list-type";
 }

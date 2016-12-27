@@ -1,4 +1,5 @@
 component e1;
+parameter number : integer ;
 parameter mp: integer := 10;
 parameter mpa : integer := 100;
 endcomponent
@@ -6,4 +7,8 @@ endcomponent
 component mycom extends e1;
 parameter mPar : float := 10.0;
 parameter mpar2 : float := 12.0;
+endcomponent
+
+component myList extends mycom;
+parameter theList := {yu,teng,fei};
 endcomponent

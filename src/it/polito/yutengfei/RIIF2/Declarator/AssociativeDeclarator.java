@@ -1,6 +1,5 @@
 package it.polito.yutengfei.RIIF2.Declarator;
 
-
 import it.polito.yutengfei.RIIF2.id.DeclaratorId;
 import it.polito.yutengfei.RIIF2.initializer.Initializer;
 

@@ -3,9 +3,6 @@ package it.polito.yutengfei.RIIF2.Declarator;
 import it.polito.yutengfei.RIIF2.id.DeclaratorId;
 import it.polito.yutengfei.RIIF2.initializer.Initializer;
 
-/**
- * Created by yutengfei on 27/12/16.
- */
 public class ChildComponentDeclarator implements Declarator {
     private DeclaratorId declaratorId;
 

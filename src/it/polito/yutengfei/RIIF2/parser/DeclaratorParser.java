@@ -51,6 +51,8 @@ abstract class DeclaratorParser extends InitializerParser {
             declarator = getDeclarator( ctx.associativeIndexDeclarator() );
         if (ctx.tableFieldDeclarator() != null )
             declarator = getDeclarator( ctx.tableFieldDeclarator());
+        if (ctx.listFieldDeclarator() != null)
+            declarator = getDeclarator( ctx.listFieldDeclarator());
 
         this.putDeclarator(ctx,declarator);
     }
@@ -91,9 +93,9 @@ abstract class DeclaratorParser extends InitializerParser {
         DeclaratorId declaratorId = getDeclaratorId(ctx.listFieldDeclaratorId());
         listDeclarator.setDeclaratorId( declaratorId );
 
-        Initializer initializer = getInitializer( ctx.listInitializer() );
-        listDeclarator.setInitializer( initializer );
+        Initializer initializer = getListInitializer();
 
+        listDeclarator.setInitializer( initializer );
         this.putDeclarator(ctx,listDeclarator);
     }
 
@@ -150,6 +152,5 @@ abstract class DeclaratorParser extends InitializerParser {
 
         this.putDeclarator(ctx, aisDeclarator );
     }
-
 
 }

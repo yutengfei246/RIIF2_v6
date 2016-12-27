@@ -10,4 +10,8 @@ public class ListInitializer implements Initializer{
         this.initializer.add(item);
     }
 
+
+    public LinkedList<String> getInitializer() {
+        return initializer;
+    }
 }

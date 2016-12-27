@@ -5,10 +5,10 @@ import it.polito.yutengfei.RIIF2.initializer.Initializer;
 
 public interface Declarator {
 
-    public void setDeclaratorId(DeclaratorId declaratorId );
-    public void setInitializer(Initializer initializer);
-    public DeclaratorId getDeclaratorId();
-    public Initializer getInitializer();
+    void setDeclaratorId(DeclaratorId declaratorId);
+    void setInitializer(Initializer initializer);
+    DeclaratorId getDeclaratorId();
+    Initializer getInitializer();
 
 
 }

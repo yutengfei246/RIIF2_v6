@@ -18,8 +18,8 @@ public class RIIF2Recorder implements Recorder{
     private List<String> eXIdentifiers = null ;
     private List<String> implIdentifiers = null;
 
-    private List<Parameter> parameters = null;
-    private List<Constant> constants = null;
+    private List<Parameter> parameters = new LinkedList<>();
+    private List<Constant> constants = new LinkedList<>();
 
     private RIIF2Recorder flash() {
         RIIF2Recorder retRecord = new RIIF2Recorder();
@@ -119,7 +119,6 @@ public class RIIF2Recorder implements Recorder{
     public RIIF2Recorder getRIIF2Recorder() {
         if( this.getIdentifier() == null)
             return this;
-
         return this.flash();
     }
 
@@ -129,6 +128,8 @@ public class RIIF2Recorder implements Recorder{
     }
 
     public boolean containsParameter(String id) {
+        if (this.parameters == null)
+
         for (Parameter parameter : this.parameters){
             String name = parameter.getName();
             if (Objects.equals(name, id)){
@@ -156,8 +157,11 @@ public class RIIF2Recorder implements Recorder{
                 return constant;
             }
         }
-
         return null;
+    }
+
+    public boolean contains(String id) {
+        return this.containsParameter(id) || this.containsConstant(id);
     }
 
     public Parameter getParameter(String id) {
@@ -181,15 +185,10 @@ public class RIIF2Recorder implements Recorder{
     }
 
     private void addConstant(Label<Object> fieldLabel) {
-        if (this.constants == null)
-            this.constants = new ArrayList<>();
         this.constants.add((Constant) fieldLabel);
     }
 
     private void addParameter(Label<Object> fieldLabel) {
-        if( this.parameters == null)
-            this.parameters = new ArrayList<>();
-
         this.parameters.add((Parameter) fieldLabel);
     }
 }

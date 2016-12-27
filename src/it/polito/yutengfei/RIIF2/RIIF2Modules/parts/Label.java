@@ -13,26 +13,31 @@ public abstract class Label<T> {
     private Boolean vector = false;
 
     private String name;
-
-    private T value = null;
-    private LinkedList<T> vectorValue ;
-
     private String type;
-
-    private List<Attribute> attributes =  new LinkedList<>();
-    private Map<String,AssocIndex> assocs = null;
-    private int vectorLength = 0;
 
 
     public Boolean isAssociative() {
         return isAssociative;
     }
 
-    public void setAssociative(Boolean associative) {
-        isAssociative = associative;
+    void associativeTrue(){
+        this.isAssociative = true;
+    }
 
-        if (associative)
-            this.assocs = new HashMap<>();
+    void associativeFalse(){
+        this.isAssociative = false;
+    }
+
+    void vectorTrue(){
+        this.vector = true;
+    }
+
+    void vectorFalse(){
+        this.vector = false;
+    }
+
+    public boolean isVector() {
+        return vector;
     }
 
     public String getName() {
@@ -43,70 +48,35 @@ public abstract class Label<T> {
         this.name = name;
     }
 
-    public T getValue() {
-        return value;
-    }
-
-    public void setValue(T value) {
-        this.value = value;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getType() {
         return type;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
+    public abstract void setAssociative(Boolean b);
 
-    public List<Attribute> getAttributes() {
-        return attributes;
-    }
+    abstract T getValue();
 
-    public void addAttribute(Attribute attribute){
-        this.attributes.add(attribute);
-    }
+    public abstract void setValue(T value);
 
-    public Map<String, AssocIndex> getAssocs() {
-        return assocs;
-    }
+    abstract List<Attribute> getAttributes();
 
-    public void addAssocs(String name, AssocIndex assocValue) {
-        this.assocs.put(name,assocValue);
-    }
+    abstract Map<String, Object > getAssocs();
 
-    public void setVector(Vector vector) {
-        this.vector = true;
+    public abstract void addAttribute(Attribute attribute);
 
-        Expression exp = vector.getLeft();
-        int left = (int) exp.getValue();
-        exp = vector.getRight();
-        int right = (int) exp.getValue();
+    public abstract void addAssoc(String name, Object assocIndex);
 
-        this.vectorValue = new LinkedList<T>();
-        this.vectorLength = right*left;
+    public abstract void setVector(Vector vector);
 
-    }
+    public abstract boolean containsAssociativeIndex(String index);
 
-    public boolean containsAssociativeIndex(String index) {
-        return this.assocs.containsKey( index );
-    }
+    public abstract boolean containsAttributeIndex(String index);
 
-    public boolean containsAttributeIndex(String atIndex) {
-        for (Attribute attribute : this.attributes){
-            if (Objects.equals(attribute.getId(), atIndex))
-                return true;
-        }
-        return false;
-    }
-
-    public boolean isVector() {
-        return vector;
-    }
-
-    public void addVectorItem(Object value) {
-        this.vectorValue.add((T) value);
-    }
+    public abstract void addVectorItem(Object value);
 
     public void print(){
         System.out.print("Parameter " + this.getName());
@@ -118,4 +88,5 @@ public abstract class Label<T> {
             System.out.print(" := null " );
         System.out.println(";");
     }
+
 }
