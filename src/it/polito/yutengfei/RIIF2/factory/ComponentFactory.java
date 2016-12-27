@@ -81,7 +81,6 @@ public class ComponentFactory {
     }
 
     private void productComponent() {
-        this.recorder.print(0);
     }
 
 }

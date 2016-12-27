@@ -2,7 +2,7 @@ package it.polito.yutengfei.RIIF2.id;
 
 import it.polito.yutengfei.RIIF2.parser.typeUtility.RIIF2Type;
 
-public class Identifier {
+public class DeclaratorId{
 
     private String id;
 

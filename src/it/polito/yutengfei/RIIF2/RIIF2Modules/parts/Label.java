@@ -14,7 +14,7 @@ public abstract class Label<T> {
 
     private String name;
 
-    private T value;
+    private T value = null;
     private LinkedList<T> vectorValue ;
 
     private String type;
@@ -106,5 +106,16 @@ public abstract class Label<T> {
 
     public void addVectorItem(Object value) {
         this.vectorValue.add((T) value);
+    }
+
+    public void print(){
+        System.out.print("Parameter " + this.getName());
+        System.out.print(" : " + this.getType());
+
+        if (this.getValue() != null)
+            System.out.print(" := "  + this.getValue().toString() );
+        else
+            System.out.print(" := null " );
+        System.out.println(";");
     }
 }

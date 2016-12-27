@@ -301,7 +301,7 @@ abstract class InitializerParser extends ExpressionParser {
         this.initializerParseTreeProperty.put(node, initializer);
     }
 
-    public Initializer getInitializer( ParseTree node ){
+    Initializer getInitializer(ParseTree node){
         return this.initializerParseTreeProperty.get( node );
     }
 
@@ -312,8 +312,9 @@ abstract class InitializerParser extends ExpressionParser {
 
         if (ctx.arrayInitializerWrapper() != null)
             initializer = getArrayWrapperInitializer();
-        if (ctx.expression() != null )
+        if (ctx.expression() != null ) {
             initializer = getExpression(ctx.expression());
+        }
         if (ctx.listInitializer() != null)
             initializer = getListInitializer();
 

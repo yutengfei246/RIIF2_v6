@@ -1,6 +1,5 @@
 package it.polito.yutengfei.RIIF2.parser;
 
-import it.polito.yutengfei.RIIF2.RIIF2Parser;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.recoder.Recorder;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;

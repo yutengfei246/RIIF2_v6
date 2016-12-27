@@ -1,6 +1,6 @@
 component e1;
-parameter mp: int := 10;
-parameter mpa : int := 100;
+parameter mp: integer := 10;
+parameter mpa : integer := 100;
 endcomponent
 
 component mycom extends e1;

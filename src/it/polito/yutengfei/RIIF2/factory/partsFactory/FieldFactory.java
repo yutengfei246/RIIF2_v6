@@ -5,8 +5,8 @@ import it.polito.yutengfei.RIIF2.Declarator.PrimitiveFieldDeclarator;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Constant;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Label;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Parameter;
+import it.polito.yutengfei.RIIF2.id.DeclaratorId;
 import it.polito.yutengfei.RIIF2.id.Id;
-import it.polito.yutengfei.RIIF2.id.Identifier;
 import it.polito.yutengfei.RIIF2.initializer.ArrayInitializer;
 import it.polito.yutengfei.RIIF2.initializer.ArrayWrapperInitializer;
 import it.polito.yutengfei.RIIF2.initializer.Initializer;
@@ -56,7 +56,7 @@ public class FieldFactory {
             PrimitiveFieldDeclarator primitiveFieldDeclarator
                     = (PrimitiveFieldDeclarator) this.declarator;
 
-            Identifier declaratorId = primitiveFieldDeclarator.getDeclaratorId();
+            DeclaratorId declaratorId = primitiveFieldDeclarator.getDeclaratorId();
             if ( !declaratorId.hasAttributeIndex()
                     && !declaratorId.hasAssociativeIndex() ){
                 /*only this case to create a new field */
@@ -107,7 +107,7 @@ public class FieldFactory {
 
     }
 
-    private void createFieldLabel(Identifier declaratorId) {
+    private void createFieldLabel(DeclaratorId declaratorId) {
 
         if (Objects.equals(RIIF2Grammar.FIELD_PARAMETER, this.fieldType.getType()))
             this.fieldLabel = new Parameter<>();
@@ -139,7 +139,7 @@ public class FieldFactory {
 
         Initializer initializer = primitiveFieldDeclarator.getInitializer();
 
-        if (initializer instanceof Exception){
+        if (initializer instanceof Expression){
             Expression expression = (Expression) initializer;
             String eType = expression.getType();
 
@@ -169,8 +169,6 @@ public class FieldFactory {
                     this.fieldLabel.addVectorItem(expression.getValue());
                 }
             }
-
         }
-
     }
 }

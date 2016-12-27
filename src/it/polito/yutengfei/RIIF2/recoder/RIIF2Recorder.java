@@ -3,6 +3,7 @@ package it.polito.yutengfei.RIIF2.recoder;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Constant;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Label;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Parameter;
+import it.polito.yutengfei.RIIF2.parser.typeUtility.RIIF2Type;
 
 import java.util.*;
 
@@ -74,44 +75,43 @@ public class RIIF2Recorder implements Recorder{
     }
 
     public void print(int level){
-            System.out.println("Record level " + level);
-        if ( this.getIdentifier() != null) {
-            for (int i = 0; i < level; i++)
-                System.out.print("-");
-            System.out.println("The Identifier of the Record is + " + this.getIdentifier());
 
-            for (int i = 0; i < level; i++)
-                System.out.print("-");
-            if (this.template != null && this.template)
-                System.out.println("The Record is TEMPLATE.");
-            else
-                System.out.println("The Record is COMPONENT. ");
+        if (this.componentRecorderMap.size() != 0){
+            System.out.println("there are components that appeared before ... size is "   + this.componentRecorderMap.size());
+            for (Map.Entry<String, RIIF2Recorder> entry : this.componentRecorderMap.entrySet() ){
+                System.out.println(" Going to print the recorder with name " + entry.getValue());
+                entry.getValue().print8();
 
-            for (int i = 0; i < level; i++)
-                System.out.print("-");
-            if (this.parameters != null) {
-                System.out.println("The record contains parameters --->" + this.parameters.size());
-                for (Parameter parameter : this.parameters) {
-                    System.out.println(" Parameter :" + parameter.getName());
-                }
-            }
-
-            for (int i = 0; i < level; i++)
-                System.out.print("-");
-            if (this.constants != null) {
-                System.out.println("The record contains constants --->" + this.constants.size());
-                for (Constant constant : this.constants)
-                    System.out.println(" Constant :" + constant.getName());
+                System.out.println("----------------------------------------------------------");
             }
         }
-        System.out.println("The record extends component --->" + this.componentRecorderMap.size());
-        if (this.componentRecorderMap.size() > 0) {
-            for (Map.Entry<String, RIIF2Recorder> entry : this.componentRecorderMap.entrySet()) {
-                System.out.println(" The eX components are : " + entry.getKey() +
-                        " The contained Record's Identifier is " + entry.getValue().getIdentifier());
-                RIIF2Recorder recorder = entry.getValue();
-                recorder.print(level +1 );
-            }
+    }
+
+    private void print8(){
+        System.out.println("Current Recorder'identifier is  " + this.getIdentifier() );
+
+        if (this.eXIdentifiers != null && this.eXIdentifiers.size() != 0){
+            for (String ex : this.eXIdentifiers)
+                System.out.println( this.getIdentifier() + " Recorder extends  " + ex);
+        }
+
+        if (this.implIdentifiers != null && this.implIdentifiers.size() != 0){
+            for (String imp : this.implIdentifiers)
+                System.out.println( this.getIdentifier() + " Recorder implements " + imp);
+        }
+
+        if (this.parameters != null && this.parameters.size() != 0){
+            System.out.println( this.getIdentifier() + " Recorder has parameters number "
+                    + this.parameters.size());
+            for (Parameter parameter : this. parameters)
+                parameter.print();
+        }
+
+        if (this.constants != null && this.constants.size() != 0){
+            System.out.println( this.getIdentifier() + "Recorder has constants number "
+                    + this.constants.size() );
+            for (Constant constant : this.constants )
+                constant.print();
         }
     }
 
