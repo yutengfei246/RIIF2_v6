@@ -11,12 +11,9 @@ public class Parameter<T> extends Label<T> {
     private T value = null;
 
     private LinkedList<T> vectorValue = null ;
-    private Map<String,Object> assocs = null;
+    private Map<String,T> assocs = null;
 
     private List<Attribute> attributes =  new LinkedList<>();
-
-    private int vectorLength = 0;
-
 
     @Override
     public void setAssociative(Boolean b) {
@@ -44,9 +41,10 @@ public class Parameter<T> extends Label<T> {
     }
 
     @Override
-    Map<String, Object> getAssocs() {
-        return assocs;
+    Map<String, T> getAssocs() {
+        return this.assocs;
     }
+
 
     @Override
     public void addAttribute(Attribute attribute) {
@@ -54,9 +52,10 @@ public class Parameter<T> extends Label<T> {
     }
 
     @Override
-    public void addAssoc(String name, Object assocIndex) {
+    public void addAssoc(String name, T assocIndex) {
         this.assocs.put(name,assocIndex);
     }
+
 
     @Override
     public void setVector(Vector vector) {
@@ -67,8 +66,10 @@ public class Parameter<T> extends Label<T> {
         exp = vector.getRight();
         int right = (int) exp.getValue();
 
+        super.setVectorLength( left * right);
+
         this.vectorValue = new LinkedList<T>();
-        this.vectorLength = right*left;
+
     }
 
     @Override
@@ -86,9 +87,19 @@ public class Parameter<T> extends Label<T> {
     }
 
     @Override
-    public void addVectorItem(Object value) {
-        this.vectorValue.add((T) value);
+    public void addVectorItem(T value) {
+        this.vectorValue.add(value);
     }
 
+    public void print(){
+        System.out.print("Parameter " + this.getName());
+        System.out.print(" : " + this.getType());
+
+        if (this.getValue() != null)
+            System.out.print(" := "  + this.getValue().toString() );
+        else
+            System.out.print(" := null " );
+        System.out.println(";");
+    }
 
 }

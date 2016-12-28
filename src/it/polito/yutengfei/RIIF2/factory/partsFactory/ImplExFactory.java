@@ -1,12 +1,13 @@
 package it.polito.yutengfei.RIIF2.factory.partsFactory;
 
+import it.polito.yutengfei.RIIF2.factory.Factory;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class ImplExFactory  {
+public class ImplExFactory  implements Factory{
 
     private List<String> eXIdentifiers = null ;
     private List<String> implIdentifiers = null;

@@ -7,6 +7,7 @@ public class RIIF2Type {
 
 
     private final String type;
+    private String ccId;
 
     private EnumType enumType;
     private Vector vector;
@@ -25,6 +26,11 @@ public class RIIF2Type {
     private RIIF2Type(String typeVector, Vector vector) {
         this.type = typeVector;
         this.vector = vector;
+    }
+
+    public RIIF2Type(String typeCc, String identifier) {
+        this.type = typeCc;
+        this.ccId = identifier;
     }
 
     public static RIIF2Type primitiveTypeBoolean() {
@@ -81,5 +87,13 @@ public class RIIF2Type {
 
     public Vector getVector() {
         return vector;
+    }
+
+    public static RIIF2Type childComponentType(String identifier) {
+        return new RIIF2Type(RIIF2Grammar.TYPE_CC, identifier );
+    }
+
+    public String getCcId() {
+        return this.ccId;
     }
 }

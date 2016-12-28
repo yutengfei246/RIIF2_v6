@@ -448,18 +448,6 @@ public class RIIF2BaseListener implements RIIF2Listener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAisInitializer(RIIF2Parser.AisInitializerContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAisInitializer(RIIF2Parser.AisInitializerContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterTableItemInitializer(RIIF2Parser.TableItemInitializerContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -515,6 +503,18 @@ public class RIIF2BaseListener implements RIIF2Listener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitRowItemListInitializer(RIIF2Parser.RowItemListInitializerContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterAisInitializer(RIIF2Parser.AisInitializerContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAisInitializer(RIIF2Parser.AisInitializerContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -700,18 +700,6 @@ public class RIIF2BaseListener implements RIIF2Listener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterChildComponentId(RIIF2Parser.ChildComponentIdContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitChildComponentId(RIIF2Parser.ChildComponentIdContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterAttributeIndex(RIIF2Parser.AttributeIndexContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -875,6 +863,18 @@ public class RIIF2BaseListener implements RIIF2Listener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitEnumType(RIIF2Parser.EnumTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterChildComponentType(RIIF2Parser.ChildComponentTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitChildComponentType(RIIF2Parser.ChildComponentTypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

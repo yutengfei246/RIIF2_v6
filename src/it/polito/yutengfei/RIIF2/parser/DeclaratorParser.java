@@ -105,7 +105,10 @@ abstract class DeclaratorParser extends InitializerParser {
         ChildComponentDeclarator childComponentDeclarator
                 = new ChildComponentDeclarator();
 
-        DeclaratorId declaratorId = getDeclaratorId(ctx.childComponentId());
+        RIIF2Type type = getRIIF2Type( ctx.childComponentType() );
+        childComponentDeclarator.setCCType( type);
+
+        DeclaratorId declaratorId = getDeclaratorId(ctx.childComponentDeclaratorId());
         childComponentDeclarator.setDeclaratorId(declaratorId);
 
         this.putDeclarator(ctx,childComponentDeclarator);

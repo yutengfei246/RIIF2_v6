@@ -59,18 +59,6 @@ abstract class IdParser extends TypeParser {
     }
 
     @Override
-    public void enterChildComponentId(RIIF2Parser.ChildComponentIdContext ctx) {
-
-        Id id;
-
-        TerminalNode Identifier = ctx.Identifier();
-        String identifier = Identifier.getText();
-
-        id = Id.childComponent(identifier);
-        this.putId(ctx,id);
-    }
-
-    @Override
     public void exitPrimitiveIdIdentifier(RIIF2Parser.PrimitiveIdIdentifierContext ctx) {
 
         Id id;

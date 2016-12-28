@@ -71,10 +71,24 @@ public class ComponentParser extends DeclaratorParser {
     }
 
     @Override
+    public void enterChildComponentDeclaration(RIIF2Parser.ChildComponentDeclarationContext ctx) {
+        this.componentFactory.startCC(/*child component declaration;*/);
+    }
+
+    @Override
+    public void exitChildComponentDeclaration(RIIF2Parser.ChildComponentDeclarationContext ctx) {
+
+        Declarator ccDeclarator = getDeclarator(ctx.childComponentDeclarator());
+        this.componentFactory.setCCDeclarator( ccDeclarator );
+    }
+
+    @Override
     public void exitComponentBodyElement(RIIF2Parser.ComponentBodyElementContext ctx) {
 
         if (ctx.fieldDeclaration() != null)
             this.componentFactory.commitField();
+        if (ctx.childComponentDeclaration() != null)
+            this.componentFactory.commitCC();
     }
 
     @Override

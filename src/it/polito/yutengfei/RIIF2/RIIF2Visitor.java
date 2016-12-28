@@ -230,12 +230,6 @@ public interface RIIF2Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitListItemIdentifier(RIIF2Parser.ListItemIdentifierContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link RIIF2Parser#aisInitializer}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAisInitializer(RIIF2Parser.AisInitializerContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link RIIF2Parser#tableItemInitializer}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -269,6 +263,12 @@ public interface RIIF2Visitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitRowItemListInitializer(RIIF2Parser.RowItemListInitializerContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link RIIF2Parser#aisInitializer}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAisInitializer(RIIF2Parser.AisInitializerContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code primitiveFieldDeclaratorId1}
 	 * labeled alternative in {@link RIIF2Parser#primitiveFieldDeclaratorId}.
@@ -368,12 +368,6 @@ public interface RIIF2Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVariableId(RIIF2Parser.VariableIdContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link RIIF2Parser#childComponentId}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitChildComponentId(RIIF2Parser.ChildComponentIdContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link RIIF2Parser#attributeIndex}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -457,6 +451,12 @@ public interface RIIF2Visitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitEnumType(RIIF2Parser.EnumTypeContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link RIIF2Parser#childComponentType}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitChildComponentType(RIIF2Parser.ChildComponentTypeContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code expCmp}
 	 * labeled alternative in {@link RIIF2Parser#expression}.

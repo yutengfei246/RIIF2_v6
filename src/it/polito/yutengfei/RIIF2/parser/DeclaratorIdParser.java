@@ -112,10 +112,6 @@ abstract class DeclaratorIdParser extends IdParser {
             Id id = getId(ctx.associativeIndex());
             identifier.setAssociativeIndex( id );
         }
-        if (ctx.attributeIndex() != null){
-            Id id = getId( ctx.attributeIndex() );
-            identifier.setAttributeIndex( id );
-        }
 
         this.putDeclaratorId(ctx,identifier);
     }

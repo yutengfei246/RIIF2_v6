@@ -1,9 +1,6 @@
 package it.polito.yutengfei.RIIF2.recoder;
 
-import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Constant;
-import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Label;
-import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Parameter;
-import it.polito.yutengfei.RIIF2.parser.typeUtility.RIIF2Type;
+import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.*;
 
 import java.util.*;
 
@@ -20,6 +17,9 @@ public class RIIF2Recorder implements Recorder{
 
     private List<Parameter> parameters = new LinkedList<>();
     private List<Constant> constants = new LinkedList<>();
+
+    private List<ChildComponent> childComponents = new LinkedList<>();
+    private List<FailMode> failModes = new LinkedList<>();
 
     private RIIF2Recorder flash() {
         RIIF2Recorder retRecord = new RIIF2Recorder();
@@ -42,6 +42,7 @@ public class RIIF2Recorder implements Recorder{
     public void setIdentifier( String identifier ) {
         this.identifier = identifier;
     }
+
     public String getIdentifier() {
         return identifier;
     }
@@ -72,6 +73,81 @@ public class RIIF2Recorder implements Recorder{
 
     public void setImplIdentifiers(List<String> implIdentifiers) {
         this.implIdentifiers = implIdentifiers;
+    }
+
+    public void setTemplate(boolean template) {
+        this.template = template;
+    }
+
+    private void addParameter(Label<Object> fieldLabel) {
+        this.parameters.add((Parameter) fieldLabel);
+    }
+
+    private void addConstant(Label<Object> fieldLabel) {
+        this.constants.add((Constant) fieldLabel);
+    }
+
+    public boolean containsParameter(String id) {
+        if (this.parameters == null)
+
+        for (Parameter parameter : this.parameters){
+            String name = parameter.getName();
+            if (Objects.equals(name, id)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean containsConstant(String id ){
+        for (Constant constant : this.constants){
+            String name = constant.getName();
+            if (Objects.equals(name, id)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Constant getConstant(String id) {
+        for (Constant constant : this.constants){
+            String name = constant.getName();
+            if (Objects.equals(name, id)){
+                return constant;
+            }
+        }
+        return null;
+    }
+
+    public boolean contains(String id) {
+        return this.containsParameter(id) || this.containsConstant(id) || this.containsChildComponent(id);
+    }
+
+    public Parameter getParameter(String id) {
+        for (Parameter parameter : this.parameters){
+            String name = parameter.getName();
+            if (Objects.equals(name, id)){
+                return  parameter;
+            }
+        }
+        return null;
+
+    }
+
+    public void addLabel(Label fieldLabel) {
+
+        if (fieldLabel instanceof Constant)
+            this.addConstant( fieldLabel );
+
+        if (fieldLabel instanceof Parameter)
+            this.addParameter( fieldLabel );
+
+        if (fieldLabel instanceof ChildComponent)
+            this.addChildComponent( fieldLabel );
+    }
+
+    private void addChildComponent(Label<Object> fieldLabel) {
+        this.childComponents.add((ChildComponent) fieldLabel);
     }
 
     public void print(int level){
@@ -113,6 +189,14 @@ public class RIIF2Recorder implements Recorder{
             for (Constant constant : this.constants )
                 constant.print();
         }
+
+        if (this.childComponents != null && this.childComponents.size() != 0){
+            System.out.println( this.getIdentifier() + " Recorder has Child component number "
+                    + this.childComponents.size() );
+            for (ChildComponent childComponent : this.childComponents){
+                childComponent.print();
+            }
+        }
     }
 
     @Override
@@ -122,73 +206,30 @@ public class RIIF2Recorder implements Recorder{
         return this.flash();
     }
 
-
-    public void setTemplate(boolean template) {
-        this.template = template;
-    }
-
-    public boolean containsParameter(String id) {
-        if (this.parameters == null)
-
-        for (Parameter parameter : this.parameters){
-            String name = parameter.getName();
-            if (Objects.equals(name, id)){
+    public boolean containsChildComponent(String id) {
+        for (ChildComponent cc : this.childComponents){
+            if (Objects.equals(cc.getName(), id))
                 return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean containsConstant(String id ){
-        for (Constant constant : this.constants){
-            String name = constant.getName();
-            if (Objects.equals(name, id)){
-                return true;
-            }
         }
 
         return false;
     }
 
-    public Constant getConstant(String id) {
-        for (Constant constant : this.constants){
-            String name = constant.getName();
-            if (Objects.equals(name, id)){
-                return constant;
-            }
+    public ChildComponent getCC(String id) {
+        for (ChildComponent cc : this.childComponents){
+            if (Objects.equals(cc.getName(), id))
+                return cc;
         }
-        return null;
+        return  null;
     }
 
-    public boolean contains(String id) {
-        return this.containsParameter(id) || this.containsConstant(id);
+    public boolean containsGlobalComponent(String typeCcId) {
+        for (Map.Entry<String,RIIF2Recorder> entry : this.componentRecorderMap.entrySet())
+            if (Objects.equals(entry.getKey(), typeCcId))
+                return true;
+
+        return false;
     }
 
-    public Parameter getParameter(String id) {
-        for (Parameter parameter : this.parameters){
-            String name = parameter.getName();
-            if (Objects.equals(name, id)){
-                return  parameter;
-            }
-        }
-        return null;
 
-    }
-
-    public void addLabel(Label<Object> fieldLabel) {
-
-        if (fieldLabel instanceof Constant)
-            this.addConstant( fieldLabel );
-
-        if (fieldLabel instanceof Parameter)
-            this.addParameter( fieldLabel );
-    }
-
-    private void addConstant(Label<Object> fieldLabel) {
-        this.constants.add((Constant) fieldLabel);
-    }
-
-    private void addParameter(Label<Object> fieldLabel) {
-        this.parameters.add((Parameter) fieldLabel);
-    }
 }

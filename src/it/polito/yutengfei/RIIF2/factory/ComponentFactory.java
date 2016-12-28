@@ -14,6 +14,9 @@ public class ComponentFactory {
 
     private ImplExFactory implExFactory = null;
     private FieldFactory fieldFactory = null;
+    private CCFactory ccFactory = null;
+
+    private Factory factory = null;
 
     private RIIF2Recorder recorder;
 
@@ -76,11 +79,28 @@ public class ComponentFactory {
         this.fieldFactory = null /*Reset the fieldFactory*/;
     }
 
+    public void startCC() {
+        this.ccFactory = new CCFactory(this.recorder);
+    }
+
+    public void setCCDeclarator(Declarator CCDeclarator) {
+        this.ccFactory.setDeclarator(CCDeclarator);
+    }
+
+    public void commitCC() {
+        try {
+            this.ccFactory.commit();
+        } catch (VeriableAlreadyExistException e) {
+            e.printStackTrace();
+        } catch (SomeVariableMissingException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void commit() {
         this.productComponent();
     }
 
     private void productComponent() {
     }
-
 }

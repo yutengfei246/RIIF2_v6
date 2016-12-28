@@ -9,23 +9,25 @@ import java.util.*;
 
 public abstract class Label<T> {
 
-    private Boolean isAssociative = false;
+    private Boolean associative = false;
     private Boolean vector = false;
 
     private String name;
     private String type;
 
+    private int vectorLength;
+
 
     public Boolean isAssociative() {
-        return isAssociative;
+        return associative;
     }
 
     void associativeTrue(){
-        this.isAssociative = true;
+        this.associative = true;
     }
 
     void associativeFalse(){
-        this.isAssociative = false;
+        this.associative = false;
     }
 
     void vectorTrue(){
@@ -56,6 +58,16 @@ public abstract class Label<T> {
         return type;
     }
 
+    public int getVectorLength() {
+        return vectorLength;
+    }
+
+    void setVectorLength(int vectorLength) {
+        this.vectorLength = vectorLength;
+    }
+
+    /***********************************************************************************/
+
     public abstract void setAssociative(Boolean b);
 
     abstract T getValue();
@@ -64,11 +76,11 @@ public abstract class Label<T> {
 
     abstract List<Attribute> getAttributes();
 
-    abstract Map<String, Object > getAssocs();
+    abstract Map<String, T > getAssocs();
 
     public abstract void addAttribute(Attribute attribute);
 
-    public abstract void addAssoc(String name, Object assocIndex);
+    public abstract void addAssoc(String name, T assocIndex);
 
     public abstract void setVector(Vector vector);
 
@@ -76,17 +88,6 @@ public abstract class Label<T> {
 
     public abstract boolean containsAttributeIndex(String index);
 
-    public abstract void addVectorItem(Object value);
-
-    public void print(){
-        System.out.print("Parameter " + this.getName());
-        System.out.print(" : " + this.getType());
-
-        if (this.getValue() != null)
-            System.out.print(" := "  + this.getValue().toString() );
-        else
-            System.out.print(" := null " );
-        System.out.println(";");
-    }
+    public abstract void addVectorItem(T value);
 
 }

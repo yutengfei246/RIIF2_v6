@@ -153,6 +153,14 @@ abstract class TypeParser extends _RIIF2Parser{
         this.putRIIF2Type(ctx,type);
     }
 
+    @Override
+    public void exitChildComponentType(RIIF2Parser.ChildComponentTypeContext ctx) {
 
+        TerminalNode Identifier = ctx.Identifier();
+        String identifier = Identifier.getText();
 
+        RIIF2Type type  = RIIF2Type.childComponentType(identifier);
+
+        this.putRIIF2Type(ctx,type);
+    }
 }

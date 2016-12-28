@@ -374,16 +374,6 @@ public interface RIIF2Listener extends ParseTreeListener {
 	 */
 	void exitListItemIdentifier(RIIF2Parser.ListItemIdentifierContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link RIIF2Parser#aisInitializer}.
-	 * @param ctx the parse tree
-	 */
-	void enterAisInitializer(RIIF2Parser.AisInitializerContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link RIIF2Parser#aisInitializer}.
-	 * @param ctx the parse tree
-	 */
-	void exitAisInitializer(RIIF2Parser.AisInitializerContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link RIIF2Parser#tableItemInitializer}.
 	 * @param ctx the parse tree
 	 */
@@ -441,6 +431,16 @@ public interface RIIF2Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitRowItemListInitializer(RIIF2Parser.RowItemListInitializerContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link RIIF2Parser#aisInitializer}.
+	 * @param ctx the parse tree
+	 */
+	void enterAisInitializer(RIIF2Parser.AisInitializerContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RIIF2Parser#aisInitializer}.
+	 * @param ctx the parse tree
+	 */
+	void exitAisInitializer(RIIF2Parser.AisInitializerContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code primitiveFieldDeclaratorId1}
 	 * labeled alternative in {@link RIIF2Parser#primitiveFieldDeclaratorId}.
@@ -608,16 +608,6 @@ public interface RIIF2Listener extends ParseTreeListener {
 	 */
 	void exitVariableId(RIIF2Parser.VariableIdContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link RIIF2Parser#childComponentId}.
-	 * @param ctx the parse tree
-	 */
-	void enterChildComponentId(RIIF2Parser.ChildComponentIdContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link RIIF2Parser#childComponentId}.
-	 * @param ctx the parse tree
-	 */
-	void exitChildComponentId(RIIF2Parser.ChildComponentIdContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link RIIF2Parser#attributeIndex}.
 	 * @param ctx the parse tree
 	 */
@@ -757,6 +747,16 @@ public interface RIIF2Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitEnumType(RIIF2Parser.EnumTypeContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link RIIF2Parser#childComponentType}.
+	 * @param ctx the parse tree
+	 */
+	void enterChildComponentType(RIIF2Parser.ChildComponentTypeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RIIF2Parser#childComponentType}.
+	 * @param ctx the parse tree
+	 */
+	void exitChildComponentType(RIIF2Parser.ChildComponentTypeContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code expCmp}
 	 * labeled alternative in {@link RIIF2Parser#expression}.

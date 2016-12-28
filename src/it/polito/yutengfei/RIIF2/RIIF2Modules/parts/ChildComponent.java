@@ -6,15 +6,10 @@ import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 
 import java.util.*;
 
-public class Constant<T> extends Label<T> {
+public class ChildComponent<ChildComponent> extends Label<ChildComponent> {
 
-    private T value = null;
-
-    private LinkedList<T> vectorValue = null ;
-    private Map<String,T> assocs = null;
-
-    private List<Attribute> attributes =  new LinkedList<>();
-
+    private LinkedList<ChildComponent> vectorValue = null ;
+    private Map<String,ChildComponent> assocs = null;
 
 
     @Override
@@ -28,33 +23,32 @@ public class Constant<T> extends Label<T> {
     }
 
     @Override
-    T getValue() {
-        return value;
+    ChildComponent getValue() {
+        return null;
     }
 
+
     @Override
-    public void setValue(T value) {
-        this.value = value;
+    public void setValue(ChildComponent value) {
+
     }
 
     @Override
     List<Attribute> getAttributes() {
-        return attributes;
+        return null;
     }
 
     @Override
-    Map<String, T> getAssocs() {
+    Map<String, ChildComponent> getAssocs() {
         return this.assocs;
     }
 
 
     @Override
-    public void addAttribute(Attribute attribute) {
-        this.attributes.add(attribute);
-    }
+    public void addAttribute(Attribute attribute) {}
 
     @Override
-    public void addAssoc(String name, T assocIndex) {
+    public void addAssoc(String name, ChildComponent assocIndex) {
         this.assocs.put(name,assocIndex);
     }
 
@@ -70,7 +64,7 @@ public class Constant<T> extends Label<T> {
 
         super.setVectorLength( left * right);
 
-        this.vectorValue = new LinkedList<T>();
+        this.vectorValue = new LinkedList<>();
 
     }
 
@@ -81,26 +75,19 @@ public class Constant<T> extends Label<T> {
 
     @Override
     public boolean containsAttributeIndex(String index) {
-        for (Attribute attribute : this.attributes){
-            if (Objects.equals(attribute.getId(), index))
-                return true;
-        }
         return false;
     }
 
     @Override
-    public void addVectorItem(T value) {
+    public void addVectorItem(ChildComponent value) {
         this.vectorValue.add(value);
     }
 
     public void print(){
-        System.out.print("Constant " + this.getName());
-        System.out.print(" : " + this.getType());
+        System.out.print("ChildComponent " + super.getName());
 
-        if (this.getValue() != null)
-            System.out.print(" := "  + this.getValue().toString() );
-        else
-            System.out.print(" := null " );
         System.out.println(";");
     }
+
+
 }

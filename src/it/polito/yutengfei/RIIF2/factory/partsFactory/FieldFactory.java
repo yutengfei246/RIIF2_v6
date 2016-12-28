@@ -4,6 +4,7 @@ import it.polito.yutengfei.RIIF2.Declarator.*;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Constant;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Label;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Parameter;
+import it.polito.yutengfei.RIIF2.factory.Factory;
 import it.polito.yutengfei.RIIF2.id.DeclaratorId;
 import it.polito.yutengfei.RIIF2.id.Id;
 import it.polito.yutengfei.RIIF2.initializer.ArrayInitializer;
@@ -25,7 +26,7 @@ import java.util.Objects;
 *   This class is responsible for creating Parameter/Constant for template or component
 * */
 
-public class FieldFactory {
+public class FieldFactory implements Factory{
 
     private RIIF2Recorder recorder = null;
 
@@ -203,7 +204,7 @@ public class FieldFactory {
                     if (this.fieldLabel.containsAttributeIndex(atIndex)) {
                         throw new VeriableAlreadyExistException();
                     }
-
+                    //TODO: add attribute
                     this.fieldLabel.addAttribute(new Attribute());
                 } else {/*only associativeIndex */
 

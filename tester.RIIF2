@@ -1,3 +1,7 @@
+component cc1 ;
+parameter number : integer :=  1;
+endcomponent
+
 component e1;
 parameter number : integer ;
 parameter mp: integer := 10;
@@ -11,4 +15,5 @@ endcomponent
 
 component myList extends mycom;
 parameter theList := {yu,teng,fei};
+child_component cc1 cc;
 endcomponent

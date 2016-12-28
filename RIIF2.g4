@@ -143,7 +143,7 @@ listFieldDeclarator
     ;
 
 childComponentDeclarator
-    : childComponentId
+    : childComponentType
       childComponentDeclaratorId
     ;
 
@@ -209,7 +209,7 @@ aisInitializer
     | tableItemInitializer
     ;
 
-// §RIIF-2 version 6 Identifier
+// §RIIF-2 version 6 Declarator Id
 
 primitiveFieldDeclaratorId
     : Identifier ( typeType ) ? ( attributeIndex ) ? #primitiveFieldDeclaratorId1
@@ -231,7 +231,6 @@ listFieldDeclaratorId
 childComponentDeclaratorId
     : Identifier
       ( typeType | associativeIndex ) ?
-      attributeIndex ?
     ;
 
 failModeDeclaratorId
@@ -268,10 +267,6 @@ variableId
     | associativeId
     | attributeId
     | tableId
-    ;
-
-childComponentId
-    : Identifier
     ;
 
 attributeIndex
@@ -343,6 +338,10 @@ fieldType
 
 enumType
     : TYPE_ENUM '{' Identifier ( ',' Identifier)* '}'
+    ;
+
+childComponentType
+    : Identifier
     ;
 
 /*RIIF-2: ANTlr.4 expression (Same with JAVA)*/
