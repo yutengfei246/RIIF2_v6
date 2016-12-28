@@ -146,7 +146,7 @@ public class RIIF2Recorder implements Recorder{
             this.addChildComponent( fieldLabel );
     }
 
-    private void addChildComponent(Label<Object> fieldLabel) {
+    private void addChildComponent(Label<ChildComponent> fieldLabel) {
         this.childComponents.add((ChildComponent) fieldLabel);
     }
 

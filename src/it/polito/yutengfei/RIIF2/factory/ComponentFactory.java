@@ -95,6 +95,7 @@ public class ComponentFactory {
         } catch (SomeVariableMissingException e) {
             e.printStackTrace();
         }
+        this.ccFactory = null ;
     }
 
     public void commit() {

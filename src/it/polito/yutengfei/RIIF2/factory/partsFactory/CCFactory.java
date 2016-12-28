@@ -32,7 +32,6 @@ public class CCFactory {
     }
 
     private void setUpDeclarator() throws VeriableAlreadyExistException, SomeVariableMissingException {
-
         ChildComponentDeclarator childComponentDeclarator
                 = (ChildComponentDeclarator) this.declarator;
 
@@ -53,11 +52,10 @@ public class CCFactory {
             this.ccLabel = this.recorder.getCC(id);
         }
         this.newCCDeclarator(childComponentDeclarator);
-        this.recorder.addLabel(this.ccLabel);
     }
 
     private void createCCLabel(String id) {
-        this.ccLabel = new ChildComponent<>();
+        this.ccLabel = new ChildComponent();
 
         this.ccLabel.setName(id);
         this.ccLabel.setType(RIIF2Grammar.TYPE_CC);
@@ -68,7 +66,7 @@ public class CCFactory {
                 = childComponentDeclarator.getDeclaratorId();
 
         if (declaratorId.hasAssociativeIndex()){
-
+            System.out.println("has associative Index");
             Id associativeIndex = declaratorId.getAssociativeIndex();
             String id = associativeIndex.getId();
 
@@ -85,7 +83,7 @@ public class CCFactory {
         }
 
         if (declaratorId.hasTypeType()){
-
+            System.out.println("has tt");
             RIIF2Type typeType = declaratorId.getTypeType();
             if (Objects.equals(typeType.getType(), RIIF2Grammar.TYPE_VECTOR)){
                 Vector vector =typeType.getVector();
@@ -98,6 +96,8 @@ public class CCFactory {
             if (Objects.equals(typeType.getType(), RIIF2Grammar.TYPE_ASSOCIATIVE)){
                 this.ccLabel.setAssociative(true);
             }
+
+            this.recorder.addLabel(this.ccLabel);
         }
     }
 }

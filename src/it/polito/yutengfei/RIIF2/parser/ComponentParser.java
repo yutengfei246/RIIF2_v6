@@ -89,6 +89,7 @@ public class ComponentParser extends DeclaratorParser {
             this.componentFactory.commitField();
         if (ctx.childComponentDeclaration() != null)
             this.componentFactory.commitCC();
+
     }
 
     @Override

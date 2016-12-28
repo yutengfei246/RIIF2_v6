@@ -9,11 +9,12 @@ parameter mpa : integer := 100;
 endcomponent
 
 component mycom extends e1;
-parameter mPar : float := 10.0;
+parameter mPar  : float := 10.0;
 parameter mpar2 : float := 12.0;
 endcomponent
 
 component myList extends mycom;
 parameter theList := {yu,teng,fei};
-child_component cc1 cc;
+child_component cc1 cc[];
+child_component cc1 cc[Instance];
 endcomponent

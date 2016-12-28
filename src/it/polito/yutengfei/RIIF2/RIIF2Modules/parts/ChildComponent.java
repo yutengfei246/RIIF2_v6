@@ -6,7 +6,7 @@ import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 
 import java.util.*;
 
-public class ChildComponent<ChildComponent> extends Label<ChildComponent> {
+public class ChildComponent extends Label<ChildComponent> {
 
     private LinkedList<ChildComponent> vectorValue = null ;
     private Map<String,ChildComponent> assocs = null;
@@ -83,10 +83,20 @@ public class ChildComponent<ChildComponent> extends Label<ChildComponent> {
         this.vectorValue.add(value);
     }
 
+
     public void print(){
-        System.out.print("ChildComponent " + super.getName());
+        System.out.print("ChildComponent " + super.getName() );
+        if (this.assocs != null && this.assocs.size() != 0)
+            System.out.print("[ ]");
 
         System.out.println(";");
+
+        if (this.assocs != null && this.assocs.size() != 0) {
+            for (Map.Entry<String,ChildComponent> entry : this.assocs.entrySet() ) {
+                System.out.println("ChildComponent " + super.getName() + "[" +
+                        entry.getValue().getName() + "]" );
+            }
+        }
     }
 
 
