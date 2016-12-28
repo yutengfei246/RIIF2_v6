@@ -15,8 +15,7 @@ public class ComponentFactory {
     private ImplExFactory implExFactory = null;
     private FieldFactory fieldFactory = null;
     private CCFactory ccFactory = null;
-
-    private Factory factory = null;
+    private FMFactory fmFactory;
 
     private RIIF2Recorder recorder;
 
@@ -96,6 +95,18 @@ public class ComponentFactory {
             e.printStackTrace();
         }
         this.ccFactory = null ;
+    }
+
+    public void startFailMode() {
+        this.fmFactory = new FMFactory( this.recorder );
+    }
+
+    public void setFailModeDeclarator(Declarator fmDeclarator) {
+        this.fmFactory.setDeclarator( fmDeclarator );
+    }
+
+    public void commitFM() {
+        this.fmFactory.commit();
     }
 
     public void commit() {

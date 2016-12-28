@@ -83,17 +83,31 @@ public class ComponentParser extends DeclaratorParser {
     }
 
     @Override
+    public void enterFailModeDeclaration(RIIF2Parser.FailModeDeclarationContext ctx) {
+        this.componentFactory.startFailMode();
+    }
+
+    @Override
+    public void exitFailModeDeclaration(RIIF2Parser.FailModeDeclarationContext ctx) {
+
+        Declarator fmDeclarator = getDeclarator(ctx.failModeDeclarator());
+        this.componentFactory.setFailModeDeclarator( fmDeclarator );
+    }
+
+    @Override
     public void exitComponentBodyElement(RIIF2Parser.ComponentBodyElementContext ctx) {
 
         if (ctx.fieldDeclaration() != null)
             this.componentFactory.commitField();
         if (ctx.childComponentDeclaration() != null)
             this.componentFactory.commitCC();
-
+        if (ctx.failModeDeclaration() != null)
+            this.componentFactory.commitFM();
     }
 
     @Override
     public void exitComponentDeclaration(RIIF2Parser.ComponentDeclarationContext ctx) {
         this.componentFactory.commit();
     }
+
 }

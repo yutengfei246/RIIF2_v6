@@ -144,6 +144,13 @@ public class RIIF2Recorder implements Recorder{
 
         if (fieldLabel instanceof ChildComponent)
             this.addChildComponent( fieldLabel );
+
+        if (fieldLabel instanceof FailMode)
+            this.addFailMode(fieldLabel);
+    }
+
+    private void addFailMode(Label fieldLabel) {
+        this.failModes.add((FailMode) fieldLabel);
     }
 
     private void addChildComponent(Label<ChildComponent> fieldLabel) {
@@ -197,6 +204,13 @@ public class RIIF2Recorder implements Recorder{
                 childComponent.print();
             }
         }
+
+        if (this.failModes != null && this.failModes.size() != 0){
+            System.out.println( this.getIdentifier() + " Recorder has FailMode number " + this.failModes.size());
+            for (FailMode failMode : this.failModes){
+                failMode.print();
+            }
+        }
     }
 
     @Override
@@ -232,4 +246,11 @@ public class RIIF2Recorder implements Recorder{
     }
 
 
+    public FailMode getFailMode(String identifier) {
+        for (FailMode failMode : this.failModes){
+            if (Objects.equals(failMode.getName(), identifier))
+                return failMode;
+        }
+        return null;
+    }
 }

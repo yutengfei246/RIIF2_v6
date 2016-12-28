@@ -79,7 +79,6 @@ public class CCFactory {
             childComponent.setName( id );
 
             this.ccLabel.addAssoc(id, childComponent );
-
         }
 
         if (declaratorId.hasTypeType()){
