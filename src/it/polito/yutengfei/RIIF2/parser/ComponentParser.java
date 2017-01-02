@@ -5,6 +5,7 @@ import it.polito.yutengfei.RIIF2.RIIF2Parser;
 import it.polito.yutengfei.RIIF2.factory.*;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.RIIF2Type;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
+import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.List;
@@ -41,8 +42,17 @@ public class ComponentParser extends DeclaratorParser {
     }
 
     @Override
+    public void exitExtendsList(RIIF2Parser.ExtendsListContext ctx) {
+        this.componentFactory.commitImplEx();
+    }
+
+    @Override
     public void enterImplementsList(RIIF2Parser.ImplementsListContext ctx) {
         List<TerminalNode> Identifiers = ctx.Identifier();
+
+        if( Identifiers.size() != 0)
+            this.componentFactory.startImplEx();
+
         for(TerminalNode Identifier : Identifiers){
             String identifier = Identifier.getText();
             this.componentFactory.setCurrentComponentImplementsIdentifier(identifier);
@@ -95,6 +105,30 @@ public class ComponentParser extends DeclaratorParser {
     }
 
     @Override
+    public void enterAssignmentDeclaration(RIIF2Parser.AssignmentDeclarationContext ctx) {
+        this.componentFactory.startAIS(RIIF2Grammar.ASSIGNMENT);
+    }
+
+    @Override
+    public void exitAssignmentDeclaration(RIIF2Parser.AssignmentDeclarationContext ctx) {
+
+        Declarator assignmentDeclarator = getDeclarator(ctx.aisDeclarator());
+        this.componentFactory.setAISDeclarator( assignmentDeclarator );
+    }
+
+    @Override
+    public void enterSetDeclaration(RIIF2Parser.SetDeclarationContext ctx) {
+        this.componentFactory.startAIS(RIIF2Grammar.SET);
+    }
+
+    @Override
+    public void exitSetDeclaration(RIIF2Parser.SetDeclarationContext ctx) {
+
+        Declarator setDeclarator = getDeclarator(ctx.aisDeclarator());
+        this.componentFactory.setAISDeclarator( setDeclarator );
+    }
+
+    @Override
     public void exitComponentBodyElement(RIIF2Parser.ComponentBodyElementContext ctx) {
 
         if (ctx.fieldDeclaration() != null)
@@ -103,6 +137,10 @@ public class ComponentParser extends DeclaratorParser {
             this.componentFactory.commitCC();
         if (ctx.failModeDeclaration() != null)
             this.componentFactory.commitFM();
+        if (ctx.assignmentDeclaration() != null)
+            this.componentFactory.commitAIS();
+        if (ctx.setDeclaration() != null)
+            this.componentFactory.commitAIS();
     }
 
     @Override

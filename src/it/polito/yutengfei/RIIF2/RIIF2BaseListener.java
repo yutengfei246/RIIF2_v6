@@ -112,6 +112,30 @@ public class RIIF2BaseListener implements RIIF2Listener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterAssignmentDeclaration(RIIF2Parser.AssignmentDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAssignmentDeclaration(RIIF2Parser.AssignmentDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterSetDeclaration(RIIF2Parser.SetDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSetDeclaration(RIIF2Parser.SetDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterAisDeclaration(RIIF2Parser.AisDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -179,6 +203,18 @@ public class RIIF2BaseListener implements RIIF2Listener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitAbstractFailModeDeclaration(RIIF2Parser.AbstractFailModeDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterAbstractChildComponentDeclaration(RIIF2Parser.AbstractChildComponentDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAbstractChildComponentDeclaration(RIIF2Parser.AbstractChildComponentDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

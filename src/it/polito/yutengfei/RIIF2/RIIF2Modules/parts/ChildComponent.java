@@ -83,6 +83,11 @@ public class ChildComponent extends Label<ChildComponent> {
         this.vectorValue.add(value);
     }
 
+    @Override
+    public Attribute getAttribute(String attribute) {
+        return null;
+    }
+
 
     public void print(){
         System.out.print("ChildComponent " + super.getName() );

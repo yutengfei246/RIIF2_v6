@@ -90,4 +90,5 @@ public abstract class Label<T> {
 
     public abstract void addVectorItem(T value);
 
+    public abstract Attribute getAttribute(String attribute);
 }

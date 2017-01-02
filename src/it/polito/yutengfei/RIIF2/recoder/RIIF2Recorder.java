@@ -10,7 +10,7 @@ public class RIIF2Recorder implements Recorder{
     private Map<String,RIIF2Recorder> componentRecorderMap = new HashMap<>();
 
     private String identifier = null;
-    private Boolean template = null;
+    private Boolean template = false;
 
     private List<String> eXIdentifiers = null ;
     private List<String> implIdentifiers = null;
@@ -20,6 +20,8 @@ public class RIIF2Recorder implements Recorder{
 
     private List<ChildComponent> childComponents = new LinkedList<>();
     private List<FailMode> failModes = new LinkedList<>();
+
+    private Platform platform = null;
 
     private RIIF2Recorder flash() {
         RIIF2Recorder retRecord = new RIIF2Recorder();
@@ -56,11 +58,11 @@ public class RIIF2Recorder implements Recorder{
     }
 
     private Map<String,RIIF2Recorder> getTempRecorderMap() {
-        return tempRecorderMap;
+        return new HashMap<>( this.tempRecorderMap );
     }
 
     private Map<String,RIIF2Recorder> getComponentRecorderMap() {
-        return componentRecorderMap;
+        return new HashMap<>(componentRecorderMap);
     }
 
     public boolean isTemplate() {
@@ -168,6 +170,16 @@ public class RIIF2Recorder implements Recorder{
                 System.out.println("----------------------------------------------------------");
             }
         }
+
+        if (this.tempRecorderMap.size() != 0){
+            System.out.println("there are templates that appeared befor ... size is " + this.tempRecorderMap.size());
+            for (Map.Entry<String,RIIF2Recorder> entry : this.tempRecorderMap.entrySet() ){
+                System.out.println(" Going to print the recorder with name " + entry.getValue());
+                entry.getValue().print8();
+
+                System.out.println("--------------------------------------------------------------");
+            }
+        }
     }
 
     private void print8(){
@@ -251,6 +263,62 @@ public class RIIF2Recorder implements Recorder{
             if (Objects.equals(failMode.getName(), identifier))
                 return failMode;
         }
+        return null;
+    }
+
+    public Label getAssignmentLabel(String labelName) {
+        /*only can find in this recorder or parent recorder */
+        if ( this.getLabelFromThisRecorder(labelName) == null ) {
+
+            for (String eXname : this.eXIdentifiers) {
+                RIIF2Recorder riif2Recorder = this.componentRecorderMap.get(eXname);
+                if (riif2Recorder.getLabelFromThisRecorder(labelName) != null)
+                    return riif2Recorder.getLabelFromThisRecorder(labelName );
+            }
+        }
+
+        return this.getLabelFromThisRecorder(labelName);
+    }
+
+    public Label getLabelFromThisRecorder(String labelName ){
+
+        if (this.getParameter(labelName ) != null )
+            return this.getParameter( labelName );
+        if (this.getConstant( labelName ) != null )
+            return this.getConstant( labelName );
+        if (this.getCC(labelName) != null )
+            return this.getCC(labelName);
+        if (this.getFailMode( labelName) != null )
+            return this.getFailMode(labelName);
+
+        return null;
+    }
+
+    public RIIF2Recorder getSetRecorder(String hierRecorderName) {
+        return this.tempRecorderMap.get(hierRecorderName);
+    }
+
+    public void setPlatform(Platform platform) {
+        this.platform = platform;
+    }
+
+    public Label getLabelParentToAncestor(String primitiveName, Boolean fromTemplate) {
+
+        if (fromTemplate){
+            for (String implName : this.implIdentifiers){
+                RIIF2Recorder temRecorder = this.tempRecorderMap.get(implName);
+                if (temRecorder.getLabelFromThisRecorder(primitiveName) != null )
+                    return temRecorder.getLabelFromThisRecorder(primitiveName);
+            }
+
+        }else{
+            for (String eXName : this.eXIdentifiers){
+                RIIF2Recorder eXRecorder = this.componentRecorderMap.get(eXName);
+                if (eXRecorder.getLabelFromThisRecorder(primitiveName) != null )
+                    return eXRecorder.getLabelFromThisRecorder(primitiveName);
+            }
+        }
+
         return null;
     }
 }

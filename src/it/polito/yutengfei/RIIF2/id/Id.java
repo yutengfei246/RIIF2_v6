@@ -3,6 +3,7 @@ package it.polito.yutengfei.RIIF2.id;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 public class Id {
@@ -25,7 +26,7 @@ public class Id {
 
     public Id(/* Hierarchy primitive index typically is a assign Id */String typeHier, Id primitiveId, Id hierPostfixId) {
         this.type = typeHier;
-        this.id = hierPostfixId.id();
+        this.id = hierPostfixId.getId();
 
         this.hierPostfixIds.addAll( primitiveId.hierPostfixIds());
         this.hierPostfixIds.add( primitiveId );
@@ -33,10 +34,10 @@ public class Id {
 
     public Id(String table, Id attributeId, String identifier1, String identifier2) {
         this.type = table;
-        this.id = attributeId.id();
+        this.id = attributeId.getId();
 
         if (attributeId.attributeIndex() == null
-                || !Objects.equals(attributeId.attributeIndex().id(), "Item")) {
+                || !Objects.equals(attributeId.attributeIndex().getId(), "Item")) {
             System.err.print("Error: table Id can not be created ");
             System.exit(1);
         }
@@ -55,10 +56,6 @@ public class Id {
 
     public static Id hierIndex(String identifier) {
         return new Id(RIIF2Grammar.TYPE_HIER_INDEX, identifier);
-    }
-
-    public static Id childComponent(String identifier) {
-        return new Id(RIIF2Grammar.TYPE_CC,identifier);
     }
 
     public static Id primitiveId(String identifier) {
@@ -81,18 +78,6 @@ public class Id {
         return new Id(RIIF2Grammar.TABLE,attributeId,identifier1,identifier2);
     }
 
-    private Collection<? extends Id> hierPostfixIds() {
-        return this.hierPostfixIds;
-    }
-
-    private String id() {
-        return this.id;
-    }
-
-    private String type(){
-        return this.type;
-    }
-
     private Id addAttributeIndex(Id attributeIndex) {
         this.type = RIIF2Grammar.ID_ATTRIBUTE;
         this.attributeIndex = attributeIndex;
@@ -105,11 +90,19 @@ public class Id {
         return this;
     }
 
+    public List<Id> hierPostfixIds() {
+        return this.hierPostfixIds;
+    }
+
     private Id attributeIndex() {
         return this.attributeIndex;
     }
 
     public String getId() {
         return id;
+    }
+
+    public String getType() {
+        return type;
     }
 }

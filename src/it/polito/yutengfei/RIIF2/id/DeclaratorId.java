@@ -13,7 +13,7 @@ public class DeclaratorId{
 
     private Id attributeIndex = null;
     private Id associativeIndex = null;
-    private Id tableId;
+    private Id tableId = null;
     private Id hierPostfix;
 
 
@@ -75,5 +75,21 @@ public class DeclaratorId{
 
     public Id getAttributeIndex() {
         return attributeIndex;
+    }
+
+    public Id getTableId() {
+        return tableId;
+    }
+
+    public Id getPrimitiveId() {
+        return primitiveId;
+    }
+
+    public RIIF2Type getAisType() {
+        return aisType;
+    }
+
+    public Id getHierPostfix() {
+        return hierPostfix;
     }
 }

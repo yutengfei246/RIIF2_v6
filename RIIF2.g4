@@ -29,7 +29,8 @@ componentBodyElement
     : fieldDeclaration
     | childComponentDeclaration
     | failModeDeclaration
-    | aisDeclaration  // assignment and impose and set declaration
+    | assignmentDeclaration
+    | setDeclaration
     | assertion
     ;
 
@@ -52,6 +53,14 @@ failModeDeclaration
     : FAIL_MODE failModeDeclarator ';'
     ;
 
+assignmentDeclaration
+    : ASSIGN aisDeclarator ';'
+    ;
+
+setDeclaration
+    : SET aisDeclarator ';'
+    ;
+
 aisDeclaration
     : ( IMPOSE | ASSIGN | SET ) aisDeclarator ';'
     ;
@@ -72,6 +81,7 @@ templateDeclaration
 templateBodyElement
     : abstractFieldDeclaration
     | abstractFailModeDeclaration
+    | abstractChildComponentDeclaration
     | abstractPlatformDeclaration
     | imposeDeclaration // predefined value
     ;
@@ -82,6 +92,10 @@ abstractFieldDeclaration
 
 abstractFailModeDeclaration
     : ABSTRACT failModeDeclaration
+    ;
+
+abstractChildComponentDeclaration
+    : ABSTRACT childComponentDeclaration
     ;
 
 abstractPlatformDeclaration
@@ -240,7 +254,7 @@ failModeDeclaratorId
     ;
 
 aisDeclaratorId
-    : primitiveId
+    : primitiveId /* hier id */
       ( aisType | associativeIndex ) ?
       ( hierPostfix ) ? attributeIndex ? #aisDeclaratorId1
     | tableId #aisDeclaratorId2

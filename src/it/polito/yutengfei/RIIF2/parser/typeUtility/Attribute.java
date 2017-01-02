@@ -32,4 +32,8 @@ public class Attribute {
     public void setId(String id) {
         this.id = id;
     }
+
+    public String  print() {
+        return (this.getId() + " Type : " + this.getType() + "value :" + this.getValue().toString() );
+    }
 }

@@ -21,7 +21,6 @@ public class ImplExFactory  implements Factory{
     public void addExtendsId(String identifier) {
         if (eXIdentifiers == null)
             this.eXIdentifiers = new ArrayList<>();
-
         this.eXIdentifiers.add(identifier);
     }
 
@@ -34,7 +33,6 @@ public class ImplExFactory  implements Factory{
 
     // check if the name has registered in the recorder
     public void commit() throws ImplExIdsNotExistException {
-
         if ( eXIdentifiers != null) {
             for (String exId : this.eXIdentifiers){
                 if (!this.recorder.containsComponent(exId)){

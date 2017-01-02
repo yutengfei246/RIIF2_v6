@@ -15,9 +15,11 @@ public class ComponentFactory {
     private ImplExFactory implExFactory = null;
     private FieldFactory fieldFactory = null;
     private CCFactory ccFactory = null;
-    private FMFactory fmFactory;
+    private FMFactory fmFactory = null;
+    private AISFactory AISFactoy = null;
 
     private RIIF2Recorder recorder;
+    private PlatformFactory platformFactory;
 
     ComponentFactory(Recorder recorder) {
         this.recorder = (RIIF2Recorder) recorder;
@@ -65,12 +67,8 @@ public class ComponentFactory {
         try {
             try {
                 this.fieldFactory.commit();
-            } catch (InvalidFieldDeclaration invalidFieldDeclaration) {
+            } catch (InvalidFieldDeclaration | VeriableAlreadyExistException | SomeVariableMissingException invalidFieldDeclaration) {
                 invalidFieldDeclaration.printStackTrace();
-            } catch (VeriableAlreadyExistException e) {
-                e.printStackTrace();
-            } catch (SomeVariableMissingException e) {
-                e.printStackTrace();
             }
         } catch (FieldTypeNotMarchException e) {
             e.printStackTrace();
@@ -89,9 +87,7 @@ public class ComponentFactory {
     public void commitCC() {
         try {
             this.ccFactory.commit();
-        } catch (VeriableAlreadyExistException e) {
-            e.printStackTrace();
-        } catch (SomeVariableMissingException e) {
+        } catch (VeriableAlreadyExistException | SomeVariableMissingException e) {
             e.printStackTrace();
         }
         this.ccFactory = null ;
@@ -106,7 +102,42 @@ public class ComponentFactory {
     }
 
     public void commitFM() {
-        this.fmFactory.commit();
+        try {
+            this.fmFactory.commit();
+        } catch (VeriableAlreadyExistException e) {
+            e.printStackTrace();
+        }
+        this.fmFactory = null;
+    }
+
+    public void startAIS(String assignment) {
+        this.AISFactoy = new AISFactory(assignment, this.recorder);
+    }
+
+
+    public void setAISDeclarator(Declarator assignmentDeclarator) {
+        this.AISFactoy.setDeclarator( assignmentDeclarator );
+    }
+
+    public void commitAIS() {
+        try {
+            this.AISFactoy.commit();
+        } catch (FieldTypeNotMarchException | SomeVariableMissingException e) {
+            e.printStackTrace();
+        }
+        this.AISFactoy = null;
+    }
+
+    public void startPlatform(String identifier) {
+        this.platformFactory = new PlatformFactory(identifier, this.recorder);
+    }
+
+    public void commitPlatform() {
+        try {
+            this.platformFactory.commit();
+        } catch (VeriableAlreadyExistException e) {
+            e.printStackTrace();
+        }
     }
 
     public void commit() {
@@ -114,5 +145,9 @@ public class ComponentFactory {
     }
 
     private void productComponent() {
+
     }
+
+
+
 }

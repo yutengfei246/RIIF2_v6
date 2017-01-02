@@ -88,6 +88,26 @@ public interface RIIF2Listener extends ParseTreeListener {
 	 */
 	void exitFailModeDeclaration(RIIF2Parser.FailModeDeclarationContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link RIIF2Parser#assignmentDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterAssignmentDeclaration(RIIF2Parser.AssignmentDeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RIIF2Parser#assignmentDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitAssignmentDeclaration(RIIF2Parser.AssignmentDeclarationContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link RIIF2Parser#setDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterSetDeclaration(RIIF2Parser.SetDeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RIIF2Parser#setDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitSetDeclaration(RIIF2Parser.SetDeclarationContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link RIIF2Parser#aisDeclaration}.
 	 * @param ctx the parse tree
 	 */
@@ -147,6 +167,16 @@ public interface RIIF2Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAbstractFailModeDeclaration(RIIF2Parser.AbstractFailModeDeclarationContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link RIIF2Parser#abstractChildComponentDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterAbstractChildComponentDeclaration(RIIF2Parser.AbstractChildComponentDeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RIIF2Parser#abstractChildComponentDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitAbstractChildComponentDeclaration(RIIF2Parser.AbstractChildComponentDeclarationContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link RIIF2Parser#abstractPlatformDeclaration}.
 	 * @param ctx the parse tree

@@ -72,8 +72,6 @@ public class FMFactory {
             }else {
                 if (declaratorId.hasTypeType())
                 this.fm.addAttribute(this.createAttribute(attributeId));
-
-
             }
         }else {
             if (declaratorId.hasAssociativeIndex()){
@@ -97,6 +95,7 @@ public class FMFactory {
 
     private Attribute createAttribute(Id attributeId) {
 
+        return null;
     }
 
     private void createFM(String identifier, DeclaratorId declaratorId) {

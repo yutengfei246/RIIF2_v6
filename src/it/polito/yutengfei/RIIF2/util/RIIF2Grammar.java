@@ -30,4 +30,7 @@ public class RIIF2Grammar {;
     public static final String ID_ATTRIBUTE = "id-attribute";
     public static final String LIST_INITIALIZER = "list-type";
     public static final String FAIL_MODE = "fail-mode";
+    public static final String ASSIGNMENT = "assignment-declaration";
+    public static final String SET = "set-declaration";
+    public static final String IMPOSE = "impose-declaration";
 }

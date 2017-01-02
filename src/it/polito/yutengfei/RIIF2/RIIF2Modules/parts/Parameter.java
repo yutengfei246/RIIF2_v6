@@ -91,6 +91,20 @@ public class Parameter<T> extends Label<T> {
         this.vectorValue.add(value);
     }
 
+    @Override
+    public Attribute getAttribute(String attributeName ) {
+        if (this.attributes == null)
+            return null;
+
+        for (Attribute attribute : this.attributes){
+            if (Objects.equals(attribute.getId(), attributeName)){
+                return attribute;
+            }
+        }
+        return  null;
+    }
+
+
     public void print(){
         System.out.print("Parameter " + this.getName());
         System.out.print(" : " + this.getType());
@@ -100,6 +114,12 @@ public class Parameter<T> extends Label<T> {
         else
             System.out.print(" := null " );
         System.out.println(";");
+
+        if (this.attributes != null){
+            for (Attribute attribute : this.attributes){
+                System.out.println( " attribute " + attribute.print() );
+            }
+        }
     }
 
 }

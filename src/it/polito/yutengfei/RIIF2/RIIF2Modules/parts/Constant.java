@@ -3,6 +3,7 @@ package it.polito.yutengfei.RIIF2.RIIF2Modules.parts;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
+import sun.reflect.CallerSensitive;
 
 import java.util.*;
 
@@ -92,6 +93,20 @@ public class Constant<T> extends Label<T> {
     public void addVectorItem(T value) {
         this.vectorValue.add(value);
     }
+
+    @Override
+    public Attribute getAttribute(String attributeName ) {
+        if (this.attributes == null)
+            return null;
+
+        for (Attribute attribute : this.attributes){
+            if (Objects.equals(attribute.getId(), attributeName)){
+                return attribute;
+            }
+        }
+        return  null;
+    }
+
 
     public void print(){
         System.out.print("Constant " + this.getName());

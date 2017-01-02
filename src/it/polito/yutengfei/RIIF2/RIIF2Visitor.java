@@ -59,6 +59,18 @@ public interface RIIF2Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFailModeDeclaration(RIIF2Parser.FailModeDeclarationContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link RIIF2Parser#assignmentDeclaration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAssignmentDeclaration(RIIF2Parser.AssignmentDeclarationContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link RIIF2Parser#setDeclaration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSetDeclaration(RIIF2Parser.SetDeclarationContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link RIIF2Parser#aisDeclaration}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -94,6 +106,12 @@ public interface RIIF2Visitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitAbstractFailModeDeclaration(RIIF2Parser.AbstractFailModeDeclarationContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link RIIF2Parser#abstractChildComponentDeclaration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAbstractChildComponentDeclaration(RIIF2Parser.AbstractChildComponentDeclarationContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link RIIF2Parser#abstractPlatformDeclaration}.
 	 * @param ctx the parse tree

@@ -156,4 +156,5 @@ abstract class DeclaratorParser extends InitializerParser {
         this.putDeclarator(ctx, aisDeclarator );
     }
 
+
 }

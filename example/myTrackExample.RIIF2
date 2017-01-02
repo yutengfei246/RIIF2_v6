@@ -28,9 +28,4 @@ child_component PP mCC[];
 child_component PP mCC[instance];
 child_component PP mCC[2:2];
 
-child_component PP mCC'attribute;
-child_component PP mCC[]'attribute;
-child_component PP mCC[Isntance]'attribute;
-child_component PP mCC[2:2]'attibute;
-
 endcomponent

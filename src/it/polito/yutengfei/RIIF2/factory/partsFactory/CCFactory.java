@@ -66,7 +66,6 @@ public class CCFactory {
                 = childComponentDeclarator.getDeclaratorId();
 
         if (declaratorId.hasAssociativeIndex()){
-            System.out.println("has associative Index");
             Id associativeIndex = declaratorId.getAssociativeIndex();
             String id = associativeIndex.getId();
 
@@ -82,7 +81,6 @@ public class CCFactory {
         }
 
         if (declaratorId.hasTypeType()){
-            System.out.println("has tt");
             RIIF2Type typeType = declaratorId.getTypeType();
             if (Objects.equals(typeType.getType(), RIIF2Grammar.TYPE_VECTOR)){
                 Vector vector =typeType.getVector();
