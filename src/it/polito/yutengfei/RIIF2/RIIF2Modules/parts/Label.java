@@ -4,10 +4,11 @@ import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 
+import java.io.Serializable;
 import java.util.*;
 
 
-public abstract class Label<T> {
+public abstract class Label<T> implements Serializable {
 
     private Boolean associative = false;
     private Boolean vector = false;

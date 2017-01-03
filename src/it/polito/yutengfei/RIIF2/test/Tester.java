@@ -13,14 +13,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * Created by yutengfei on 29/11/16.
- */
 public class Tester {
 
     private final InputStream in;
 
-    public Tester(InputStream in) {
+    private Tester(InputStream in) {
         this.in = in ;
     }
 
@@ -62,6 +59,6 @@ public class Tester {
             recorder.print( 0 );
             System.out.println("Parser OK");
 
-        } catch (IOException e) {}
+        } catch (IOException ignored) {}
     }
 }

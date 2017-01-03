@@ -2,6 +2,7 @@ package it.polito.yutengfei.RIIF2.factory.partsFactory;
 
 import it.polito.yutengfei.RIIF2.factory.Factory;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
+import it.polito.yutengfei.RIIF2.recoder.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,7 @@ public class ImplExFactory  implements Factory{
     public void commit() throws ImplExIdsNotExistException {
         if ( eXIdentifiers != null) {
             for (String exId : this.eXIdentifiers){
-                if (!this.recorder.containsComponent(exId)){
+                if (!Repository.containsComponent(exId)){
                     throw new ImplExIdsNotExistException( exId );
                 }
                 this.recorder.seteXIdentifiers( this.eXIdentifiers );
@@ -44,7 +45,7 @@ public class ImplExFactory  implements Factory{
 
         if ( implIdentifiers != null) {
             for (String implId : this.implIdentifiers){
-                if( !this.recorder.containsTemplate(implId)){
+                if( !Repository.containsTemplate(implId)){
                     throw new ImplExIdsNotExistException( implId );
                 }
             }

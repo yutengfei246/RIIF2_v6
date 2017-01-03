@@ -2,18 +2,18 @@ package it.polito.yutengfei.RIIF2.recoder;
 
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.*;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class RIIF2Recorder implements Recorder{
+public class RIIF2Recorder implements Recorder, Serializable {
 
-    private Map<String,RIIF2Recorder> tempRecorderMap = new HashMap<>();
-    private Map<String,RIIF2Recorder> componentRecorderMap = new HashMap<>();
-
-    private String identifier = null;
     private Boolean template = false;
 
-    private List<String> eXIdentifiers = null ;
-    private List<String> implIdentifiers = null;
+    private String identifier = null;
+
+    /*deep copy*/
+    private Map<String,RIIF2Recorder> exRecorderMap = new HashMap<>();
+    private Map<String,RIIF2Recorder> implRecorderMap = new HashMap<>();
 
     private List<Parameter> parameters = new LinkedList<>();
     private List<Constant> constants = new LinkedList<>();
@@ -23,23 +23,8 @@ public class RIIF2Recorder implements Recorder{
 
     private Platform platform = null;
 
-    private RIIF2Recorder flash() {
-        RIIF2Recorder retRecord = new RIIF2Recorder();
 
-        retRecord.record(this);
-
-        return retRecord;
-    }
-
-    private void record(RIIF2Recorder recorder) {
-        this.tempRecorderMap.putAll( recorder.getTempRecorderMap() );
-        this.componentRecorderMap.putAll( recorder.getComponentRecorderMap() );
-
-        if (recorder.isTemplate())
-            this.tempRecorderMap.put( recorder.getIdentifier(), recorder);
-        else
-            this.componentRecorderMap.put( recorder.getIdentifier(), recorder);
-    }
+    /***********************************Setters and Getters************************************/
 
     public void setIdentifier( String identifier ) {
         this.identifier = identifier;
@@ -49,36 +34,20 @@ public class RIIF2Recorder implements Recorder{
         return identifier;
     }
 
-    public boolean containsComponent(String exId) {
-        return this.componentRecorderMap.containsKey(exId);
-    }
-
-    public boolean containsTemplate(String implId){
-        return this.tempRecorderMap.containsKey(implId);
-    }
-
-    private Map<String,RIIF2Recorder> getTempRecorderMap() {
-        return new HashMap<>( this.tempRecorderMap );
-    }
-
-    private Map<String,RIIF2Recorder> getComponentRecorderMap() {
-        return new HashMap<>(componentRecorderMap);
+    public void setTemplate(boolean template) {
+        this.template = template;
     }
 
     public boolean isTemplate() {
         return template;
     }
 
-    public void seteXIdentifiers(List<String> eXIdentifiers) {
-        this.eXIdentifiers = eXIdentifiers;
+    public void putExRecorder(String key,RIIF2Recorder value ) {
+        this.exRecorderMap.put(key,value);
     }
 
-    public void setImplIdentifiers(List<String> implIdentifiers) {
-        this.implIdentifiers = implIdentifiers;
-    }
-
-    public void setTemplate(boolean template) {
-        this.template = template;
+    public void putImplRecorder(String key, RIIF2Recorder value) {
+        this.implRecorderMap.put(key, value);
     }
 
     private void addParameter(Label<Object> fieldLabel) {
@@ -161,21 +130,21 @@ public class RIIF2Recorder implements Recorder{
 
     public void print(int level){
 
-        if (this.componentRecorderMap.size() != 0){
-            System.out.println("there are components that appeared before ... size is "   + this.componentRecorderMap.size());
-            for (Map.Entry<String, RIIF2Recorder> entry : this.componentRecorderMap.entrySet() ){
+        if (componentRecorderMap.size() != 0){
+            System.out.println("there are components that appeared before ... size is "   + componentRecorderMap.size());
+            for (Map.Entry<String, Recorder> entry : componentRecorderMap.entrySet() ){
                 System.out.println(" Going to print the recorder with name " + entry.getValue());
-                entry.getValue().print8();
+                ((RIIF2Recorder)entry.getValue()).print8();
 
                 System.out.println("----------------------------------------------------------");
             }
         }
 
-        if (this.tempRecorderMap.size() != 0){
-            System.out.println("there are templates that appeared befor ... size is " + this.tempRecorderMap.size());
-            for (Map.Entry<String,RIIF2Recorder> entry : this.tempRecorderMap.entrySet() ){
+        if (tempRecorderMap.size() != 0){
+            System.out.println("there are templates that appeared befor ... size is " + tempRecorderMap.size());
+            for (Map.Entry<String, Recorder> entry : tempRecorderMap.entrySet() ){
                 System.out.println(" Going to print the recorder with name " + entry.getValue());
-                entry.getValue().print8();
+                ((RIIF2Recorder)entry.getValue()).print8();
 
                 System.out.println("--------------------------------------------------------------");
             }
@@ -198,30 +167,24 @@ public class RIIF2Recorder implements Recorder{
         if (this.parameters != null && this.parameters.size() != 0){
             System.out.println( this.getIdentifier() + " Recorder has parameters number "
                     + this.parameters.size());
-            for (Parameter parameter : this. parameters)
-                parameter.print();
+            this.parameters.forEach(Parameter::print);
         }
 
         if (this.constants != null && this.constants.size() != 0){
             System.out.println( this.getIdentifier() + "Recorder has constants number "
                     + this.constants.size() );
-            for (Constant constant : this.constants )
-                constant.print();
+            this.constants.forEach(Constant::print);
         }
 
         if (this.childComponents != null && this.childComponents.size() != 0){
             System.out.println( this.getIdentifier() + " Recorder has Child component number "
                     + this.childComponents.size() );
-            for (ChildComponent childComponent : this.childComponents){
-                childComponent.print();
-            }
+            this.childComponents.forEach(ChildComponent::print);
         }
 
         if (this.failModes != null && this.failModes.size() != 0){
             System.out.println( this.getIdentifier() + " Recorder has FailMode number " + this.failModes.size());
-            for (FailMode failMode : this.failModes){
-                failMode.print();
-            }
+            this.failModes.forEach(FailMode::print);
         }
     }
 
@@ -229,7 +192,9 @@ public class RIIF2Recorder implements Recorder{
     public RIIF2Recorder getRIIF2Recorder() {
         if( this.getIdentifier() == null)
             return this;
-        return this.flash();
+
+        Recorder.record(this);
+        return new RIIF2Recorder();
     }
 
     public boolean containsChildComponent(String id) {
@@ -250,11 +215,7 @@ public class RIIF2Recorder implements Recorder{
     }
 
     public boolean containsGlobalComponent(String typeCcId) {
-        for (Map.Entry<String,RIIF2Recorder> entry : this.componentRecorderMap.entrySet())
-            if (Objects.equals(entry.getKey(), typeCcId))
-                return true;
-
-        return false;
+        return componentRecorderMap.containsKey(typeCcId);
     }
 
 
@@ -271,7 +232,7 @@ public class RIIF2Recorder implements Recorder{
         if ( this.getLabelFromThisRecorder(labelName) == null ) {
 
             for (String eXname : this.eXIdentifiers) {
-                RIIF2Recorder riif2Recorder = this.componentRecorderMap.get(eXname);
+                RIIF2Recorder riif2Recorder = (RIIF2Recorder) Recorder.getRecorderFromComponentRepository(eXname);
                 if (riif2Recorder.getLabelFromThisRecorder(labelName) != null)
                     return riif2Recorder.getLabelFromThisRecorder(labelName );
             }
@@ -295,7 +256,7 @@ public class RIIF2Recorder implements Recorder{
     }
 
     public RIIF2Recorder getSetRecorder(String hierRecorderName) {
-        return this.tempRecorderMap.get(hierRecorderName);
+        return tempRecorderMap.get(hierRecorderName);
     }
 
     public void setPlatform(Platform platform) {
@@ -306,19 +267,24 @@ public class RIIF2Recorder implements Recorder{
 
         if (fromTemplate){
             for (String implName : this.implIdentifiers){
-                RIIF2Recorder temRecorder = this.tempRecorderMap.get(implName);
+                RIIF2Recorder temRecorder = (RIIF2Recorder) Recorder.getRecorderFromTemplateRepository(implName);
                 if (temRecorder.getLabelFromThisRecorder(primitiveName) != null )
                     return temRecorder.getLabelFromThisRecorder(primitiveName);
             }
 
         }else{
             for (String eXName : this.eXIdentifiers){
-                RIIF2Recorder eXRecorder = this.componentRecorderMap.get(eXName);
+                RIIF2Recorder eXRecorder = (RIIF2Recorder) Recorder.getRecorderFromComponentRepository(eXName);
                 if (eXRecorder.getLabelFromThisRecorder(primitiveName) != null )
                     return eXRecorder.getLabelFromThisRecorder(primitiveName);
             }
         }
 
         return null;
+    }
+
+    public RIIF2Recorder getGlobalComponent(String s) {
+        Map<String,RIIF2Recorder> components = new HashMap<>( componentRecorderMap );
+        return components.get(s);
     }
 }

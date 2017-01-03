@@ -4,6 +4,7 @@ package it.polito.yutengfei.RIIF2.factory.partsFactory;
 import it.polito.yutengfei.RIIF2.Declarator.AisDeclarator;
 import it.polito.yutengfei.RIIF2.Declarator.Declarator;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Label;
+import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Platform;
 import it.polito.yutengfei.RIIF2.id.DeclaratorId;
 import it.polito.yutengfei.RIIF2.id.Id;
 import it.polito.yutengfei.RIIF2.initializer.Initializer;
@@ -84,7 +85,8 @@ public class AISFactory {
 
     }
 
-    private void setDeclaration() throws FieldTypeNotMarchException, SomeVariableMissingException {
+    private void setDeclaration()
+            throws FieldTypeNotMarchException, SomeVariableMissingException {
         DeclaratorId setDeclaratorId = aisDeclarator.getDeclaratorId();
         Id primitiveId = setDeclaratorId.getPrimitiveId();
         String primitiveName = primitiveId.getId();
@@ -112,12 +114,28 @@ public class AISFactory {
 
     }
 
-    private void newSetDeclaration(DeclaratorId setDeclaratorId, Label label) throws FieldTypeNotMarchException {
+    private void newSetDeclaration(DeclaratorId setDeclaratorId, Label label)
+            throws FieldTypeNotMarchException, SomeVariableMissingException {
+
+        if (initializer instanceof Expression){
+            Expression expInitializer = (Expression) initializer;
+
+            if (label instanceof Platform){
+                if (!Objects.equals(expInitializer.getType(), RIIF2Grammar.USER_DEFINED))
+                    throw new FieldTypeNotMarchException();
+
+                if (!this.recorder.containsGlobalComponent(expInitializer.getValue().toString()))
+                    throw new SomeVariableMissingException();
+
+                RIIF2Recorder platformRecorder = this.recorder.getGlobalComponent( expInitializer.getValue().toString() );
+                ((Platform) label).setValue(platformRecorder);
+            }
+        }
+
         if (setDeclaratorId.getHierPostfix() == null
                 && setDeclaratorId.getAssociativeIndex() == null
                 && setDeclaratorId.getAttributeIndex() == null
                 && setDeclaratorId.getAisType() == null){
-
 
             if (initializer instanceof Expression){
                 Expression expInitializer = (Expression) initializer;
