@@ -13,6 +13,7 @@ public abstract class Label<T> implements Serializable {
 
     private String name;
     private String type;
+    private Object value;
 
     private int vectorLength;
 
@@ -65,13 +66,17 @@ public abstract class Label<T> implements Serializable {
         this.vectorLength = vectorLength;
     }
 
+    public Object getValue(){
+        return this.value;
+    }
+
+    public void setValue(Object value){
+        this.value = value;
+    }
+
     /***********************************************************************************/
 
     public abstract void setAssociative(Boolean b);
-
-    abstract T getValue();
-
-    public abstract void setValue(T value);
 
     public abstract void putAttribute(String key, Attribute attribute);
 
