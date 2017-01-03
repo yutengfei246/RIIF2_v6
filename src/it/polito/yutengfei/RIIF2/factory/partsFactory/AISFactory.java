@@ -68,7 +68,7 @@ public class AISFactory {
         if(/*the most easy one */ Objects.equals(primitiveId.getType(), RIIF2Grammar.TYPE_PRIMITIVE)){
 
             String labelName = primitiveId.getId();
-            Label theLabel = this.recorder.getLabelFromThisRecorder(labelName);
+            Label theLabel = this.recorder.getLabel(labelName);
 
             if (/*has attribute */ imposeDeclaratorId.getAttributeIndex() != null ){
                 Id attributeIndex = imposeDeclaratorId.getAttributeIndex();
@@ -103,9 +103,9 @@ public class AISFactory {
                         throw new SomeVariableMissingException();
                 }
             }
-            theLabel = hierRecorder.getLabelFromThisRecorder(primitiveName);
+            theLabel = hierRecorder.getLabel(primitiveName);
         }else
-            theLabel = this.recorder.getLabelParentToAncestor(primitiveName, true);
+            theLabel = this.recorder.getSetLabel(primitiveName);
 
         if (theLabel == null)
             throw new SomeVariableMissingException();
@@ -127,7 +127,7 @@ public class AISFactory {
                 if (!this.recorder.containsGlobalComponent(expInitializer.getValue().toString()))
                     throw new SomeVariableMissingException();
 
-                RIIF2Recorder platformRecorder = this.recorder.getGlobalComponent( expInitializer.getValue().toString() );
+                RIIF2Recorder platformRecorder = this.recorder.getImplRecorder( expInitializer.getValue().toString() );
                 ((Platform) label).setValue(platformRecorder);
             }
         }

@@ -33,24 +33,28 @@ public class ImplExFactory  implements Factory{
     }
 
     // check if the name has registered in the recorder
-    public void commit() throws ImplExIdsNotExistException {
+    public void commit() {
         if ( eXIdentifiers != null) {
-            for (String exId : this.eXIdentifiers){
-                if (!Repository.containsComponent(exId)){
-                    throw new ImplExIdsNotExistException( exId );
-                }
-                this.recorder.seteXIdentifiers( this.eXIdentifiers );
-            }
+            this.eXIdentifiers.forEach(s -> {
+                if (!Repository.containsComponent(s))
+                    throw new IllegalArgumentException();
+
+                RIIF2Recorder recorder
+                        = (RIIF2Recorder) Repository.getDeepCopedRecorderFromComponentRepository(s);
+                this.recorder.putExRecorder(s,recorder);
+            });
         }
 
         if ( implIdentifiers != null) {
-            for (String implId : this.implIdentifiers){
-                if( !Repository.containsTemplate(implId)){
-                    throw new ImplExIdsNotExistException( implId );
-                }
-            }
+            this.implIdentifiers.forEach(s -> {
+                if (!Repository.containsTemplate(s))
+                    throw new IllegalArgumentException();
+
+                RIIF2Recorder recorder
+                        = (RIIF2Recorder) Repository.getDeepCopedRecorderFromTemplateRepository(s);
+                this.recorder.putImplRecorder(s,recorder);
+            });
         }
-        this.recorder.setImplIdentifiers( this.implIdentifiers );
     }
 
 }

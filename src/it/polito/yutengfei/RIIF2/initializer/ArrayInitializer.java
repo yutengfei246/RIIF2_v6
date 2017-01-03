@@ -4,15 +4,22 @@ import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 
 import java.util.LinkedList;
 
-public class ArrayInitializer implements Initializer{
+public class ArrayInitializer implements Initializer<Expression>{
 
-    private LinkedList<Expression> expressions = new LinkedList<>();
+    private LinkedList<Expression> initializer = new LinkedList<>();
 
-    public void addArrayItem( Expression expression){
-        this.expressions.add(expression);
+    @Override
+    public void addItem(Expression item) {
+        this.initializer.add(item);
     }
 
-    public LinkedList<Expression> getExpressions() {
-        return expressions;
+    @Override
+    public Expression getItem(int index) {
+        return this.initializer.get(index);
+    }
+
+    @Override
+    public LinkedList<Expression> getInitializer() {
+        return this.initializer;
     }
 }

@@ -34,24 +34,19 @@ public class ChildComponent extends Label<ChildComponent> {
     }
 
     @Override
-    List<Attribute> getAttributes() {
-        return null;
+    public void putAttribute(String key, Attribute attribute) {
+
     }
 
     @Override
-    Map<String, ChildComponent> getAssocs() {
-        return this.assocs;
-    }
-
-
-    @Override
-    public void addAttribute(Attribute attribute) {}
-
-    @Override
-    public void addAssoc(String name, ChildComponent assocIndex) {
+    public void putAssoc(String name, ChildComponent assocIndex) {
         this.assocs.put(name,assocIndex);
     }
 
+    @Override
+    public ChildComponent getAssociative(String index) {
+        return this.assocs.get(index);
+    }
 
     @Override
     public void setVector(Vector vector) {

@@ -7,16 +7,8 @@ import it.polito.yutengfei.RIIF2.parser.typeUtility.RIIF2Type;
 
 public class PrimitiveFieldDeclarator implements Declarator{
     private DeclaratorId declaratorId = null;
-    private RIIF2Type declaratorType = null;
     private Initializer initializer = null;
-
-    public void setDeclaratorType(RIIF2Type declaratorType) {
-        this.declaratorType = declaratorType;
-    }
-
-    public RIIF2Type getDeclaratorType() {
-        return declaratorType;
-    }
+    private RIIF2Type primitiveType;
 
     @Override
     public void setDeclaratorId(DeclaratorId declaratorId) {
@@ -36,5 +28,13 @@ public class PrimitiveFieldDeclarator implements Declarator{
     @Override
     public Initializer getInitializer() {
         return initializer;
+    }
+
+    public void setPrimitiveType(RIIF2Type primitiveType) {
+        this.primitiveType = primitiveType;
+    }
+
+    public RIIF2Type getPrimitiveType() {
+        return primitiveType;
     }
 }

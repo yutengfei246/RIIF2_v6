@@ -2,10 +2,8 @@ package it.polito.yutengfei.RIIF2.RIIF2Modules.parts;
 
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
-import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 
 import java.io.Serializable;
-import java.util.*;
 
 
 public abstract class Label<T> implements Serializable {
@@ -75,21 +73,20 @@ public abstract class Label<T> implements Serializable {
 
     public abstract void setValue(T value);
 
-    abstract List<Attribute> getAttributes();
+    public abstract void putAttribute(String key, Attribute attribute);
 
-    abstract Map<String, T > getAssocs();
+    public abstract void putAssoc(String name, T assocIndex);
 
-    public abstract void addAttribute(Attribute attribute);
+    public abstract T getAssociative(String index);
 
-    public abstract void addAssoc(String name, T assocIndex);
-
-    public abstract void setVector(Vector vector);
+    public abstract Attribute getAttribute(String index);
 
     public abstract boolean containsAssociativeIndex(String index);
 
     public abstract boolean containsAttributeIndex(String index);
 
+    public abstract void setVector(Vector vector);
+
     public abstract void addVectorItem(T value);
 
-    public abstract Attribute getAttribute(String attribute);
 }

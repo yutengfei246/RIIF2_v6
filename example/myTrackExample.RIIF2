@@ -9,6 +9,8 @@ parameter mPar[instance]'attr : int := 10;
 parameter mPar[]'attribute : float ;
 parameter mPar[2:2]'attribute : float ;
 
+parameter Mo[i]'attribute : integer := {1,2,3,4};
+
 parameter mpar := {oi,oio,oo,ooio } ;
 parameter mPar : table;
 

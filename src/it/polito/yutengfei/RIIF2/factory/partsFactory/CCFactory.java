@@ -49,7 +49,7 @@ public class CCFactory {
         else {
             if ( ! this.recorder.containsChildComponent(id))
                 throw new SomeVariableMissingException();
-            this.ccLabel = this.recorder.getCC(id);
+            this.ccLabel = this.recorder.getChildComponent(id);
         }
         this.newCCDeclarator(childComponentDeclarator);
     }

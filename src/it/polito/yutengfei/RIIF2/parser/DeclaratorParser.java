@@ -30,8 +30,8 @@ abstract class DeclaratorParser extends InitializerParser {
         DeclaratorId declaratorId = getDeclaratorId(ctx.primitiveFieldDeclaratorId());
         primitiveFieldDeclarator.setDeclaratorId( declaratorId );
 
-        RIIF2Type declaratorType = getRIIF2Type(ctx.primitiveType());
-        primitiveFieldDeclarator.setDeclaratorType( declaratorType );
+        RIIF2Type primitiveType = getRIIF2Type(ctx.primitiveType());
+        primitiveFieldDeclarator.setPrimitiveType( primitiveType);
 
         if (ctx.fieldInitializer() != null) {
             Initializer initializer = getInitializer(ctx.fieldInitializer());

@@ -8,9 +8,9 @@ import java.util.*;
 
 public class FailMode extends Label<FailMode> {
 
-    private List<Attribute> attributes = null;
     private LinkedList<FailMode> vectorValue = null ;
     private Map<String,FailMode> assocs = null;
+    private Map<String,Attribute> attributeMap = new HashMap<>();
 
     @Override
     public void setAssociative(Boolean b) {
@@ -33,30 +33,25 @@ public class FailMode extends Label<FailMode> {
     }
 
     @Override
-    List<Attribute> getAttributes() {
-        return attributes;
+    public void putAttribute(String key, Attribute attribute) {
+        this.attributeMap.put(key, attribute);
     }
 
     @Override
-    Map<String, FailMode> getAssocs() {
-        return this.assocs;
-    }
-
-    @Override
-    public void addAttribute(Attribute attribute) {
-        if (this.attributes == null)
-            this.attributes = new LinkedList<>();
-
-        this.attributes.add(attribute);
-    }
-
-    @Override
-    public void addAssoc(String name, FailMode assocIndex) {
-        if (this.assocs == null)
-            this.assocs = new HashMap<>();
-
+    public void putAssoc(String name, FailMode assocIndex) {
         this.assocs.put(name, assocIndex);
     }
+
+    @Override
+    public FailMode getAssociative(String index) {
+        return this.assocs.get(index);
+    }
+
+    @Override
+    public Attribute getAttribute(String index) {
+        return this.attributeMap.get(index);
+    }
+
 
     @Override
     public void setVector(Vector vector) {
@@ -79,11 +74,7 @@ public class FailMode extends Label<FailMode> {
 
     @Override
     public boolean containsAttributeIndex(String index) {
-        for (Attribute attribute : this.attributes){
-            if (Objects.equals(attribute.getId(), index))
-                return true;
-        }
-        return false;
+        return this.attributeMap.containsKey(index);
     }
 
     @Override
@@ -91,18 +82,7 @@ public class FailMode extends Label<FailMode> {
         this.vectorValue.add(value);
     }
 
-    @Override
-    public Attribute getAttribute(String attributeName ) {
-        if (this.attributes == null)
-            return null;
 
-        for (Attribute attribute : this.attributes){
-            if (Objects.equals(attribute.getId(), attributeName)){
-                return attribute;
-            }
-        }
-        return  null;
-    }
 
     public void print() {
         System.out.print("Fail_Mode " + getName());

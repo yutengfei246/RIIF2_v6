@@ -3,19 +3,17 @@ package it.polito.yutengfei.RIIF2.RIIF2Modules.parts;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
-import sun.reflect.CallerSensitive;
 
 import java.util.*;
 
-public class Constant<T> extends Label<T> {
+public class Constant extends Label<Object> {
 
-    private T value = null;
+    private Object value = null;
 
-    private LinkedList<T> vectorValue = null ;
-    private Map<String,T> assocs = null;
+    private LinkedList<Object> vectorValue = null ;
 
-    private List<Attribute> attributes =  new LinkedList<>();
-
+    private Map<String,Object> assocs = null;
+    private Map<String,Attribute> attributeMap = new HashMap<>();
 
 
     @Override
@@ -29,36 +27,24 @@ public class Constant<T> extends Label<T> {
     }
 
     @Override
-    T getValue() {
+    Object getValue() {
         return value;
     }
 
     @Override
-    public void setValue(T value) {
+    public void setValue(Object value) {
         this.value = value;
     }
 
     @Override
-    List<Attribute> getAttributes() {
-        return attributes;
+    public void putAttribute(String key ,Attribute attribute) {
+        this.attributeMap.put(key,attribute);
     }
 
     @Override
-    Map<String, T> getAssocs() {
-        return this.assocs;
-    }
-
-
-    @Override
-    public void addAttribute(Attribute attribute) {
-        this.attributes.add(attribute);
-    }
-
-    @Override
-    public void addAssoc(String name, T assocIndex) {
+    public void putAssoc(String name, Object assocIndex) {
         this.assocs.put(name,assocIndex);
     }
-
 
     @Override
     public void setVector(Vector vector) {
@@ -71,7 +57,7 @@ public class Constant<T> extends Label<T> {
 
         super.setVectorLength( left * right);
 
-        this.vectorValue = new LinkedList<T>();
+        this.vectorValue = new LinkedList<>();
 
     }
 
@@ -81,30 +67,23 @@ public class Constant<T> extends Label<T> {
     }
 
     @Override
+    public Object getAssociative(String index) {
+        return this.assocs.get(index);
+    }
+
+    @Override
     public boolean containsAttributeIndex(String index) {
-        for (Attribute attribute : this.attributes){
-            if (Objects.equals(attribute.getId(), index))
-                return true;
-        }
-        return false;
+        return this.attributeMap.containsKey(index);
     }
 
     @Override
-    public void addVectorItem(T value) {
+    public Attribute getAttribute(String index) {
+        return this.attributeMap.get(index);
+    }
+
+    @Override
+    public void addVectorItem(Object value) {
         this.vectorValue.add(value);
-    }
-
-    @Override
-    public Attribute getAttribute(String attributeName ) {
-        if (this.attributes == null)
-            return null;
-
-        for (Attribute attribute : this.attributes){
-            if (Objects.equals(attribute.getId(), attributeName)){
-                return attribute;
-            }
-        }
-        return  null;
     }
 
 
@@ -117,5 +96,11 @@ public class Constant<T> extends Label<T> {
         else
             System.out.print(" := null " );
         System.out.println(";");
+
+        if (this.attributeMap.size() != 0 ){
+            this.attributeMap.forEach((s, attribute) ->
+                    System.out.println("Attribute : " + s  + attribute.print())
+            );
+        }
     }
 }

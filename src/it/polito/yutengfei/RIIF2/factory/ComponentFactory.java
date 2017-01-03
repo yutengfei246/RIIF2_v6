@@ -17,9 +17,12 @@ public class ComponentFactory {
     private CCFactory ccFactory = null;
     private FMFactory fmFactory = null;
     private AISFactory AISFactoy = null;
+    private PlatformFactory platformFactory;
 
     private RIIF2Recorder recorder;
-    private PlatformFactory platformFactory;
+
+    private RIIF2Type fieldType;
+    private Declarator declarator;
 
     ComponentFactory(Recorder recorder) {
         this.recorder = (RIIF2Recorder) recorder;
@@ -42,25 +45,28 @@ public class ComponentFactory {
     }
 
     public void commitImplEx(/*void*/) { /*checker and updater*/
-        try {
-            this.implExFactory.commit();
-        } catch (ImplExIdsNotExistException e) {
-            e.printStackTrace();
-            System.exit(0);
-        }
+        this.implExFactory.commit();
         this.implExFactory = null;
     }
 
+    public void setDeclarator(Declarator declarator) {
+        this.declarator = declarator;
+    }
+
+    public Declarator getDeclarator(){
+        return this.declarator;
+    }
+
     public void startField() {
-        this.fieldFactory = new FieldFactory(this.recorder);
+        this.fieldFactory = new FieldFactory(this,this.recorder);
     }
 
     public void setFieldType(RIIF2Type fieldType /*Parameter or Constant*/) {
-        this.fieldFactory.setFieldType( fieldType );
+        this.fieldType = fieldType;
     }
 
-    public void setFieldDeclarator(Declarator fieldDeclarator) {
-        this.fieldFactory.setDeclarator( fieldDeclarator );
+    public RIIF2Type getFieldType() {
+        return this.fieldType;
     }
 
     public void commitField(/*void*/) { /*checker and updater*/
@@ -74,14 +80,11 @@ public class ComponentFactory {
             e.printStackTrace();
         }
         this.fieldFactory = null /*Reset the fieldFactory*/;
+        this.fieldType = null;
     }
 
     public void startCC() {
         this.ccFactory = new CCFactory(this.recorder);
-    }
-
-    public void setCCDeclarator(Declarator CCDeclarator) {
-        this.ccFactory.setDeclarator(CCDeclarator);
     }
 
     public void commitCC() {
@@ -97,10 +100,6 @@ public class ComponentFactory {
         this.fmFactory = new FMFactory( this.recorder );
     }
 
-    public void setFailModeDeclarator(Declarator fmDeclarator) {
-        this.fmFactory.setDeclarator( fmDeclarator );
-    }
-
     public void commitFM() {
         try {
             this.fmFactory.commit();
@@ -112,11 +111,6 @@ public class ComponentFactory {
 
     public void startAIS(String assignment) {
         this.AISFactoy = new AISFactory(assignment, this.recorder);
-    }
-
-
-    public void setAISDeclarator(Declarator assignmentDeclarator) {
-        this.AISFactoy.setDeclarator( assignmentDeclarator );
     }
 
     public void commitAIS() {
