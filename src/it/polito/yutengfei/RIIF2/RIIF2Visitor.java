@@ -326,11 +326,19 @@ public interface RIIF2Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitChildComponentDeclaratorId(RIIF2Parser.ChildComponentDeclaratorIdContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link RIIF2Parser#failModeDeclaratorId}.
+	 * Visit a parse tree produced by the {@code failModeDeclaratorId1}
+	 * labeled alternative in {@link RIIF2Parser#failModeDeclaratorId}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitFailModeDeclaratorId(RIIF2Parser.FailModeDeclaratorIdContext ctx);
+	T visitFailModeDeclaratorId1(RIIF2Parser.FailModeDeclaratorId1Context ctx);
+	/**
+	 * Visit a parse tree produced by the {@code failModeDeclaratorId2}
+	 * labeled alternative in {@link RIIF2Parser#failModeDeclaratorId}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFailModeDeclaratorId2(RIIF2Parser.FailModeDeclaratorId2Context ctx);
 	/**
 	 * Visit a parse tree produced by the {@code aisDeclaratorId1}
 	 * labeled alternative in {@link RIIF2Parser#aisDeclaratorId}.

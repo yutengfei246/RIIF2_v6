@@ -248,9 +248,8 @@ childComponentDeclaratorId
     ;
 
 failModeDeclaratorId
-    : Identifier
-      ( typeType | associativeIndex ) ?
-      attributeIndex ?
+    : Identifier ( typeType ) ? ( attributeIndex) ? #failModeDeclaratorId1
+    | Identifier associativeIndex attributeIndex #failModeDeclaratorId2
     ;
 
 aisDeclaratorId

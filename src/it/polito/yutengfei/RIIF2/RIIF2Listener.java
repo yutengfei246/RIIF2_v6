@@ -536,15 +536,29 @@ public interface RIIF2Listener extends ParseTreeListener {
 	 */
 	void exitChildComponentDeclaratorId(RIIF2Parser.ChildComponentDeclaratorIdContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link RIIF2Parser#failModeDeclaratorId}.
+	 * Enter a parse tree produced by the {@code failModeDeclaratorId1}
+	 * labeled alternative in {@link RIIF2Parser#failModeDeclaratorId}.
 	 * @param ctx the parse tree
 	 */
-	void enterFailModeDeclaratorId(RIIF2Parser.FailModeDeclaratorIdContext ctx);
+	void enterFailModeDeclaratorId1(RIIF2Parser.FailModeDeclaratorId1Context ctx);
 	/**
-	 * Exit a parse tree produced by {@link RIIF2Parser#failModeDeclaratorId}.
+	 * Exit a parse tree produced by the {@code failModeDeclaratorId1}
+	 * labeled alternative in {@link RIIF2Parser#failModeDeclaratorId}.
 	 * @param ctx the parse tree
 	 */
-	void exitFailModeDeclaratorId(RIIF2Parser.FailModeDeclaratorIdContext ctx);
+	void exitFailModeDeclaratorId1(RIIF2Parser.FailModeDeclaratorId1Context ctx);
+	/**
+	 * Enter a parse tree produced by the {@code failModeDeclaratorId2}
+	 * labeled alternative in {@link RIIF2Parser#failModeDeclaratorId}.
+	 * @param ctx the parse tree
+	 */
+	void enterFailModeDeclaratorId2(RIIF2Parser.FailModeDeclaratorId2Context ctx);
+	/**
+	 * Exit a parse tree produced by the {@code failModeDeclaratorId2}
+	 * labeled alternative in {@link RIIF2Parser#failModeDeclaratorId}.
+	 * @param ctx the parse tree
+	 */
+	void exitFailModeDeclaratorId2(RIIF2Parser.FailModeDeclaratorId2Context ctx);
 	/**
 	 * Enter a parse tree produced by the {@code aisDeclaratorId1}
 	 * labeled alternative in {@link RIIF2Parser#aisDeclaratorId}.

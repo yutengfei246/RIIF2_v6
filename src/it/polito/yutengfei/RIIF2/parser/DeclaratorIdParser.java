@@ -61,6 +61,43 @@ abstract class DeclaratorIdParser extends IdParser {
     }
 
     @Override
+    public void exitFailModeDeclaratorId1(RIIF2Parser.FailModeDeclaratorId1Context ctx) {
+        DeclaratorId identifier = new DeclaratorId();
+
+        TerminalNode DeclaratorId = ctx.Identifier();
+        String primitiveId = DeclaratorId.getText();
+        identifier.setId( primitiveId );
+
+        if (ctx.typeType() != null) {
+            RIIF2Type type = getRIIF2Type(ctx.typeType());
+            identifier.setTypeType(type);
+        }
+        if (ctx.attributeIndex() != null) {
+            Id id = getId(ctx.attributeIndex());
+            identifier.setAttributeIndex( id );
+        }
+
+        this.putDeclaratorId(ctx,identifier);
+    }
+
+    @Override
+    public void exitFailModeDeclaratorId2(RIIF2Parser.FailModeDeclaratorId2Context ctx) {
+        DeclaratorId identifier = new DeclaratorId();
+
+        TerminalNode DeclaratorId = ctx.Identifier();
+        String primitiveId = DeclaratorId.getText();
+        identifier.setId( primitiveId );
+
+        Id id = getId( ctx.associativeIndex() );
+        identifier.setAssociativeIndex( id );
+
+        id = getId( ctx.attributeIndex());
+        identifier.setAttributeIndex(id);
+
+        this.putDeclaratorId(ctx,identifier);
+    }
+
+    @Override
     public void exitAssociativeIndexDeclaratorId(RIIF2Parser.AssociativeIndexDeclaratorIdContext ctx) {
         DeclaratorId identifier = new DeclaratorId();
 
@@ -111,30 +148,6 @@ abstract class DeclaratorIdParser extends IdParser {
         if (ctx.associativeIndex() != null){
             Id id = getId(ctx.associativeIndex());
             identifier.setAssociativeIndex( id );
-        }
-
-        this.putDeclaratorId(ctx,identifier);
-    }
-
-    @Override
-    public void exitFailModeDeclaratorId(RIIF2Parser.FailModeDeclaratorIdContext ctx) {
-        DeclaratorId identifier = new DeclaratorId();
-
-        TerminalNode DeclaratorId = ctx.Identifier();
-        String childId = DeclaratorId.getText();
-        identifier.setId(childId);
-
-        if (ctx.typeType() != null){
-            RIIF2Type type = getRIIF2Type( ctx.typeType() );
-            identifier.setTypeType(type);
-        }
-        if (ctx.associativeIndex() != null){
-            Id id = getId(ctx.associativeIndex());
-            identifier.setAssociativeIndex( id );
-        }
-        if (ctx.attributeIndex() != null){
-            Id id = getId( ctx.attributeIndex() );
-            identifier.setAttributeIndex( id );
         }
 
         this.putDeclaratorId(ctx,identifier);

@@ -49,21 +49,20 @@ public class FieldFactory implements Factory{
         this.initializer = this.declarator.getInitializer();
     }
 
-    public void commit() throws InvalidFieldDeclaration, VeriableAlreadyExistException, SomeVariableMissingException, FieldTypeNotMarchException {
-        this.setUpDeclarator(); // set those properties to fieldLabel
-        this.recorder.addLabel(this.fieldLabel);
-    }
-
     private void setUpDeclarator() throws InvalidFieldDeclaration, VeriableAlreadyExistException, SomeVariableMissingException, FieldTypeNotMarchException {
 
-        if (this.declarator instanceof  PrimitiveFieldDeclarator)
-            this.primitiveFieldDeclarator();
-        if (this.declarator instanceof ListDeclarator )
-            this.listDeclarator();
+        try {
+            if (this.declarator instanceof PrimitiveFieldDeclarator)
+                this.primitiveFieldDeclarator();
+            if (this.declarator instanceof ListDeclarator)
+                this.listDeclarator();
+            if (this.declarator instanceof TableDeclarator)
+                this.tableDeclarator();
+        }finally {
+            this.recorder.addLabel(this.fieldLabel);
+        }
         if (this.declarator instanceof AssociativeDeclarator)
             this.associativeDeclarator();
-        if (this.declarator instanceof TableDeclarator)
-            this.tableDeclarator();
 
     }
 
@@ -308,5 +307,11 @@ public class FieldFactory implements Factory{
         fieldLabel.setName(id);
 
         return fieldLabel;
+    }
+
+    @Override
+    public void commit() throws SomeVariableMissingException, VeriableAlreadyExistException, InvalidFieldDeclaration, FieldTypeNotMarchException {
+
+        this.setUpDeclarator(); // set those properties to fieldLabel
     }
 }

@@ -628,13 +628,25 @@ public class RIIF2BaseListener implements RIIF2Listener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterFailModeDeclaratorId(RIIF2Parser.FailModeDeclaratorIdContext ctx) { }
+	@Override public void enterFailModeDeclaratorId1(RIIF2Parser.FailModeDeclaratorId1Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitFailModeDeclaratorId(RIIF2Parser.FailModeDeclaratorIdContext ctx) { }
+	@Override public void exitFailModeDeclaratorId1(RIIF2Parser.FailModeDeclaratorId1Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterFailModeDeclaratorId2(RIIF2Parser.FailModeDeclaratorId2Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFailModeDeclaratorId2(RIIF2Parser.FailModeDeclaratorId2Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
