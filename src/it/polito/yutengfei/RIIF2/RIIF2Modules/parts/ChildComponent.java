@@ -2,6 +2,7 @@ package it.polito.yutengfei.RIIF2.RIIF2Modules.parts;
 
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
+import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 
 import java.util.*;
@@ -20,17 +21,6 @@ public class ChildComponent extends Label<ChildComponent> {
         }
         else
             super.associativeFalse();
-    }
-
-    @Override
-    ChildComponent getValue() {
-        return null;
-    }
-
-
-    @Override
-    public void setValue(ChildComponent value) {
-
     }
 
     @Override
@@ -76,6 +66,16 @@ public class ChildComponent extends Label<ChildComponent> {
     @Override
     public void addVectorItem(ChildComponent value) {
         this.vectorValue.add(value);
+    }
+
+    @Override
+    public void setPlatform(RIIF2Recorder recorder) {
+
+    }
+
+    @Override
+    public RIIF2Recorder getPlatform() {
+        return null;
     }
 
     @Override

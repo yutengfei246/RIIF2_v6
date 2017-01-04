@@ -2,17 +2,16 @@ package it.polito.yutengfei.RIIF2.RIIF2Modules.parts;
 
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
+import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 
 import java.util.*;
 
-public class Parameter extends Label<Object> {
+public class Parameter extends Label<Parameter> {
 
-    private Object value = null;
+    private LinkedList<Parameter> vectorValue = null ;
 
-    private LinkedList<Object> vectorValue = null ;
-
-    private Map<String,Object> assocs = null;
+    private Map<String,Parameter> assocs = null;
     private Map<String,Attribute> attributeMap = new HashMap<>();
 
 
@@ -27,22 +26,12 @@ public class Parameter extends Label<Object> {
     }
 
     @Override
-    Object getValue() {
-        return value;
-    }
-
-    @Override
-    public void setValue(Object value) {
-        this.value = value;
-    }
-
-    @Override
     public void putAttribute(String key ,Attribute attribute) {
         this.attributeMap.put(key,attribute);
     }
 
     @Override
-    public void putAssoc(String name, Object assocIndex) {
+    public void putAssoc(String name, Parameter assocIndex) {
         this.assocs.put(name,assocIndex);
     }
 
@@ -67,7 +56,7 @@ public class Parameter extends Label<Object> {
     }
 
     @Override
-    public Object getAssociative(String index) {
+    public Parameter getAssociative(String index) {
         return this.assocs.get(index);
     }
 
@@ -82,8 +71,18 @@ public class Parameter extends Label<Object> {
     }
 
     @Override
-    public void addVectorItem(Object value) {
+    public void addVectorItem(Parameter value) {
         this.vectorValue.add(value);
+    }
+
+    @Override
+    public void setPlatform(RIIF2Recorder recorder) {
+
+    }
+
+    @Override
+    public RIIF2Recorder getPlatform() {
+        return null;
     }
 
 

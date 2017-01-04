@@ -2,6 +2,7 @@ package it.polito.yutengfei.RIIF2.RIIF2Modules.parts;
 
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
+import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 
 import java.io.Serializable;
 
@@ -94,4 +95,7 @@ public abstract class Label<T> implements Serializable {
 
     public abstract void addVectorItem(T value);
 
+    public abstract void setPlatform(RIIF2Recorder recorder);
+
+    public abstract RIIF2Recorder getPlatform();
 }

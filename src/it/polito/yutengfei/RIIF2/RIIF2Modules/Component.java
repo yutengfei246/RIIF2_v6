@@ -1,8 +1,5 @@
 package it.polito.yutengfei.RIIF2.RIIF2Modules;
 
-/**
- * A class that responsible for creating component class which includes everything
- */
 public class Component {
 
 
@@ -10,5 +7,9 @@ public class Component {
 
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
+    }
+
+    public String getIdentifier(){
+        return this.identifier;
     }
 }

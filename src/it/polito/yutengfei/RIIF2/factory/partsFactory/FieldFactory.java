@@ -8,8 +8,6 @@ import it.polito.yutengfei.RIIF2.factory.ComponentFactory;
 import it.polito.yutengfei.RIIF2.factory.Factory;
 import it.polito.yutengfei.RIIF2.id.DeclaratorId;
 import it.polito.yutengfei.RIIF2.id.Id;
-import it.polito.yutengfei.RIIF2.initializer.ArrayInitializer;
-import it.polito.yutengfei.RIIF2.initializer.ArrayWrapperInitializer;
 import it.polito.yutengfei.RIIF2.initializer.Initializer;
 import it.polito.yutengfei.RIIF2.initializer.ListInitializer;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
@@ -19,7 +17,6 @@ import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,7 +29,7 @@ public class FieldFactory implements Factory{
     private final RIIF2Recorder recorder ;
     private final ComponentFactory componentFactory;
 
-    private Label<Object> fieldLabel = null;
+    private Label fieldLabel = null;
 
     private Declarator declarator;
     private DeclaratorId declaratorId;
@@ -62,19 +59,20 @@ public class FieldFactory implements Factory{
         if (this.declarator instanceof  PrimitiveFieldDeclarator)
             this.primitiveFieldDeclarator();
         if (this.declarator instanceof ListDeclarator )
-            this.listDeclarator(this.declarator);
+            this.listDeclarator();
         if (this.declarator instanceof AssociativeDeclarator)
-            this.associativeDeclarator(this.declarator);
+            this.associativeDeclarator();
         if (this.declarator instanceof TableDeclarator)
-            this.tableDeclarator(this.declarator);
+            this.tableDeclarator();
 
     }
 
+    //Done
     private void primitiveFieldDeclarator()
             throws FieldTypeNotMarchException, InvalidFieldDeclaration, SomeVariableMissingException, VeriableAlreadyExistException {
 
         if ( !declaratorId.hasAttributeIndex() && !declaratorId.hasAssociativeIndex() )
-            this.createFieldLabel();
+            this.createFieldLabel(this.fieldLabel);
         else{
                 /*other cases to search in recorder and add those properties into recorder*/
             String id = declaratorId.getId();
@@ -98,52 +96,44 @@ public class FieldFactory implements Factory{
     }
 
     /*Identifier typeType? attributeIndex? */
+    //Done
     private void newPrimitiveFieldDeclarator1(PrimitiveFieldDeclarator primitiveFieldDeclarator) throws FieldTypeNotMarchException {
 
-        RIIF2Type declaratorType = primitiveFieldDeclarator.getPrimitiveType();
-        String type = declaratorType.getType();
-        this.fieldLabel.setType( type );
+        RIIF2Type primitiveTypeS= primitiveFieldDeclarator.getPrimitiveType();
+        String primitiveType = primitiveTypeS.getType();
+        this.fieldLabel.setType( primitiveType );
 
-        Initializer initializer = primitiveFieldDeclarator.getInitializer();
+        if (!this.declaratorId.hasAttributeIndex()){
+            /*in this case we need to create associated typeType to the label*/
+            if (this.declaratorId.hasTypeType()){
+                RIIF2Type typeType = this.declaratorId.getTypeType();
+                if (Objects.equals(typeType.getType(), RIIF2Grammar.TYPE_ASSOCIATIVE)) {
+                    this.fieldLabel.setAssociative(true);
 
-        if (initializer == null)
-            return ;
-
-        if (initializer instanceof Expression){
-            Expression expression = (Expression) initializer;
-            String eType = expression.getType();
-
-            if (!Objects.equals(type, eType))
-                throw new FieldTypeNotMarchException();
-
-            this.fieldLabel.setValue( expression.getValue());
-        }
-
-        if (initializer instanceof ArrayWrapperInitializer){
-            if (this.fieldLabel.isVector())
-                throw new FieldTypeNotMarchException();
-
-            ArrayWrapperInitializer arrayWrapperInitializer
-                    = (ArrayWrapperInitializer) initializer;
-
-            LinkedList<ArrayInitializer> arrayInitializers
-                    = arrayWrapperInitializer.getArrayInitializers();
-            for (ArrayInitializer arrayInitializer : arrayInitializers){
-                LinkedList<Expression> expressions
-                        = arrayInitializer.getExpressions();
-
-                for (Expression expression : expressions){
-                    if (!Objects.equals(expression.getType(), type))
-                        throw new FieldTypeNotMarchException();
-
-                    this.fieldLabel.addVectorItem(expression.getValue());
+                    /*set value */
+                    if (this.initializer != null)
+                        this.setAssociativeIndexValue(primitiveType);
                 }
+
+                if (Objects.equals(typeType.getType(), RIIF2Grammar.TYPE_VECTOR)) {
+                    Vector vector = typeType.getVector();
+                    this.fieldLabel.setVector(vector);
+
+                    /*set value*/
+                    if (this.initializer != null)
+                        this.setVectorValue(primitiveType,vector);
+                }
+            }else{
+                /*pure value assign*/
+                /*initializer could be Expression only */
+                this.setPureValue(primitiveType);
             }
         }
     }
 
     /*DeclaratorId :: Identifier associativeIndex attributeIndex*/
     /*Initializer :: list expression array*/
+    //Done
     private void newPrimitiveFieldDeclarator2()
             throws SomeVariableMissingException, VeriableAlreadyExistException, FieldTypeNotMarchException {
 
@@ -154,7 +144,7 @@ public class FieldFactory implements Factory{
         if (!this.fieldLabel.containsAssociativeIndex(associativeIndex))
             throw new SomeVariableMissingException();
 
-        Object associativeObject = this.fieldLabel.getAssociative(associativeIndex);
+        this.fieldLabel = (Label) this.fieldLabel.getAssociative(associativeIndex);
 
         Id attributeIndexId = declaratorId.getAttributeIndex();
         String attributeIndex = attributeIndexId.getId();
@@ -167,23 +157,23 @@ public class FieldFactory implements Factory{
         this.fieldLabel.putAttribute(attributeIndex,attribute);
     }
 
-    private void initialAttribute(Attribute attribute) throws FieldTypeNotMarchException {
-        PrimitiveFieldDeclarator primitiveFieldDeclarator
-                = (PrimitiveFieldDeclarator) this.declarator;
-        RIIF2Type primitiveType = primitiveFieldDeclarator.getPrimitiveType();
 
-        if (this.initializer instanceof  Expression){
-            Expression expInitializer = (Expression) this.initializer;
-            if (!Objects.equals(primitiveType.getType(), expInitializer.getType()))
-                throw new FieldTypeNotMarchException();
+    private void listDeclarator() throws VeriableAlreadyExistException, FieldTypeNotMarchException {
 
-            attribute.setType( expInitializer.getType());
-            attribute.setValue(expInitializer.getValue());
-            attribute.setId( this.declaratorId.getAttributeIndex().getId());
-        }
+        String id = declaratorId.getId();
+        if ( this.recorder.contains(id) )
+            throw new VeriableAlreadyExistException();
+
+        this.createFieldLabel(this.fieldLabel);
+        this.newListFieldDeclarator();
     }
 
-    private void tableDeclarator(Declarator declarator)
+    private void newListFieldDeclarator() throws FieldTypeNotMarchException {
+        this.fieldLabel.setType(RIIF2Grammar.LIST_INITIALIZER);
+        this.setListValue();
+    }
+
+    private void tableDeclarator()
             throws VeriableAlreadyExistException {
 
         String id = this.declaratorId.getId();
@@ -191,23 +181,20 @@ public class FieldFactory implements Factory{
             throw new VeriableAlreadyExistException();
 
         /* need to add predefined attributes*/
-        this.createFieldLabel();
+        this.createFieldLabel(this.fieldLabel);
         this.fieldLabel.setType(RIIF2Grammar.TABLE);
-        this.recorder.addLabel(this.fieldLabel);
-
     }
 
-    private void associativeDeclarator(Declarator declarator) throws SomeVariableMissingException, VeriableAlreadyExistException, FieldTypeNotMarchException {
-        AssociativeDeclarator associativeDeclarator
-                = (AssociativeDeclarator) declarator;
+    /*Identifier [ associativeIndex] := Initializer ? */
+    private void associativeDeclarator() throws SomeVariableMissingException, VeriableAlreadyExistException, FieldTypeNotMarchException {
 
-        DeclaratorId declaratorId = associativeDeclarator.getDeclaratorId();
         String id = declaratorId.getId();
+
         if (Objects.equals(this.fieldType.getType(), RIIF2Grammar.FIELD_PARAMETER)) {
             if (!this.recorder.containsParameter(id))
                 throw new SomeVariableMissingException();
 
-            this.fieldLabel = (Label) this.recorder.getParameter(id);
+            this.fieldLabel = this.recorder.getParameter(id);
         }
 
         if (Objects.equals(this.fieldType.getType(), RIIF2Grammar.FIELD_CONSTANT)){
@@ -226,15 +213,21 @@ public class FieldFactory implements Factory{
         if (!this.fieldLabel.isAssociative())
             throw new FieldTypeNotMarchException();
 
-        this.newAssociativeDeclarator( associativeDeclarator , associativeIndex );
-        this.recorder.addLabel(this.fieldLabel);
+        Label associativeLabel = null;
+        associativeLabel = this.createFieldLabel(associativeLabel);
+        associativeLabel.setName( associativeIndex);
+        associativeLabel.setType( this.fieldType.getType());
+
+        this.fieldLabel.putAssoc(associativeIndex,associativeLabel);
+        this.fieldLabel = associativeLabel;
+
+        this.newAssociativeDeclarator();
     }
 
-    private void newAssociativeDeclarator(AssociativeDeclarator associativeDeclarator, String associativeIndex) throws FieldTypeNotMarchException {
+    private void newAssociativeDeclarator() throws FieldTypeNotMarchException {
 
-        Initializer initializer = associativeDeclarator.getInitializer();
         if (initializer == null ) {
-            this.fieldLabel.addAssoc(associativeIndex, null);
+            this.fieldLabel.setValue(null);
             return;
         }
 
@@ -244,23 +237,12 @@ public class FieldFactory implements Factory{
             if (!Objects.equals(this.fieldLabel.getType(), expression.getType()))
                 throw new FieldTypeNotMarchException();
 
-            this.fieldLabel.addAssoc(associativeIndex, expression.getValue());
+            this.fieldLabel.setValue(expression.getValue());
         }
     }
 
-    private void listDeclarator(Declarator declarator) throws VeriableAlreadyExistException, FieldTypeNotMarchException {
 
-        String id = declaratorId.getId();
-        if ( this.recorder.contains(id) )
-            throw new VeriableAlreadyExistException();
-
-        this.createFieldLabel();
-        this.newListFieldDeclarator();
-        this.recorder.addLabel(this.fieldLabel);
-    }
-
-    private void newListFieldDeclarator() throws FieldTypeNotMarchException {
-        this.fieldLabel.setType(RIIF2Grammar.LIST_INITIALIZER);
+    private void setListValue() throws FieldTypeNotMarchException {
 
         if (initializer instanceof ListInitializer){
             ListInitializer listInitializer
@@ -273,28 +255,58 @@ public class FieldFactory implements Factory{
             throw new FieldTypeNotMarchException();
     }
 
-    private void createFieldLabel() {
+    private void setVectorValue(String primitiveType, Vector vector) {
+        //TODO:: set vector value
+    }
 
-        if (Objects.equals(RIIF2Grammar.FIELD_PARAMETER, this.fieldType.getType()))
-            this.fieldLabel = new Parameter<>();
-        if (Objects.equals(RIIF2Grammar.FIELD_CONSTANT, this.fieldType.getType()))
-            this.fieldLabel = new Constant<>();
+    private void setPureValue(String primitiveType) throws FieldTypeNotMarchException {
 
-        String id = declaratorId.getId();
-        this.fieldLabel.setName(id);
+        if (this.initializer != null){
 
-        if (declaratorId.hasTypeType()){
-            RIIF2Type typeType = declaratorId.getTypeType();
-            String tt = typeType.getType();
+            if (this.initializer instanceof  Expression){
+                Expression expInitializer = (Expression) this.initializer;
+                String expType = expInitializer.getType();
 
-            if (/*is associative declaration*/Objects.equals(tt, RIIF2Grammar.TYPE_ASSOCIATIVE))
-                this.fieldLabel.setAssociative( true );
+                if (!Objects.equals(expType, primitiveType))
+                    throw new FieldTypeNotMarchException();
 
-            if (/*is vector declaration*/ Objects.equals(tt, RIIF2Grammar.TYPE_VECTOR)) {
-                Vector vector = typeType.getVector();
-                this.fieldLabel.setVector(vector);
+                this.fieldLabel.setValue(expInitializer.getValue());
             }
+        }
+
+    }
+
+
+    private void setAssociativeIndexValue(String associativeIndexValue) {
+        //TODO:: set AssociativeIndex value
+    }
+
+    private void initialAttribute(Attribute attribute) throws FieldTypeNotMarchException {
+        PrimitiveFieldDeclarator primitiveFieldDeclarator
+                = (PrimitiveFieldDeclarator) this.declarator;
+        RIIF2Type primitiveType = primitiveFieldDeclarator.getPrimitiveType();
+
+        if (this.initializer instanceof  Expression){
+            Expression expInitializer = (Expression) this.initializer;
+            if (!Objects.equals(primitiveType.getType(), expInitializer.getType()))
+                throw new FieldTypeNotMarchException();
+
+            attribute.setType( expInitializer.getType());
+            attribute.setValue(expInitializer.getValue());
+            attribute.setId( this.declaratorId.getAttributeIndex().getId());
         }
     }
 
+    private Label createFieldLabel(Label fieldLabel) {
+
+        if (Objects.equals(RIIF2Grammar.FIELD_PARAMETER, this.fieldType.getType()))
+            fieldLabel = new Parameter();
+        if (Objects.equals(RIIF2Grammar.FIELD_CONSTANT, this.fieldType.getType()))
+            fieldLabel = new Constant();
+
+        String id = declaratorId.getId();
+        fieldLabel.setName(id);
+
+        return fieldLabel;
+    }
 }

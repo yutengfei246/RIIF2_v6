@@ -2,19 +2,17 @@ package it.polito.yutengfei.RIIF2.RIIF2Modules.parts;
 
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
+import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 
 import java.util.*;
 
-public class Constant extends Label<Object> {
+public class Constant extends Label<Constant> {
 
-    private Object value = null;
+    private LinkedList<Constant> vectorValue = null ;
 
-    private LinkedList<Object> vectorValue = null ;
-
-    private Map<String,Object> assocs = null;
+    private Map<String,Constant> assocs = null;
     private Map<String,Attribute> attributeMap = new HashMap<>();
-
 
     @Override
     public void setAssociative(Boolean b) {
@@ -27,22 +25,12 @@ public class Constant extends Label<Object> {
     }
 
     @Override
-    Object getValue() {
-        return value;
-    }
-
-    @Override
-    public void setValue(Object value) {
-        this.value = value;
-    }
-
-    @Override
     public void putAttribute(String key ,Attribute attribute) {
         this.attributeMap.put(key,attribute);
     }
 
     @Override
-    public void putAssoc(String name, Object assocIndex) {
+    public void putAssoc(String name, Constant assocIndex) {
         this.assocs.put(name,assocIndex);
     }
 
@@ -67,7 +55,7 @@ public class Constant extends Label<Object> {
     }
 
     @Override
-    public Object getAssociative(String index) {
+    public Constant getAssociative(String index) {
         return this.assocs.get(index);
     }
 
@@ -82,8 +70,18 @@ public class Constant extends Label<Object> {
     }
 
     @Override
-    public void addVectorItem(Object value) {
+    public void addVectorItem(Constant value) {
         this.vectorValue.add(value);
+    }
+
+    @Override
+    public void setPlatform(RIIF2Recorder recorder) {
+
+    }
+
+    @Override
+    public RIIF2Recorder getPlatform() {
+        return null;
     }
 
 

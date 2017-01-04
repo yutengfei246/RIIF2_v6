@@ -16,16 +16,6 @@ public class Platform extends Label<RIIF2Recorder>{
     }
 
     @Override
-    RIIF2Recorder getValue() {
-        return value;
-    }
-
-    @Override
-    public void setValue(RIIF2Recorder value) {
-        this.value = value;
-    }
-
-    @Override
     public void putAttribute(String key, Attribute attribute) {
 
     }
@@ -63,5 +53,15 @@ public class Platform extends Label<RIIF2Recorder>{
     @Override
     public void addVectorItem(RIIF2Recorder value) {
 
+    }
+
+    @Override
+    public void setPlatform(RIIF2Recorder recorder) {
+        this.value = recorder;
+    }
+
+    @Override
+    public RIIF2Recorder getPlatform() {
+        return this.value;
     }
 }

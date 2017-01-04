@@ -2,6 +2,7 @@ package it.polito.yutengfei.RIIF2.RIIF2Modules.parts;
 
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
+import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 
 import java.util.*;
@@ -20,16 +21,6 @@ public class FailMode extends Label<FailMode> {
         }
         else
             super.associativeFalse();
-    }
-
-    @Override
-    FailMode getValue() {
-        return null;
-    }
-
-    @Override
-    public void setValue(FailMode value) {
-
     }
 
     @Override
@@ -82,6 +73,15 @@ public class FailMode extends Label<FailMode> {
         this.vectorValue.add(value);
     }
 
+    @Override
+    public void setPlatform(RIIF2Recorder recorder) {
+
+    }
+
+    @Override
+    public RIIF2Recorder getPlatform() {
+        return null;
+    }
 
 
     public void print() {
