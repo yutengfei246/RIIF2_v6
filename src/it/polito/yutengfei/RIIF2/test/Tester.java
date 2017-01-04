@@ -3,6 +3,7 @@ package it.polito.yutengfei.RIIF2.test;
 import it.polito.yutengfei.RIIF2.RIIF2Lexer;
 import it.polito.yutengfei.RIIF2.RIIF2Parser;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
+import it.polito.yutengfei.RIIF2.recoder.Repository;
 import it.polito.yutengfei.RIIF2.visitor.SLV;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -18,16 +19,16 @@ public class Tester {
     private final InputStream in;
 
     private Tester(InputStream in) {
-        this.in = in ;
+        this.in = in;
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         InputStream in = System.in;
         String userDir = System.getProperty("user.dir");
         System.out.println("Userdir is " + userDir);
 
-        if(args.length == 0){}
-        else try {
+        if (args.length == 0) {
+        } else try {
             in = new FileInputStream(args[0]);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -40,25 +41,40 @@ public class Tester {
 
     private void run() {
 
+        ANTLRInputStream antlrInputStream = null;
         try {
-            ANTLRInputStream antlrInputStream = new ANTLRInputStream(this.in);
-            RIIF2Lexer riif2Lexer = new RIIF2Lexer(antlrInputStream);
-            CommonTokenStream commonTokenStream = new CommonTokenStream(riif2Lexer);
-            RIIF2Parser parser = new RIIF2Parser(commonTokenStream);
+            antlrInputStream = new ANTLRInputStream(this.in);
+        } catch (IOException e) {
+        }
+        RIIF2Lexer riif2Lexer = new RIIF2Lexer(antlrInputStream);
+        CommonTokenStream commonTokenStream = new CommonTokenStream(riif2Lexer);
+        RIIF2Parser parser = new RIIF2Parser(commonTokenStream);
 
-            ParseTree parseTree = parser.program();
+        ParseTree parseTree = parser.program();
 
-           SLV secondLevelVisitor =
-                    new SLV(parseTree,parser);
+        SLV secondLevelVisitor =
+                new SLV(parseTree, parser);
 
-            secondLevelVisitor.visit(parseTree);
+        secondLevelVisitor.visit(parseTree);
 
-            RIIF2Recorder recorder = secondLevelVisitor.getRIIF2Recorder();
 
-            //System.out.println(parseTree.toStringTree());
-            recorder.print( 0 );
-            System.out.println("Parser OK");
+        Repository.getTemplateRepository()
+                .forEach((s, recorder1) -> {
+                    System.out.println("RECORDER --> " + s + ":");
+                    ((RIIF2Recorder) recorder1).print8();
+                    System.out.println("----------------------------------------");
+                });
 
-        } catch (IOException ignored) {}
+
+        Repository.getComponentRepository()
+                .forEach((s2, recorder2) -> {
+                    System.out.println("RECORDER --> " + s2 + ":");
+                    ((RIIF2Recorder) recorder2).print8();
+                    System.out.println("----------------------------------------");
+                });
+
+        //System.out.println(parseTree.toStringTree());
+        System.out.println("Parser OK");
     }
+
 }

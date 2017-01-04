@@ -87,5 +87,11 @@ public class FailMode extends Label<FailMode> {
     public void print() {
         System.out.print("Fail_Mode " + getName());
         System.out.println(" ; ");
+
+        if (this.attributeMap.size() != 0 ){
+            this.attributeMap.forEach((s, attribute) ->
+                    System.out.println("Fail_Mode:" + this.getName()+ "@Attribute:" + attribute.print())
+            );
+        }
     }
 }

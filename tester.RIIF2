@@ -1,28 +1,26 @@
-template temp;
-abstract parameter name : String;
+template testt;
+abstract parameter mtt : integer := 1 ;
+abstract parameter mtt1 : float := 10.0;
+abstract parameter mtt2 : float ;
 endtemplate
 
-component cc1 implements temp;
-parameter number : integer :=  1;
+component tester;
+parameter mfloat: float := 10.0;
+parameter tmLine: integer := 100;
+fail_mode fm;
 endcomponent
 
-component e1 implements temp;
-parameter mp: integer := 10;
-parameter mpa : integer := 100;
-set name = "e111111";
-endcomponent
-
-component mycom extends e1;
-parameter mPar  : float := 10.0;
-parameter mpar2 : float := 12.0;
-
-assign mp'max = 10;
+component testercc;
+child_component tester cc;
+child_component tester cc1;
 
 endcomponent
 
-component myList extends mycom;
-parameter theList := {yu,teng,fei};
-child_component cc1 cc[];
-child_component cc1 cc[Instance];
-fail_mode myFM ;
+component tester1 extends tester, testercc implements testt;
+parameter myString: String := "my tester1";
+assign mfloat = 100.0;
+assign tester.fm'rate = 10;
+assign tester.fm'description = "my first failmode tester ";
+assign cc.mfloat = 1000.0;
+set mtt2 = 10.0;
 endcomponent

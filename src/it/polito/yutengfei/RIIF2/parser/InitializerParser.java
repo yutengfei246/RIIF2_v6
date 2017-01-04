@@ -86,7 +86,7 @@ abstract class InitializerParser extends ExpressionParser {
     private ParseTreeProperty<Expression> arrayItemTree = new ParseTreeProperty<>();
     private ArrayInitializer arrayInitializer = null;
 
-    public ArrayInitializer getArrayInitializer(){
+    private ArrayInitializer getArrayInitializer(){
         ArrayInitializer returnedList = this.arrayInitializer;
         this.cleanArrayInitializer();
         return returnedList;
@@ -121,7 +121,7 @@ abstract class InitializerParser extends ExpressionParser {
         ArrayInitializer arrayInitializer = new ArrayInitializer();
         for (RIIF2Parser.ArrayItemContext arrayItemContext : arrayItemContexts){
             Expression arrayItem = this.getArrayItem(arrayItemContext);
-            arrayInitializer.addArrayItem(arrayItem);
+            arrayInitializer.addItem(arrayItem);
         }
 
         this.arrayInitializer = arrayInitializer;
@@ -156,7 +156,7 @@ abstract class InitializerParser extends ExpressionParser {
         this.arrayWrapperParseTreeProperty.put(node, value);
     }
 
-    public ArrayWrapperInitializer getArrayWrapperInitializer(){
+    private ArrayWrapperInitializer getArrayWrapperInitializer(){
         ArrayWrapperInitializer returnedInitializer = this.arrayWrapperInitializer;
         this.cleanArrayWrapperInitializer();
         return returnedInitializer;
@@ -179,7 +179,7 @@ abstract class InitializerParser extends ExpressionParser {
                 arrayInitializerContext : arrayInitializerContexts) {
             ArrayInitializer arrayListInitializer
                     = this.getArrayInitializerItem(arrayInitializerContext);
-            currentArrayWrapperInitializer.addArrayInitializerItem(arrayListInitializer);
+            currentArrayWrapperInitializer.addItem(arrayListInitializer);
         }
 
         this.arrayWrapperInitializer = currentArrayWrapperInitializer;
@@ -211,7 +211,7 @@ abstract class InitializerParser extends ExpressionParser {
         return this.rowItemParseTreeProperty.get(node );
     }
 
-    public TableInitializer getTableInitializer(){
+    private TableInitializer getTableInitializer(){
         TableInitializer returnedTable = this.tableInitializer;
         this.cleanTable();
         return returnedTable;
@@ -288,7 +288,7 @@ abstract class InitializerParser extends ExpressionParser {
         TableInitializer currentTableInitializer = new TableInitializer();
         for (RIIF2Parser.RowContext rowContext : rowContexts){
             Row row = this.getRowParseTree(rowContext);
-            currentTableInitializer.addRow(row);
+            currentTableInitializer.addItem(row);
         }
         this.tableInitializer = currentTableInitializer;
     }

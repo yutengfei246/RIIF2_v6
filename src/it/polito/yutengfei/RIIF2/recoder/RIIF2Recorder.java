@@ -192,6 +192,17 @@ public class RIIF2Recorder implements Recorder, Serializable {
 
         return null;
     }
+    public Label getImposeLabel(String labelName) {
+        if (this.getLabel(labelName) != null )
+            return this.getLabel(labelName);
+
+        for (Map.Entry<String,RIIF2Recorder> entry : this.implRecorderMap.entrySet()){
+            if (entry.getValue().getImposeLabel(labelName) != null)
+                return entry.getValue().getImposeLabel(labelName);
+        }
+
+        return null;
+    }
 
     public Label getSetLabel(String labelName){
 
@@ -223,11 +234,10 @@ public class RIIF2Recorder implements Recorder, Serializable {
         this.print();
     }
 
-    public void print(){
+    private void print(){
         this.parameters.forEach(Parameter::print);
         this.constants.forEach(Constant::print);
         this.failModes.forEach(FailMode::print);
         this.childComponents.forEach(ChildComponent::print);
     }
-
 }

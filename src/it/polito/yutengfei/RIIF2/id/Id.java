@@ -1,7 +1,6 @@
 package it.polito.yutengfei.RIIF2.id;
 
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;

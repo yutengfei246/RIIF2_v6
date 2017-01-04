@@ -33,4 +33,5 @@ public class RIIF2Grammar {;
     public static final String ASSIGNMENT = "assignment-declaration";
     public static final String SET = "set-declaration";
     public static final String IMPOSE = "impose-declaration";
+    public static final String RATE = "rate";
 }

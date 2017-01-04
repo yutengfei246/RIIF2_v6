@@ -1,13 +1,13 @@
 package it.polito.yutengfei.RIIF2.recoder;
 
 import java.io.*;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public interface Repository {
     /*Repository ...*/
-    Map<String,Recorder> tempRecorderMap = new HashMap<>();
-    Map<String,Recorder> componentRecorderMap = new HashMap<>();
+    Map<String,Recorder> tempRecorderMap = new LinkedHashMap<>();
+    Map<String,Recorder> componentRecorderMap = new LinkedHashMap<>();
 
     static void putTemp(String key, Recorder value){
         tempRecorderMap.put(key,value);
@@ -41,6 +41,13 @@ public interface Repository {
         return DeepCopy.copy(getRecorderFromComponentRepository(key));
     }
 
+    static Map<String,Recorder> getTemplateRepository(){
+        return tempRecorderMap;
+    }
+
+    static Map<String,Recorder> getComponentRepository(){
+        return componentRecorderMap;
+    }
 
     class DeepCopy{
 

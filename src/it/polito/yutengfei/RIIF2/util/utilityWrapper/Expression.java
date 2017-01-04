@@ -293,5 +293,18 @@ public class Expression implements Initializer {
     }
 
 
+    @Override
+    public void addItem(Object item) {
 
+    }
+
+    @Override
+    public Object getItem(int index) {
+        return null;
+    }
+
+    @Override
+    public LinkedList getInitializer() {
+        return null;
+    }
 }

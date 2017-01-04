@@ -43,7 +43,7 @@ public class ComponentParser extends DeclaratorParser {
 
     @Override
     public void exitExtendsList(RIIF2Parser.ExtendsListContext ctx) {
-        this.componentFactory.commitImplEx();
+        this.componentFactory.commitFactory();
     }
 
     @Override
@@ -61,7 +61,7 @@ public class ComponentParser extends DeclaratorParser {
 
     @Override
     public void exitImplementsList(RIIF2Parser.ImplementsListContext ctx) {
-        this.componentFactory.commitImplEx();
+        this.componentFactory.commitFactory();
     }
 
     @Override
@@ -77,7 +77,7 @@ public class ComponentParser extends DeclaratorParser {
         Declarator fieldDeclarator = getDeclarator( ctx.fieldDeclaratorType() );
 
         this.componentFactory.setFieldType( fieldType );
-        this.componentFactory.setFieldDeclarator( fieldDeclarator );
+        this.componentFactory.setDeclarator( fieldDeclarator );
     }
 
     @Override
@@ -89,7 +89,7 @@ public class ComponentParser extends DeclaratorParser {
     public void exitChildComponentDeclaration(RIIF2Parser.ChildComponentDeclarationContext ctx) {
 
         Declarator ccDeclarator = getDeclarator(ctx.childComponentDeclarator());
-        this.componentFactory.setCCDeclarator( ccDeclarator );
+        this.componentFactory.setDeclarator( ccDeclarator );
     }
 
     @Override
@@ -101,7 +101,7 @@ public class ComponentParser extends DeclaratorParser {
     public void exitFailModeDeclaration(RIIF2Parser.FailModeDeclarationContext ctx) {
 
         Declarator fmDeclarator = getDeclarator(ctx.failModeDeclarator());
-        this.componentFactory.setFailModeDeclarator( fmDeclarator );
+        this.componentFactory.setDeclarator( fmDeclarator );
     }
 
     @Override
@@ -113,7 +113,7 @@ public class ComponentParser extends DeclaratorParser {
     public void exitAssignmentDeclaration(RIIF2Parser.AssignmentDeclarationContext ctx) {
 
         Declarator assignmentDeclarator = getDeclarator(ctx.aisDeclarator());
-        this.componentFactory.setAISDeclarator( assignmentDeclarator );
+        this.componentFactory.setDeclarator( assignmentDeclarator );
     }
 
     @Override
@@ -125,22 +125,12 @@ public class ComponentParser extends DeclaratorParser {
     public void exitSetDeclaration(RIIF2Parser.SetDeclarationContext ctx) {
 
         Declarator setDeclarator = getDeclarator(ctx.aisDeclarator());
-        this.componentFactory.setAISDeclarator( setDeclarator );
+        this.componentFactory.setDeclarator( setDeclarator );
     }
 
     @Override
     public void exitComponentBodyElement(RIIF2Parser.ComponentBodyElementContext ctx) {
-
-        if (ctx.fieldDeclaration() != null)
-            this.componentFactory.commitField();
-        if (ctx.childComponentDeclaration() != null)
-            this.componentFactory.commitCC();
-        if (ctx.failModeDeclaration() != null)
-            this.componentFactory.commitFM();
-        if (ctx.assignmentDeclaration() != null)
-            this.componentFactory.commitAIS();
-        if (ctx.setDeclaration() != null)
-            this.componentFactory.commitAIS();
+        this.componentFactory.commitFactory();
     }
 
     @Override

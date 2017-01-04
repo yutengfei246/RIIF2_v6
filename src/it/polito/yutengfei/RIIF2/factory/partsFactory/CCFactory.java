@@ -27,7 +27,6 @@ public class CCFactory implements Factory {
     public CCFactory(ComponentFactory componentFactory, RIIF2Recorder recorder) {
         this.componentFactory = componentFactory;
         this.recorder = recorder;
-        this.initializer();
     }
 
     private void initializer() {
@@ -45,12 +44,15 @@ public class CCFactory implements Factory {
         if ( !Repository.containsComponent(typeCcId))
             throw new SomeVariableMissingException();
 
+        RIIF2Recorder recorder
+                = (RIIF2Recorder) Repository.getDeepCopedRecorderFromComponentRepository( typeCcId );
+
         String id = declaratorId.getId();
         /* child_component cc cc1 */
         /* child_component cc cc1[] */
         /* child_component cc cc1[1:6] */
         if ( !declaratorId.hasAssociativeIndex()  ) {
-            this.createCCLabel(id);
+            this.createCCLabel(id,recorder);
 
             if (declaratorId.hasTypeType()) {
                 RIIF2Type typeType = declaratorId.getTypeType();
@@ -70,11 +72,12 @@ public class CCFactory implements Factory {
                 throw new SomeVariableMissingException();
 
             this.ccLabel = this.recorder.getChildComponent(id);
-            this.newChildComponentIndex();
+            this.newChildComponentIndex(recorder);
         }
     }
 
-    private void newChildComponentIndex() throws SomeVariableMissingException {
+    private void newChildComponentIndex(RIIF2Recorder recorder)
+            throws SomeVariableMissingException {
 
             Id associativeIndex = declaratorId.getAssociativeIndex();
             String id = associativeIndex.getId();
@@ -86,20 +89,22 @@ public class CCFactory implements Factory {
             ChildComponent childComponent = new ChildComponent();
             childComponent.setType(RIIF2Grammar.TYPE_CC);
             childComponent.setName( id );
-
+            childComponent.setValue(recorder);
             this.ccLabel.putAssoc(id, childComponent);
 
     }
 
-    private void createCCLabel(String id) {
+    private void createCCLabel(String id, RIIF2Recorder recorder) {
         this.ccLabel = new ChildComponent();
 
         this.ccLabel.setName(id);
         this.ccLabel.setType(RIIF2Grammar.TYPE_CC);
+        this.ccLabel.setValue(recorder);
     }
 
     @Override
     public void commit() throws SomeVariableMissingException, VeriableAlreadyExistException {
+        this.initializer();
         this.childComponentDeclarator();
     }
 }

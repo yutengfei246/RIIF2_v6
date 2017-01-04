@@ -9,12 +9,12 @@ public class DeclaratorId{
     private Id primitiveId;
 
     private RIIF2Type typeType = null;
-    private RIIF2Type aisType;
+    private RIIF2Type aisType = null ;
 
     private Id attributeIndex = null;
     private Id associativeIndex = null;
     private Id tableId = null;
-    private Id hierPostfix;
+    private Id hierPostfix= null;
 
 
     public void setTypeType(RIIF2Type typeType) {
@@ -91,5 +91,13 @@ public class DeclaratorId{
 
     public Id getHierPostfix() {
         return hierPostfix;
+    }
+
+    public boolean hasAisType() {
+        return this.aisType == null ? false : true;
+    }
+
+    public Boolean hasHierPostfix(){
+        return this.hierPostfix == null ? false : true;
     }
 }
