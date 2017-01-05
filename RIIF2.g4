@@ -228,7 +228,7 @@ aisInitializer
 
 primitiveFieldDeclaratorId
     : Identifier ( typeType ) ? ( attributeIndex ) ? #primitiveFieldDeclaratorId1
-    | Identifier associativeIndex attributeIndex ? #primitiveFieldDeclaratorId2
+    | Identifier associativeIndex attributeIndex  #primitiveFieldDeclaratorId2
     ;
 
 associativeIndexDeclaratorId
@@ -250,7 +250,7 @@ childComponentDeclaratorId
 
 failModeDeclaratorId
     : Identifier ( typeType ) ? ( attributeIndex) ? #failModeDeclaratorId1
-    | Identifier associativeIndex attributeIndex ? #failModeDeclaratorId2
+    | Identifier associativeIndex attributeIndex ?  #failModeDeclaratorId2
     ;
 
 aisDeclaratorId

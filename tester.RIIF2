@@ -24,6 +24,7 @@ parameter myAssoc1[] : float := [ "assoc1", "assoc2" ] ;
 parameter myArray[1:6] : integer := [1,2,3,4,5,6];
 parameter my2Array[2:2] : integer := { [7,8],
                                        [9,0] };
+parameter myAssoc[first] ;
 child_component tester cc1;
 
 fail_mode fm;
