@@ -317,6 +317,8 @@ abstract class InitializerParser extends ExpressionParser {
         }
         if (ctx.listInitializer() != null)
             initializer = getListInitializer();
+        if (ctx.arrayInitializer() != null)
+            initializer = getArrayInitializer();
 
         this.putInitializer(ctx,initializer);
     }

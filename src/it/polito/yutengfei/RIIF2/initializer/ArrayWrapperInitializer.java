@@ -20,4 +20,9 @@ public class ArrayWrapperInitializer implements Initializer<ArrayInitializer>{
     public LinkedList<ArrayInitializer> getInitializer() {
         return this.initializer;
     }
+
+    @Override
+    public int size() {
+        return this.initializer.size();
+    }
 }

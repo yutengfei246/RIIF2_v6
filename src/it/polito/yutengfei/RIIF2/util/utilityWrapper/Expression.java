@@ -304,6 +304,11 @@ public class Expression implements Initializer {
     }
 
     @Override
+    public int size() {
+        return 0;
+    }
+
+    @Override
     public LinkedList getInitializer() {
         return null;
     }

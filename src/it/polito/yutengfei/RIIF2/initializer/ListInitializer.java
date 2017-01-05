@@ -21,4 +21,8 @@ public class ListInitializer implements Initializer<String>{
         return this.initializer;
     }
 
+    @Override
+    public int size() {
+        return this.initializer.size();
+    }
 }

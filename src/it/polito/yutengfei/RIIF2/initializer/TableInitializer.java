@@ -22,4 +22,9 @@ public class TableInitializer implements Initializer<Row> {
     public LinkedList<Row> getInitializer() {
         return this.initializer;
     }
+
+    @Override
+    public int size() {
+        return this.initializer.size();
+    }
 }

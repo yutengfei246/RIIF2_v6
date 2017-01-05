@@ -18,9 +18,22 @@ endcomponent
 
 component tester1 extends tester, testercc implements testt;
 parameter myString: String := "my tester1";
+parameter myList := { this ,is ,a ,list } ;
+parameter myAssoc[] :float ;
+parameter myAssoc1[] : float := [ "assoc1", "assoc2" ] ;
+parameter myArray[1:6] : integer := [1,2,3,4,5,6];
+parameter my2Array[2:2] : integer := { [7,8],
+                                       [9,0] };
+child_component tester cc1;
+
+fail_mode fm;
+
+assign cc1.tmLine = 100000;
+assign testercc.cc1.tmLine = 200000;
 assign mfloat = 100.0;
 assign tester.fm'rate = 10;
 assign tester.fm'description = "my first failmode tester ";
 assign cc.mfloat = 1000.0;
 set mtt2 = 10.0;
+
 endcomponent

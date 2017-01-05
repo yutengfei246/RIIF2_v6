@@ -17,6 +17,8 @@ public abstract class Label<T> implements Serializable {
     private Object value;
 
     private int vectorLength;
+    private int vectorLeft;
+    private int vectorRight;
 
 
     public Boolean isAssociative() {
@@ -65,6 +67,22 @@ public abstract class Label<T> implements Serializable {
 
     void setVectorLength(int vectorLength) {
         this.vectorLength = vectorLength;
+    }
+
+    void setVectorLeft(int vectorLeft) {
+        this.vectorLeft = vectorLeft;
+    }
+
+    void setVectorRight(int vectorRight){
+        this.vectorRight = vectorRight;
+    }
+
+    public int getVectorLeft() {
+        return this.vectorLeft;
+    }
+
+    public int getVectorRight() {
+        return this.vectorRight;
     }
 
     public Object getValue(){

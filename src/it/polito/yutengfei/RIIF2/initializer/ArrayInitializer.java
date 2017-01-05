@@ -19,7 +19,14 @@ public class ArrayInitializer implements Initializer<Expression>{
     }
 
     @Override
+    public int size() {
+        return this.initializer.size();
+    }
+
+    @Override
     public LinkedList<Expression> getInitializer() {
         return this.initializer;
     }
+
+
 }

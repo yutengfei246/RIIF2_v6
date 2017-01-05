@@ -44,6 +44,8 @@ public class Parameter extends Label<Parameter> {
         exp = vector.getRight();
         int right = (int) exp.getValue();
 
+        super.setVectorLeft(left);
+        super.setVectorRight(right);
         super.setVectorLength( left * right);
 
         this.vectorValue = new LinkedList<>();
@@ -100,6 +102,20 @@ public class Parameter extends Label<Parameter> {
             this.attributeMap.forEach((s, attribute) ->
                 System.out.println("Attribute : " + s  + attribute.print())
             );
+        }
+
+        if (this.assocs != null && this.assocs.size() != 0){
+            System.out.println("--assoc--");
+            this.assocs.forEach((s, parameter) -> {
+                parameter.print();
+            });
+            System.out.println("--assoc end--");
+        }
+
+        if (this.vectorValue != null && this.vectorValue.size() != 0 ){
+            System.out.println("--vector--");
+            this.vectorValue.forEach(Parameter::print);
+            System.out.println("--vector end ");
         }
     }
 

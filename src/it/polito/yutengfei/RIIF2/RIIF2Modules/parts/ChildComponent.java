@@ -97,6 +97,11 @@ public class ChildComponent extends Label<ChildComponent> {
                         entry.getValue().getName() + "]" );
             }
         }
+
+        RIIF2Recorder value = (RIIF2Recorder) this.getValue();
+        if (value != null ){
+            value.print8();
+        }
     }
 
 
