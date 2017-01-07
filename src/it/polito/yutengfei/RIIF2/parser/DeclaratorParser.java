@@ -138,23 +138,6 @@ abstract class DeclaratorParser extends InitializerParser {
         Initializer initializer = getInitializer(ctx.aisInitializer());
         aisDeclarator.setInitializer( initializer );
 
-        RIIF2Type type;
-
-        if (ctx.aisType() != null ){
-            type = getRIIF2Type( ctx.aisType() );
-            aisDeclarator.setAisType( type );
-        }
-        if (ctx.associativeIndex() !=null ){
-            type = getRIIF2Type( ctx.associativeIndex());
-            aisDeclarator.setAssociativeIndex( type );
-        }
-        if (ctx.attributeIndex() != null){
-            type = getRIIF2Type( ctx.attributeIndex() );
-            aisDeclarator.setAttributeIndex( type );
-        }
-
         this.putDeclarator(ctx, aisDeclarator );
     }
-
-
 }

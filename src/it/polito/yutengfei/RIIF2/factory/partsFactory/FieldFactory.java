@@ -189,6 +189,28 @@ public class FieldFactory implements Factory{
         /* need to add predefined attributes*/
         this.createFieldLabel();
         this.recorder.addLabel(this.fieldLabel);
+        this.setTableValue();
+    }
+
+    private void setTableValue() {
+        /* set the pre-defined attributes Item and Header to the label */
+
+        Attribute attribute
+                = this.createAttribute(RIIF2Grammar.HEADER,RIIF2Grammar.LIST,null);
+        this.fieldLabel.putAttribute(RIIF2Grammar.HEADER, attribute);
+
+        attribute =
+                this.createAttribute(RIIF2Grammar.ITEMS, RIIF2Grammar.JSON, null);
+        this.fieldLabel.putAttribute(RIIF2Grammar.ITEMS, attribute);
+    }
+
+    private Attribute createAttribute(String Id , String type, String value) {
+        Attribute attribute = new Attribute();
+        attribute.setId(Id);
+        attribute.setType(type);
+        attribute.setValue(value);
+
+        return attribute;
     }
 
     /*Identifier [ associativeIndex] := Initializer ? */

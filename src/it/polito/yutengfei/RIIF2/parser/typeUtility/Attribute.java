@@ -34,6 +34,6 @@ public class Attribute {
     }
 
     public String  print() {
-        return (this.getId() + " -Type : " + this.getType() + " -value :" + this.getValue().toString() );
+        return (this.getId() + " -Type : " + this.getType() + " -value :" + this.getValue() );
     }
 }

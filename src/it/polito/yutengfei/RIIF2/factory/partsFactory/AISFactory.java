@@ -55,7 +55,6 @@ public class AISFactory implements Factory{
             throws FieldTypeNotMarchException, SomeVariableMissingException {
 
         if (this.primitiveId != null ) {
-
             this.getAisLabel();
             this.newAISDeclarator();
         }
@@ -66,7 +65,9 @@ public class AISFactory implements Factory{
         }
     }
 
-    private void newAISDeclarator() throws FieldTypeNotMarchException, SomeVariableMissingException {
+    /*declaratorId :: primitiveId (aisType|associativeIndex) ? hierPostfix ? attributeIndex?*/
+    private void newAISDeclarator()
+            throws FieldTypeNotMarchException, SomeVariableMissingException {
          /*vector or associative*/
         if (this.declaratorId.hasAisType()) {
             RIIF2Type aisType = this.declaratorId.getAisType();
@@ -123,7 +124,8 @@ public class AISFactory implements Factory{
 
     }
 
-    private void getAisLabel() throws SomeVariableMissingException, FieldTypeNotMarchException {
+    private void getAisLabel()
+            throws SomeVariableMissingException, FieldTypeNotMarchException {
 
         String labelName = primitiveId.getId();
 

@@ -35,4 +35,7 @@ public class RIIF2Grammar {;
     public static final String IMPOSE = "impose-declaration";
     public static final String RATE = "rate";
     public static final String LIST = "list";
+    public static final String HEADER = "header";
+    public static final String ITEMS = "items";
+    public static final String JSON = "json";
 }

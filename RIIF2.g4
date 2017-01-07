@@ -167,8 +167,6 @@ failModeDeclarator
 
 aisDeclarator
     : aisDeclaratorId
-      ( aisType | associativeIndex ) ?
-      ( attributeIndex ) ?
       '=' aisInitializer
     ;
 
