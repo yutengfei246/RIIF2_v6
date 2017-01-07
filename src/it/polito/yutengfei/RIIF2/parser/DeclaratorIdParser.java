@@ -158,7 +158,7 @@ abstract class DeclaratorIdParser extends IdParser {
     }
 
     @Override
-    public void exitAisDeclaratorId1(RIIF2Parser.AisDeclaratorId1Context ctx) {
+    public void exitAisDeclaratorId(RIIF2Parser.AisDeclaratorIdContext ctx) {
         DeclaratorId identifier = new DeclaratorId();
 
         Id primitiveId = getId(ctx.primitiveId());
@@ -168,28 +168,25 @@ abstract class DeclaratorIdParser extends IdParser {
             RIIF2Type type = getRIIF2Type( ctx.aisType() );
             identifier.setAisType( type );
         }
-        if (ctx.associativeIndex() != null){
-            Id id = getId(ctx.associativeIndex());
+
+        Id id ;
+
+        if (ctx.associativeIndex() != null ){
+            id = getId(ctx.associativeIndex());
             identifier.setAssociativeIndex( id );
         }
-        if (ctx.hierPostfix() != null ) {
-            Id id = getId(ctx.hierPostfix());
+        if (ctx.hierPostfix() != null ){
+            id = getId(ctx.hierPostfix());
             identifier.setHierPostfix(id);
         }
         if (ctx.attributeIndex() != null ){
-            Id id = getId(ctx.attributeIndex());
+            id = getId(ctx.attributeIndex());
             identifier.setAttributeIndex(id);
         }
-
+        if (ctx.tableIndex() != null ){
+            id = getId(ctx.tableIndex());
+            identifier.setTableIndex(id);
+        }
         this.putDeclaratorId(ctx,identifier);
-    }
-
-    @Override
-    public void exitAisDeclaratorId2(RIIF2Parser.AisDeclaratorId2Context ctx) {
-        DeclaratorId identifier = new DeclaratorId();
-
-        Id id = getId(ctx.tableId());
-        identifier.setTableId( id );
-        this.putDeclaratorId(ctx, identifier);
     }
 }

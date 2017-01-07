@@ -45,6 +45,12 @@ public class Id {
         this.yy = identifier2;
     }
 
+    public Id(String table, String identifier1, String identifier2) {
+        this.type = table;
+        this.xx = identifier1;
+        this.yy = identifier2;
+    }
+
     public static Id associativeIndex(String identifier) {
         return new Id(RIIF2Grammar.TYPE_ASSOCIATIVE_INDEX,identifier);
     }
@@ -75,6 +81,10 @@ public class Id {
 
     public static Id tableId(Id attributeId, String identifier1, String identifier2) {
         return new Id(RIIF2Grammar.TABLE,attributeId,identifier1,identifier2);
+    }
+
+    public static Id tableId(String identifier1, String identifier2) {
+        return new Id(RIIF2Grammar.TABLE, identifier1, identifier2 );
     }
 
     private Id addAttributeIndex(Id attributeIndex) {

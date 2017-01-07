@@ -254,8 +254,7 @@ failModeDeclaratorId
 aisDeclaratorId
     : primitiveId /* hier id */
       ( aisType | associativeIndex ) ?
-      ( hierPostfix ) ? attributeIndex ? #aisDeclaratorId1
-    | tableId #aisDeclaratorId2
+      ( hierPostfix ) ? attributeIndex ? tableIndex ?
     ;
 
 // §RIIF-2 version 6 Id
@@ -287,6 +286,10 @@ attributeIndex
 
 associativeIndex
     : '[' Identifier ']'
+    ;
+
+tableIndex
+    : '[' ('#' | Identifier) ']' '[' Identifier ']'
     ;
 
 hierPostfix

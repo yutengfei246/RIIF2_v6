@@ -6,7 +6,6 @@ import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 
 import java.io.Serializable;
 
-
 public abstract class Label<T> implements Serializable {
 
     private Boolean associative = false;

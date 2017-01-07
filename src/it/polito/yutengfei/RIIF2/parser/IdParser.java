@@ -164,4 +164,29 @@ abstract class IdParser extends TypeParser {
             this.putId(ctx,id);
         }
     }
+
+    @Override
+    public void exitTableIndex(RIIF2Parser.TableIndexContext ctx) {
+
+        Id id;
+
+        List<TerminalNode> Identifiers = ctx.Identifier();
+
+        if (Identifiers.size() == 1){
+            TerminalNode Identifier = ctx.Identifier(0);
+            String identifier = Identifier.getText();
+
+            id = Id.tableId("#", identifier);
+        }else {
+            TerminalNode Identifier1 = ctx.Identifier(0);
+            TerminalNode Identifier2 = ctx.Identifier(1);
+
+            String identifier1 = Identifier1.getText();
+            String identifier2 = Identifier2.getText();
+
+            id = Id.tableId(identifier1, identifier2);
+        }
+
+        this.putId(ctx,id);
+    }
 }

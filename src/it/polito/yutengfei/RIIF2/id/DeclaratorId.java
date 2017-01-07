@@ -15,6 +15,7 @@ public class DeclaratorId{
     private Id associativeIndex = null;
     private Id tableId = null;
     private Id hierPostfix= null;
+    private Id tableIndex;
 
 
     public void setTypeType(RIIF2Type typeType) {
@@ -99,5 +100,17 @@ public class DeclaratorId{
 
     public Boolean hasHierPostfix(){
         return this.hierPostfix == null ? false : true;
+    }
+
+    public void setTableIndex(Id tableIndex) {
+        this.tableIndex = tableIndex;
+    }
+
+    public Id getTableIndex(){
+        return this.tableIndex;
+    }
+
+    public boolean hasTableIndex() {
+        return this.tableIndex == null ? false : true ;
     }
 }

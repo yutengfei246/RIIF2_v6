@@ -652,25 +652,13 @@ public class RIIF2BaseListener implements RIIF2Listener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAisDeclaratorId1(RIIF2Parser.AisDeclaratorId1Context ctx) { }
+	@Override public void enterAisDeclaratorId(RIIF2Parser.AisDeclaratorIdContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitAisDeclaratorId1(RIIF2Parser.AisDeclaratorId1Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterAisDeclaratorId2(RIIF2Parser.AisDeclaratorId2Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAisDeclaratorId2(RIIF2Parser.AisDeclaratorId2Context ctx) { }
+	@Override public void exitAisDeclaratorId(RIIF2Parser.AisDeclaratorIdContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -767,6 +755,18 @@ public class RIIF2BaseListener implements RIIF2Listener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitAssociativeIndex(RIIF2Parser.AssociativeIndexContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterTableIndex(RIIF2Parser.TableIndexContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitTableIndex(RIIF2Parser.TableIndexContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -340,19 +340,11 @@ public interface RIIF2Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFailModeDeclaratorId2(RIIF2Parser.FailModeDeclaratorId2Context ctx);
 	/**
-	 * Visit a parse tree produced by the {@code aisDeclaratorId1}
-	 * labeled alternative in {@link RIIF2Parser#aisDeclaratorId}.
+	 * Visit a parse tree produced by {@link RIIF2Parser#aisDeclaratorId}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAisDeclaratorId1(RIIF2Parser.AisDeclaratorId1Context ctx);
-	/**
-	 * Visit a parse tree produced by the {@code aisDeclaratorId2}
-	 * labeled alternative in {@link RIIF2Parser#aisDeclaratorId}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAisDeclaratorId2(RIIF2Parser.AisDeclaratorId2Context ctx);
+	T visitAisDeclaratorId(RIIF2Parser.AisDeclaratorIdContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code primitiveIdId}
 	 * labeled alternative in {@link RIIF2Parser#primitiveId}.
@@ -405,6 +397,12 @@ public interface RIIF2Visitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitAssociativeIndex(RIIF2Parser.AssociativeIndexContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link RIIF2Parser#tableIndex}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTableIndex(RIIF2Parser.TableIndexContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link RIIF2Parser#hierPostfix}.
 	 * @param ctx the parse tree

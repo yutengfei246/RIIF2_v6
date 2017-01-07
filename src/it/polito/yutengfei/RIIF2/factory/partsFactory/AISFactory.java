@@ -8,9 +8,7 @@ import it.polito.yutengfei.RIIF2.factory.ComponentFactory;
 import it.polito.yutengfei.RIIF2.factory.Factory;
 import it.polito.yutengfei.RIIF2.id.DeclaratorId;
 import it.polito.yutengfei.RIIF2.id.Id;
-import it.polito.yutengfei.RIIF2.initializer.ArrayInitializer;
-import it.polito.yutengfei.RIIF2.initializer.Initializer;
-import it.polito.yutengfei.RIIF2.initializer.ListInitializer;
+import it.polito.yutengfei.RIIF2.initializer.*;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.RIIF2Type;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
@@ -65,7 +63,8 @@ public class AISFactory implements Factory{
         }
     }
 
-    /*declaratorId :: primitiveId (aisType|associativeIndex) ? hierPostfix ? attributeIndex?*/
+    /*declaratorId
+    :: primitiveId (aisType|associativeIndex) ? hierPostfix ? attributeIndex?*/
     private void newAISDeclarator()
             throws FieldTypeNotMarchException, SomeVariableMissingException {
          /*vector or associative*/
@@ -256,6 +255,28 @@ public class AISFactory implements Factory{
         if (attribute == null) {
             attribute = createAttribute(attributeIndex);
             this.aisLabel.putAttribute(attributeIndex,attribute);
+        }else {
+
+            if (attributeIndex.equals( RIIF2Grammar.HEADER) ){
+
+                if ( ! (this.initializer instanceof ListInitializer) )
+                    throw new FieldTypeNotMarchException();
+
+                ListInitializer listInitializer =
+                        (ListInitializer) this.initializer;
+
+                this.aisLabel.setValue( listInitializer.getInitializer() );
+            }
+
+            if (attributeIndex.equals( RIIF2Grammar.ITEMS) ){
+                if ( ! (this.initializer instanceof TableInitializer) )
+                    throw new FieldTypeNotMarchException();
+
+                TableInitializer tableInitializer
+                        = (TableInitializer) this.initializer;
+
+                this.aisLabel.setValue( tableInitializer.getInitializer() );
+            }
         }
 
         this.initialAttribute(attribute);

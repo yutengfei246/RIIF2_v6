@@ -7,6 +7,9 @@ public class RowItem {
     public static final int LIST_STRING = 0;
     public static final int EXPRESSION = 1;
 
+    private Object value;
+    private int type;
+
     public Object getValue() {
         return value;
     }
@@ -14,9 +17,6 @@ public class RowItem {
     public int getType() {
         return type;
     }
-
-    private Object value;
-    private int type;
 
     public void setType(int type) {
         this.type = type;
