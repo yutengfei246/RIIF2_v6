@@ -3,6 +3,7 @@ package it.polito.yutengfei.RIIF2.factory.partsFactory;
 
 import it.polito.yutengfei.RIIF2.Declarator.AisDeclarator;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.ChildComponent;
+import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Item;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Label;
 import it.polito.yutengfei.RIIF2.factory.ComponentFactory;
 import it.polito.yutengfei.RIIF2.factory.Factory;
@@ -15,7 +16,10 @@ import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
+import it.polito.yutengfei.RIIF2.util.utilityWrapper.Row;
+import it.polito.yutengfei.RIIF2.util.utilityWrapper.RowItem;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -120,7 +124,6 @@ public class AISFactory implements Factory{
                     this.setPureValue();
             }
         }
-
     }
 
     private void getAisLabel()
@@ -265,20 +268,91 @@ public class AISFactory implements Factory{
                 ListInitializer listInitializer =
                         (ListInitializer) this.initializer;
 
-                this.aisLabel.setValue( listInitializer.getInitializer() );
+                attribute.setValue( listInitializer.getInitializer() );
             }
 
             if (attributeIndex.equals( RIIF2Grammar.ITEMS) ){
-                if ( ! (this.initializer instanceof TableInitializer) )
+                if ( ! (this.initializer instanceof TableInitializer)
+                        && ! (this.initializer instanceof ArrayWrapperInitializer))
                     throw new FieldTypeNotMarchException();
 
-                TableInitializer tableInitializer
-                        = (TableInitializer) this.initializer;
+                if (this.initializer instanceof TableInitializer) {
+                    TableInitializer tableInitializer
+                            = (TableInitializer) this.initializer;
 
-                this.aisLabel.setValue( tableInitializer.getInitializer() );
+                    List<Item> items = new LinkedList<>();
+                    tableInitializer.getInitializer()
+                            .forEach(row -> {
+
+                                Item item = new Item();
+                                if (row.getType() == Row.EXPRESSION) {
+                                    Expression expression
+                                            = (Expression) row.getValue();
+                                    ArrayInitializer arrayInitializer
+                                            = (ArrayInitializer) expression.getValue();
+                                    List<Expression> initializer
+                                            = arrayInitializer.getInitializer();
+
+                                    initializer.forEach(expression1 -> {
+                                        Item.UnitItem unitItem
+                                                = item.createUnitItem(expression1.getType(), expression1.getValue());
+                                        item.addUnitItem(unitItem);
+                                    });
+                                }
+
+                                if (row.getType() == Row.ROW_ITEMS_ARRAY) {
+                                    List<RowItem> rowItems
+                                            = (List<RowItem>) row.getValue();
+
+                                    rowItems.forEach(rowItem -> {
+
+                                        String unitItemType = null;
+                                        Object unitItemValue = null;
+                                        if (rowItem.getType() == RowItem.EXPRESSION) {
+                                            Expression expression
+                                                    = (Expression) rowItem.getValue();
+                                            unitItemType = expression.getType();
+                                            unitItemValue = expression.getValue();
+                                        }
+
+                                        if (rowItem.getType() == RowItem.LIST_STRING) {
+                                            ListInitializer listInitializer
+                                                    = (ListInitializer) rowItem.getValue();
+                                            unitItemType = RIIF2Grammar.LIST;
+                                            unitItemValue = listInitializer.getInitializer();
+                                        }
+                                        Item.UnitItem unitItem
+                                                = item.createUnitItem(unitItemType, unitItemValue);
+                                        item.addUnitItem(unitItem);
+                                    });
+                                }
+                                items.add(item);
+                            });
+                    attribute.setValue(items);
+                }
+
+                if (this.initializer instanceof ArrayWrapperInitializer){
+                    ArrayWrapperInitializer arrayWrapperInitializer
+                            = (ArrayWrapperInitializer) this.initializer;
+
+                    List<Item> items = new LinkedList<>();
+                    List<ArrayInitializer> arrayInitializers = arrayWrapperInitializer.getInitializer();
+                    arrayInitializers.forEach(arrayInitializer -> {
+
+                        Item item = new Item();
+                        List<Expression> expressions = arrayInitializer.getInitializer();
+                        expressions.forEach(expression -> {
+                            Item.UnitItem unitItem
+                                    = item.createUnitItem(expression.getType(), expression.getValue());
+                            item.addUnitItem(unitItem);
+                        });
+
+                        items.add(item);
+                    });
+                    attribute.setValue(items);
+                }
             }
         }
-
         this.initialAttribute(attribute);
     }
 

@@ -26,6 +26,9 @@ parameter my2Array[2:2] : integer := { [7,8],
                                        [9,0] };
 parameter myAssoc[first] ;
 parameter myTable : table ;
+assign myTable'header = {header1, header2} ;
+assign myTable'items = {["header1","header2"], ["header11", {1,2,3,4}]};
+assign myTable'items = {["header1", "header2"],["header11", "header22"]};
 child_component tester cc1;
 
 fail_mode fm;

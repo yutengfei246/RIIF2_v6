@@ -41,7 +41,7 @@ abstract class InitializerParser extends ExpressionParser {
 
     private void cleanListInitializer(){
         this.listItemTree = new ParseTreeProperty<>();
-        this.listItemTree = null;
+        this.listInitializer = null ;
     }
 
     @Override
