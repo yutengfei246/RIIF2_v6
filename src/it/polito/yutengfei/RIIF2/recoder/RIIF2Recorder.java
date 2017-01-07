@@ -227,6 +227,11 @@ public class RIIF2Recorder implements Recorder, Serializable {
         return new RIIF2Recorder();
     }
 
+    @Override
+    public void javaBean() {
+
+    }
+
 
     public void print8(){
         this.implRecorderMap.forEach((s, riif2Recorder) -> riif2Recorder.print8());

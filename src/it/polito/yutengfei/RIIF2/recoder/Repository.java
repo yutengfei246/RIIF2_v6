@@ -49,9 +49,18 @@ public interface Repository {
         return componentRecorderMap;
     }
 
+
+    /* the method for generating the class , each class has the name that stored in recorder*/
+    static void generateJavaBean() {
+        System.out.println("Generating template class ");
+        tempRecorderMap.forEach((s, recorder) -> recorder.javaBean() );
+        System.out.println("Generating component class");
+        componentRecorderMap.forEach((s, recorder) -> recorder.javaBean());
+    }
+
     class DeepCopy{
 
-        public static Recorder copy(Recorder orig) {
+        static Recorder copy(Recorder orig) {
             Recorder obj = null;
             try {
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();

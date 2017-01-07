@@ -1,7 +1,6 @@
 package it.polito.yutengfei.RIIF2.recoder;
 
 public interface Recorder extends Repository{
-    RIIF2Recorder getRIIF2Recorder();
 
     static void record(Recorder recorder){
         if (recorder instanceof RIIF2Recorder){
@@ -9,4 +8,7 @@ public interface Recorder extends Repository{
             else Repository.putComponent(((RIIF2Recorder) recorder).getIdentifier(),recorder);
         }
     }
+
+    void javaBean();
+    RIIF2Recorder getRIIF2Recorder();
 }

@@ -187,9 +187,8 @@ public class FieldFactory implements Factory{
             throw new VeriableAlreadyExistException();
 
         /* need to add predefined attributes*/
-        this.createFieldLabel(this.fieldLabel);
+        this.createFieldLabel();
         this.recorder.addLabel(this.fieldLabel);
-        this.fieldLabel.setType(RIIF2Grammar.TABLE);
     }
 
     /*Identifier [ associativeIndex] := Initializer ? */

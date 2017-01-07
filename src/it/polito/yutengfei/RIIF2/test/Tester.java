@@ -75,6 +75,10 @@ public class Tester {
 
         //System.out.println(parseTree.toStringTree());
         System.out.println("Parser OK");
+
+        System.out.println("Going to generate the database which is the java bean class ");
+
+        Repository.generateJavaBean();
     }
 
 }

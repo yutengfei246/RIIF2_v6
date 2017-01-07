@@ -1,7 +1,6 @@
 package it.polito.yutengfei.RIIF2.factory;
 
 import it.polito.yutengfei.RIIF2.Declarator.Declarator;
-import it.polito.yutengfei.RIIF2.RIIF2Modules.Component;
 import it.polito.yutengfei.RIIF2.factory.partsFactory.*;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.RIIF2Type;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
@@ -9,8 +8,6 @@ import it.polito.yutengfei.RIIF2.recoder.Recorder;
 
 
 public class ComponentFactory {
-
-    private Component component = null;
 
     private Factory factory;
 

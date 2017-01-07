@@ -63,6 +63,11 @@ public class SLV extends RIIF2BaseVisitor<Boolean> implements Recorder{
     }
 
     @Override
+    public void javaBean() {
+
+    }
+
+    @Override
     public RIIF2Recorder getRIIF2Recorder() {
         return this.recorder;
     }
