@@ -49,7 +49,7 @@ abstract class ExpressionParser extends DeclaratorIdParser {
     public void exitLiteralFloatingPoint(RIIF2Parser.LiteralFloatingPointContext ctx) {
         Expression expression = new Expression();
 
-        double value = Double.valueOf( ctx.getText() );
+        Double value = Double.valueOf( ctx.getText() );
         expression.setType(RIIF2Grammar.DOUBLE);
         expression.setValue(value);
 

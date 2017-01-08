@@ -58,6 +58,14 @@ public class RIIF2Recorder implements Recorder, Serializable {
         return this.exRecorderMap.get(key);
     }
 
+    public Map<String,RIIF2Recorder> getExRecorderMap() {
+        return this.exRecorderMap;
+    }
+
+    public Map<String,RIIF2Recorder> getImplRecorderMap() {
+        return this.implRecorderMap;
+    }
+
     public void setPlatform(Platform platform) {
         this.platform = platform;
     }

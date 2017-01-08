@@ -227,7 +227,14 @@ public class AISFactory implements Factory{
 
         String id = primitiveId.getId();
         if (Objects.equals(primitiveId.getType(), RIIF2Grammar.TYPE_PRIMITIVE))
-            rtnLabel = this.recorder.getLabel(id);
+
+            rtnLabel = this.recorder.getLabel(id) != null
+                    ? this.recorder.getLabel(id)
+                    : this.recorder.getAssignmentLabel(id) != null
+                    ? this.recorder.getAssignmentLabel(id)
+                    : this.recorder.getImposeLabel(id) != null
+                    ? this.recorder.getImposeLabel(id)
+                    : null ;
 
         if (Objects.equals(primitiveId.getType(), RIIF2Grammar.TYPE_HIER)){
             List<Id> ids = primitiveId.hierPostfixIds();
@@ -304,6 +311,7 @@ public class AISFactory implements Factory{
         this.setPureValue();
     }
 
+    //TODO:: need to change !!! important
     private void setAttributeValue(String attributeIndex)
             throws FieldTypeNotMarchException {
 
@@ -313,6 +321,7 @@ public class AISFactory implements Factory{
         if (attribute == null) {
             attribute = createAttribute(attributeIndex);
             this.aisLabel.putAttribute(attributeIndex,attribute);
+            this.initialAttribute(attribute);
         }else {
 
             if (attributeIndex.equals( RIIF2Grammar.HEADER) ){
@@ -423,7 +432,7 @@ public class AISFactory implements Factory{
                     throw new FieldTypeNotMarchException();
             }
         }
-        this.initialAttribute(attribute);
+
     }
 
 
@@ -476,10 +485,10 @@ public class AISFactory implements Factory{
                 Label usedDefinedLabel = this.getUserDefinedLabel(expInitializer);
                 if (usedDefinedLabel == null )
                     throw new FieldTypeNotMarchException();
-
                 attribute.setValue( usedDefinedLabel.getValue());
             }
-            attribute.setValue( expInitializer.getValue() );
+            else
+                attribute.setValue( expInitializer.getValue() );
         }
 
     }

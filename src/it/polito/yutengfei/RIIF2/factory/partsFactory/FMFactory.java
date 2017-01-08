@@ -44,13 +44,26 @@ public class FMFactory implements Factory {
         String fmName = this.declaratorId.getId();
 
         /*fail_mode fm fail_mode fm[]  fail_mode[1:6] */
-        if ( !declaratorId.hasAttributeIndex() && !declaratorId.hasAssociativeIndex() ) {
+        if ( !declaratorId.hasAttributeIndex()
+                && !declaratorId.hasAssociativeIndex() ) {
 
             if (this.recorder.contains(fmName))
                 throw new VeriableAlreadyExistException();
 
             this.createFailMode(fmName);
             this.recorder.addLabel(this.fm);
+
+            if ( ! declaratorId.hasAttributeIndex() ){
+
+                Attribute attributeMin = this.createAttribute(RIIF2Grammar.MIN,RIIF2Grammar.DOUBLE,null);
+                Attribute attributeMax = this.createAttribute(RIIF2Grammar.MAX,RIIF2Grammar.DOUBLE,null);
+                Attribute attributeUnit = this.createAttribute(RIIF2Grammar.UNIT, RIIF2Grammar.USER_DEFINED,null);
+
+                this.fm.putAttribute(RIIF2Grammar.MAX,attributeMax);
+                this.fm.putAttribute(RIIF2Grammar.MIN,attributeMin);
+                this.fm.putAttribute(RIIF2Grammar.UNIT,attributeUnit);
+
+            }
         }else {
             /*other cases to search in recorder and add those properties into recorder*/
             if (!this.recorder.containsFailMode(fmName))
@@ -65,6 +78,14 @@ public class FMFactory implements Factory {
             this.newFailModeDeclarator1();
     }
 
+    private Attribute createAttribute(String Id , String type, String value) {
+        Attribute attribute = new Attribute();
+        attribute.setId(Id);
+        attribute.setType(type);
+        attribute.setValue(value);
+
+        return attribute;
+    }
     /*Identifier typeType ? attribute ?*/
     private void newFailModeDeclarator1() {
 

@@ -20,7 +20,7 @@ component tester1 extends tester, testercc implements testt;
 
 
 parameter myString: String := "my tester1";
-assign myString'min = tester.mfloat;
+assign myString'min = mfloat;
 
 parameter myList := { this ,is ,a ,list } ;
 parameter myAssoc[] :float ;
