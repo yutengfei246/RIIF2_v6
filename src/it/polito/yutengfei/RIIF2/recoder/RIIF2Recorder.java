@@ -176,7 +176,7 @@ public class RIIF2Recorder implements Recorder, Serializable {
                 .orElse(null);
     }
 
-    public Label getLabel(String labelName ){
+    public Label<Label> getLabel(String labelName ){
         return this.getParameter(labelName) != null
                 ? this.getParameter(labelName)
                 : this.getConstant(labelName) != null

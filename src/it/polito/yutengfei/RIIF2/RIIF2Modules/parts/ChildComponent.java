@@ -7,10 +7,10 @@ import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 
 import java.util.*;
 
-public class ChildComponent extends Label<ChildComponent> {
+public class ChildComponent extends Label<Label> {
 
-    private LinkedList<ChildComponent> vectorValue = null ;
-    private Map<String,ChildComponent> assocs = null;
+    private LinkedList<Label> vectorValue = null ;
+    private Map<String,Label> assocs = null;
 
 
     @Override
@@ -29,12 +29,12 @@ public class ChildComponent extends Label<ChildComponent> {
     }
 
     @Override
-    public void putAssoc(String name, ChildComponent assocIndex) {
+    public void putAssoc(String name, Label assocIndex) {
         this.assocs.put(name,assocIndex);
     }
 
     @Override
-    public ChildComponent getAssociative(String index) {
+    public Label getAssociative(String index) {
         return this.assocs.get(index);
     }
 
@@ -64,7 +64,7 @@ public class ChildComponent extends Label<ChildComponent> {
     }
 
     @Override
-    public void addVectorItem(ChildComponent value) {
+    public void addVectorItem(Label value) {
         this.vectorValue.add(value);
     }
 
@@ -92,7 +92,7 @@ public class ChildComponent extends Label<ChildComponent> {
         System.out.println(";");
 
         if (this.assocs != null && this.assocs.size() != 0) {
-            for (Map.Entry<String,ChildComponent> entry : this.assocs.entrySet() ) {
+            for (Map.Entry<String,Label> entry : this.assocs.entrySet() ) {
                 System.out.println("ChildComponent " + super.getName() + "[" +
                         entry.getValue().getName() + "]" );
             }

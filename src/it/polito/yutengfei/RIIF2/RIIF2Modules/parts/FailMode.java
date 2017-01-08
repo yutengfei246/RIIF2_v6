@@ -7,10 +7,10 @@ import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 
 import java.util.*;
 
-public class FailMode extends Label<FailMode> {
+public class FailMode extends Label<Label> {
 
-    private LinkedList<FailMode> vectorValue = null ;
-    private Map<String,FailMode> assocs = null;
+    private LinkedList<Label> vectorValue = null ;
+    private Map<String,Label> assocs = null;
     private Map<String,Attribute> attributeMap = new HashMap<>();
 
     @Override
@@ -29,12 +29,12 @@ public class FailMode extends Label<FailMode> {
     }
 
     @Override
-    public void putAssoc(String name, FailMode assocIndex) {
+    public void putAssoc(String name, Label assocIndex) {
         this.assocs.put(name, assocIndex);
     }
 
     @Override
-    public FailMode getAssociative(String index) {
+    public Label getAssociative(String index) {
         return this.assocs.get(index);
     }
 
@@ -69,7 +69,7 @@ public class FailMode extends Label<FailMode> {
     }
 
     @Override
-    public void addVectorItem(FailMode value) {
+    public void addVectorItem(Label value) {
         this.vectorValue.add(value);
     }
 

@@ -7,11 +7,11 @@ import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 
 import java.util.*;
 
-public class Constant extends Label<Constant> {
+public class Constant extends Label<Label> {
 
-    private LinkedList<Constant> vectorValue = null ;
+    private LinkedList<Label> vectorValue = null ;
 
-    private Map<String,Constant> assocs = null;
+    private Map<String,Label> assocs = null;
     private Map<String,Attribute> attributeMap = new HashMap<>();
 
     @Override
@@ -30,7 +30,7 @@ public class Constant extends Label<Constant> {
     }
 
     @Override
-    public void putAssoc(String name, Constant assocIndex) {
+    public void putAssoc(String name, Label assocIndex) {
         this.assocs.put(name,assocIndex);
     }
 
@@ -55,7 +55,7 @@ public class Constant extends Label<Constant> {
     }
 
     @Override
-    public Constant getAssociative(String index) {
+    public Label getAssociative(String index) {
         return this.assocs.get(index);
     }
 
@@ -70,7 +70,7 @@ public class Constant extends Label<Constant> {
     }
 
     @Override
-    public void addVectorItem(Constant value) {
+    public void addVectorItem(Label value) {
         this.vectorValue.add(value);
     }
 
@@ -84,7 +84,7 @@ public class Constant extends Label<Constant> {
         return null;
     }
 
-
+    @Override
     public void print(){
         System.out.print("Constant " + this.getName());
         System.out.print(" : " + this.getType());

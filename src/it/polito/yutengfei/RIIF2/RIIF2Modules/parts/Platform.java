@@ -26,7 +26,7 @@ public class Platform extends Label<RIIF2Recorder>{
     }
 
     @Override
-    public RIIF2Recorder getAssociative(String index) {
+    public Label getAssociative(String index) {
         return null;
     }
 
@@ -63,5 +63,10 @@ public class Platform extends Label<RIIF2Recorder>{
     @Override
     public RIIF2Recorder getPlatform() {
         return this.value;
+    }
+
+    @Override
+    public void print() {
+
     }
 }

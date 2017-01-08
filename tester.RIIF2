@@ -19,7 +19,7 @@ endcomponent
 component tester1 extends tester, testercc implements testt;
 
 
-parameter myString: String := "my tester1";
+parameter myString: string := "my tester1";
 assign myString'min = mfloat;
 
 parameter myList := { this ,is ,a ,list } ;

@@ -7,6 +7,7 @@ import java.util.LinkedList;
 public class ArrayInitializer implements Initializer<Expression>{
 
     private LinkedList<Expression> initializer = new LinkedList<>();
+    private String type;
 
     @Override
     public void addItem(Expression item) {
@@ -26,6 +27,16 @@ public class ArrayInitializer implements Initializer<Expression>{
     @Override
     public LinkedList<Expression> getInitializer() {
         return this.initializer;
+    }
+
+    @Override
+    public String getType() {
+        return this.type;
+    }
+
+    @Override
+    public void setType(String type) {
+        this.type = type ;
     }
 
 

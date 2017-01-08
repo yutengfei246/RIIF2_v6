@@ -4,6 +4,7 @@ import it.polito.yutengfei.RIIF2.RIIF2Parser;
 import it.polito.yutengfei.RIIF2.id.DeclaratorId;
 import it.polito.yutengfei.RIIF2.id.Id;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.RIIF2Type;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -28,8 +29,10 @@ abstract class DeclaratorIdParser extends IdParser {
         DeclaratorId identifier = new DeclaratorId();
 
         TerminalNode DeclaratorId = ctx.Identifier();
+        Token DeclaratorIdToken = DeclaratorId.getSymbol();
+
         String primitiveId = DeclaratorId.getText();
-        identifier.setId( primitiveId );
+        identifier.setId( primitiveId, DeclaratorIdToken.getLine(), DeclaratorIdToken.getCharPositionInLine());
 
         if (ctx.typeType() != null) {
             RIIF2Type type = getRIIF2Type(ctx.typeType());
@@ -48,8 +51,10 @@ abstract class DeclaratorIdParser extends IdParser {
         DeclaratorId identifier = new DeclaratorId();
 
         TerminalNode DeclaratorId = ctx.Identifier();
+        Token DeclaratorIdToken = DeclaratorId.getSymbol();
+
         String primitiveId = DeclaratorId.getText();
-        identifier.setId( primitiveId );
+        identifier.setId( primitiveId, DeclaratorIdToken.getLine(), DeclaratorIdToken.getCharPositionInLine());
 
         Id id = getId( ctx.associativeIndex() );
         identifier.setAssociativeIndex( id );
@@ -67,8 +72,10 @@ abstract class DeclaratorIdParser extends IdParser {
         DeclaratorId identifier = new DeclaratorId();
 
         TerminalNode DeclaratorId = ctx.Identifier();
+        Token DeclaratorIdToken = DeclaratorId.getSymbol();
+
         String primitiveId = DeclaratorId.getText();
-        identifier.setId( primitiveId );
+        identifier.setId( primitiveId, DeclaratorIdToken.getLine(), DeclaratorIdToken.getCharPositionInLine());
 
         if (ctx.typeType() != null) {
             RIIF2Type type = getRIIF2Type(ctx.typeType());
@@ -87,8 +94,10 @@ abstract class DeclaratorIdParser extends IdParser {
         DeclaratorId identifier = new DeclaratorId();
 
         TerminalNode DeclaratorId = ctx.Identifier();
+        Token DeclaratorIdToken = DeclaratorId.getSymbol();
+
         String primitiveId = DeclaratorId.getText();
-        identifier.setId( primitiveId );
+        identifier.setId( primitiveId, DeclaratorIdToken.getLine(), DeclaratorIdToken.getCharPositionInLine());
 
         Id id = getId( ctx.associativeIndex() );
         identifier.setAssociativeIndex( id );
@@ -106,8 +115,10 @@ abstract class DeclaratorIdParser extends IdParser {
         DeclaratorId identifier = new DeclaratorId();
 
         TerminalNode DeclaratorId = ctx.Identifier();
+        Token DeclaratorIdToken = DeclaratorId.getSymbol();
+
         String associativeIndex = DeclaratorId.getText();
-        identifier.setId(associativeIndex);
+        identifier.setId(associativeIndex, DeclaratorIdToken.getLine(), DeclaratorIdToken.getCharPositionInLine());
 
         Id id = getId(ctx.associativeIndex());
         identifier.setAssociativeIndex( id );
@@ -120,8 +131,10 @@ abstract class DeclaratorIdParser extends IdParser {
         DeclaratorId identifier = new DeclaratorId();
 
         TerminalNode DeclaratorId = ctx.Identifier();
+        Token DeclaratorIdToken = DeclaratorId.getSymbol();
+
         String tableId = DeclaratorId.getText();
-        identifier.setId(tableId);
+        identifier.setId(tableId, DeclaratorIdToken.getLine(), DeclaratorIdToken.getCharPositionInLine());
 
         this.putDeclaratorId(ctx,identifier);
     }
@@ -131,8 +144,10 @@ abstract class DeclaratorIdParser extends IdParser {
         DeclaratorId identifier = new DeclaratorId();
 
         TerminalNode DeclaratorId = ctx.Identifier();
+        Token DeclaratorIdToken = DeclaratorId.getSymbol();
+
         String tableId = DeclaratorId.getText();
-        identifier.setId(tableId);
+        identifier.setId(tableId, DeclaratorIdToken.getLine(), DeclaratorIdToken.getCharPositionInLine());
 
         this.putDeclaratorId(ctx,identifier);
     }
@@ -142,8 +157,10 @@ abstract class DeclaratorIdParser extends IdParser {
         DeclaratorId identifier = new DeclaratorId();
 
         TerminalNode DeclaratorId = ctx.Identifier();
+        Token DeclaratorIdToken = DeclaratorId.getSymbol();
+
         String childId = DeclaratorId.getText();
-        identifier.setId(childId);
+        identifier.setId(childId, DeclaratorIdToken.getLine(), DeclaratorIdToken.getCharPositionInLine());
 
         if (ctx.typeType() != null){
             RIIF2Type type = getRIIF2Type( ctx.typeType() );

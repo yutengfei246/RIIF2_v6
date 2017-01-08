@@ -75,11 +75,18 @@ public class ComponentFactory {
     public void commitFactory(/*void*/) { /*checker and updater*/
         try {
             this.factory.commit();
-        } catch (SomeVariableMissingException
-                | VeriableAlreadyExistException
-                | FieldTypeNotMarchException
-                | InvalidFieldDeclaration e) {
+        } catch (SomeVariableMissingException e) {
             e.printStackTrace();
+            e.print();
+        } catch (VeriableAlreadyExistException e) {
+            e.printStackTrace();
+            e.print();
+        } catch (InvalidFieldDeclaration invalidFieldDeclaration) {
+            invalidFieldDeclaration.printStackTrace();
+            invalidFieldDeclaration.print();
+        } catch (FieldTypeNotMarchException e) {
+            e.printStackTrace();
+            e.print();
         }
         this.factory = null /*Reset the fieldFactory*/;
         this.fieldType = null;

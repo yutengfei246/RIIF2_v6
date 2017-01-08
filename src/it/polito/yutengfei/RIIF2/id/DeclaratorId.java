@@ -4,6 +4,8 @@ import it.polito.yutengfei.RIIF2.parser.typeUtility.RIIF2Type;
 
 public class DeclaratorId{
 
+    int line , column;
+
     private String id;
 
     private Id primitiveId;
@@ -22,8 +24,10 @@ public class DeclaratorId{
         this.typeType = typeType;
     }
 
-    public void setId(String id) {
+    public void setId(String id, int line, int charPositionInLine) {
         this.id = id;
+        this.line = line;
+        this.column = charPositionInLine;
     }
 
     public void setPrimitiveId(Id primitiveId) {
@@ -112,5 +116,13 @@ public class DeclaratorId{
 
     public boolean hasTableIndex() {
         return this.tableIndex == null ? false : true ;
+    }
+
+    public int getLine() {
+        return this.line;
+    }
+
+    public int getColumn() {
+        return this.column;
     }
 }

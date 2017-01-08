@@ -7,6 +7,7 @@ import java.util.LinkedList;
 
 public class TableInitializer implements Initializer<Row> {
     private LinkedList<Row> initializer = new LinkedList<>();
+    private String type;
 
     @Override
     public void addItem(Row item) {
@@ -21,6 +22,16 @@ public class TableInitializer implements Initializer<Row> {
     @Override
     public LinkedList<Row> getInitializer() {
         return this.initializer;
+    }
+
+    @Override
+    public String getType() {
+        return this.type;
+    }
+
+    @Override
+    public void setType(String type) {
+        this.type = type;
     }
 
     @Override

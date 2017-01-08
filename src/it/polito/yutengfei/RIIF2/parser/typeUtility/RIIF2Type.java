@@ -5,72 +5,98 @@ import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 
 public class RIIF2Type {
 
-
     private final String type;
-    private String ccId;
+    private String value;
 
     private EnumType enumType;
     private Vector vector;
+    private int column;
+    private int line;
 
+    /**
+     * user defined type  / child_component
+     * @param userDefinedType user defined name
+     * @param typeName user defined type name
+     * @param line line number
+     * @param column column number
+     */
 
-
-    private RIIF2Type(String aBoolean) {
-        this.type = aBoolean;
+    private RIIF2Type(String userDefinedType, String typeName, int line, int column) {
+        this.value = typeName;
+        this.type = userDefinedType;
+        this.column = column;
+        this.line = line;
     }
 
-    private RIIF2Type(String anEnum, EnumType enumType) {
+    /**
+     * Enum type
+     * @param anEnum enum type
+     * @param enumType enumType instance
+     */
+
+    private RIIF2Type(String anEnum, EnumType enumType , int line, int column) {
         this.type = anEnum;
         this.enumType = enumType;
+        this.line = line;
+        this.column = column;
     }
+
+    /**
+     * @param typeVector vector type
+     * @param vector vector instance
+     */
 
     private RIIF2Type(String typeVector, Vector vector) {
         this.type = typeVector;
         this.vector = vector;
     }
 
-    public RIIF2Type(String typeCc, String identifier) {
-        this.type = typeCc;
-        this.ccId = identifier;
+    public RIIF2Type(String aBoolean, int line, int charPositionInLine) {
+        this.type = aBoolean;
     }
 
-    public static RIIF2Type primitiveTypeBoolean() {
-        return new RIIF2Type(RIIF2Grammar.BOOLEAN);
+    /**
+     * @param line
+     * @param charPositionInLine*****************************************************************************************/
+
+    public static RIIF2Type primitiveTypeBoolean(int line, int charPositionInLine) {
+        return new RIIF2Type(RIIF2Grammar.BOOLEAN, line, charPositionInLine);
     }
 
-    public static RIIF2Type primitiveTypeFloat() {
-        return new RIIF2Type(RIIF2Grammar.DOUBLE);
+    public static RIIF2Type primitiveTypeFloat(int line, int charPositionInLine) {
+        return new RIIF2Type(RIIF2Grammar.DOUBLE, line, charPositionInLine);
     }
 
-    public static RIIF2Type primitiveTypeInteger() {
-        return new RIIF2Type(RIIF2Grammar.INTEGER);
+    public static RIIF2Type primitiveTypeInteger(int line, int charPositionInLine) {
+        return new RIIF2Type(RIIF2Grammar.INTEGER, line, charPositionInLine);
     }
 
-    public static RIIF2Type primitiveTypeString() {
-        return new RIIF2Type(RIIF2Grammar.STRING);
+    public static RIIF2Type primitiveTypeString(int line, int charPositionInLine) {
+        return new RIIF2Type(RIIF2Grammar.STRING, line, charPositionInLine);
     }
 
-    public static RIIF2Type primitiveTypeTime() {
-        return new RIIF2Type(RIIF2Grammar.TIME);
+    public static RIIF2Type primitiveTypeTime(int line, int charPositionInLine) {
+        return new RIIF2Type(RIIF2Grammar.TIME, line, charPositionInLine);
     }
 
-    public static RIIF2Type primitiveTypeUserDefined(String identifier) {
-        return new RIIF2Type(identifier);
+    public static RIIF2Type primitiveTypeUserDefined(String identifier, int line, int charPositionInLine) {
+        return new RIIF2Type(RIIF2Grammar.USER_DEFINED, identifier,line,charPositionInLine);
     }
 
-    public static RIIF2Type enumType(EnumType enumType) {
-        return new RIIF2Type(RIIF2Grammar.ENUM, enumType);
+    public static RIIF2Type enumType(EnumType enumType, int line, int charPositionInLine) {
+        return new RIIF2Type(RIIF2Grammar.ENUM, enumType, line, charPositionInLine);
     }
 
-    public static RIIF2Type associativeType() {
-        return new RIIF2Type(RIIF2Grammar.TYPE_ASSOCIATIVE);
+    public static RIIF2Type associativeType(int line, int charPositionInLine) {
+        return new RIIF2Type(RIIF2Grammar.TYPE_ASSOCIATIVE, line, charPositionInLine);
     }
 
-    public static RIIF2Type fieldTypeConstant() {
-        return new RIIF2Type(RIIF2Grammar.FIELD_CONSTANT);
+    public static RIIF2Type fieldTypeConstant(int line, int charPositionInLine) {
+        return new RIIF2Type(RIIF2Grammar.FIELD_CONSTANT,line,charPositionInLine);
     }
 
-    public static RIIF2Type fieldTypeParameter() {
-        return new RIIF2Type(RIIF2Grammar.FIELD_PARAMETER);
+    public static RIIF2Type fieldTypeParameter(int line, int charPositionInLine) {
+        return new RIIF2Type(RIIF2Grammar.FIELD_PARAMETER, line, charPositionInLine);
     }
 
     public static RIIF2Type vectorType(Vector vector) {
@@ -81,6 +107,11 @@ public class RIIF2Type {
         return new RIIF2Type(RIIF2Grammar.TYPE_FLAT_VECTOR, vector);
     }
 
+    public static RIIF2Type childComponentType(String identifier, int line, int charPositionInLine) {
+        return new RIIF2Type(RIIF2Grammar.TYPE_CC, identifier,line,charPositionInLine );
+    }
+
+    /*****************************************************************************************************************/
     public String getType() {
         return type;
     }
@@ -89,11 +120,19 @@ public class RIIF2Type {
         return vector;
     }
 
-    public static RIIF2Type childComponentType(String identifier) {
-        return new RIIF2Type(RIIF2Grammar.TYPE_CC, identifier );
+    public int getLine() {
+        return this.line;
     }
 
-    public String getCcId() {
-        return this.ccId;
+    public int getColumn() {
+        return this.column;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public EnumType getEnumType() {
+        return this.enumType;
     }
 }

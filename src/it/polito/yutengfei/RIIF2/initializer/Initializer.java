@@ -8,5 +8,6 @@ public interface Initializer<T> {
     T getItem(int index);
     int size();
     LinkedList<T> getInitializer();
-
+    String getType();
+    void setType(String type);
 }

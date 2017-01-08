@@ -464,7 +464,7 @@ public class AISFactory implements Factory{
             attribute.setType(RIIF2Grammar.INTEGER);
         else
             attribute.setType( RIIF2Grammar.STRING );
-        attribute.setId(attributeName);
+        attribute.setName(attributeName);
 
         return attribute;
     }

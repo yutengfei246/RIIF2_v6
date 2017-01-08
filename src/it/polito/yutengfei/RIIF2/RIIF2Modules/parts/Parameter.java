@@ -7,11 +7,11 @@ import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 
 import java.util.*;
 
-public class Parameter extends Label<Parameter> {
+public class Parameter extends Label<Label> {
 
-    private LinkedList<Parameter> vectorValue = null ;
+    private LinkedList<Label> vectorValue = null ;
 
-    private Map<String,Parameter> assocs = null;
+    private Map<String,Label> assocs = null;
     private Map<String,Attribute> attributeMap = new HashMap<>();
 
 
@@ -31,7 +31,7 @@ public class Parameter extends Label<Parameter> {
     }
 
     @Override
-    public void putAssoc(String name, Parameter assocIndex) {
+    public void putAssoc(String name, Label assocIndex) {
         this.assocs.put(name,assocIndex);
     }
 
@@ -58,7 +58,7 @@ public class Parameter extends Label<Parameter> {
     }
 
     @Override
-    public Parameter getAssociative(String index) {
+    public Label getAssociative(String index) {
         return this.assocs.get(index);
     }
 
@@ -73,7 +73,7 @@ public class Parameter extends Label<Parameter> {
     }
 
     @Override
-    public void addVectorItem(Parameter value) {
+    public void addVectorItem(Label value) {
         this.vectorValue.add(value);
     }
 
@@ -87,7 +87,7 @@ public class Parameter extends Label<Parameter> {
         return null;
     }
 
-
+    @Override
     public void print(){
         System.out.print("Parameter " + this.getName());
         System.out.print(" : " + this.getType());
@@ -114,7 +114,7 @@ public class Parameter extends Label<Parameter> {
 
         if (this.vectorValue != null && this.vectorValue.size() != 0 ){
             System.out.println("--vector--");
-            this.vectorValue.forEach(Parameter::print);
+            this.vectorValue.forEach(Label::print);
             System.out.println("--vector end ");
         }
     }

@@ -6,6 +6,7 @@ import it.polito.yutengfei.RIIF2.parser.typeUtility.RIIF2Type;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.UtilityFactory;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -32,21 +33,25 @@ abstract class TypeParser extends _RIIF2Parser{
 
         RIIF2Type type = null;
 
+
         if( ctx.TYPE_BOOLEAN() != null )
-            type = RIIF2Type.primitiveTypeBoolean();
+            type = RIIF2Type.primitiveTypeBoolean(ctx.start.getLine(), ctx.start.getCharPositionInLine());
         if( ctx.TYPE_FLOAT() != null)
-            type = RIIF2Type.primitiveTypeFloat();
+            type = RIIF2Type.primitiveTypeFloat(ctx.start.getLine(), ctx.start.getCharPositionInLine());
         if( ctx.TYPE_INTEGER() != null)
-            type = RIIF2Type.primitiveTypeInteger();
+            type = RIIF2Type.primitiveTypeInteger(ctx.start.getLine(), ctx.start.getCharPositionInLine());
         if( ctx.TYPE_STRING() != null )
-            type = RIIF2Type.primitiveTypeString();
+            type = RIIF2Type.primitiveTypeString(ctx.start.getLine(), ctx.start.getCharPositionInLine());
         if( ctx.TYPE_TIME() != null)
-            type = RIIF2Type.primitiveTypeTime();
+            type = RIIF2Type.primitiveTypeTime(ctx.start.getLine(), ctx.start.getCharPositionInLine());
         if( ctx.enumType() != null)
             type = this.getRIIF2Type( ctx.enumType() );
         if( ctx.Identifier() != null) {
-            String identifier = ctx.Identifier().getText();
-            type = RIIF2Type.primitiveTypeUserDefined( identifier );
+            TerminalNode Identifier = ctx.Identifier();
+            String identifier = Identifier.getText();
+            Token IdentifierToken = Identifier.getSymbol();
+
+            type = RIIF2Type.primitiveTypeUserDefined( identifier, IdentifierToken.getLine(), IdentifierToken.getCharPositionInLine());
         }
 
         this.putRIIF2Type(ctx,type);
@@ -64,14 +69,14 @@ abstract class TypeParser extends _RIIF2Parser{
             enumType.putEnum( enumIdentifier );
         }
 
-        type = RIIF2Type.enumType( enumType );
+        type = RIIF2Type.enumType( enumType ,ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
         this.putRIIF2Type(ctx,type);
     }
 
     @Override
     public void enterAssociativeType(RIIF2Parser.AssociativeTypeContext ctx) {
 
-        RIIF2Type type = RIIF2Type.associativeType();
+        RIIF2Type type = RIIF2Type.associativeType(ctx.start.getLine(), ctx.start.getCharPositionInLine());
         this.putRIIF2Type(ctx,type);
     }
 
@@ -81,9 +86,10 @@ abstract class TypeParser extends _RIIF2Parser{
         RIIF2Type type = null;
 
         if (ctx.CONSTANT() != null)
-            type = RIIF2Type.fieldTypeConstant();
+            type = RIIF2Type.fieldTypeConstant(ctx.start.getLine(), ctx.start.getCharPositionInLine());
         if (ctx.PARAMETER() != null)
-            type = RIIF2Type.fieldTypeParameter();
+            type = RIIF2Type.fieldTypeParameter(ctx.start.getLine(),ctx.start.getCharPositionInLine());
+
 
         this.putRIIF2Type(ctx,type);
     }
@@ -159,7 +165,9 @@ abstract class TypeParser extends _RIIF2Parser{
         TerminalNode Identifier = ctx.Identifier();
         String identifier = Identifier.getText();
 
-        RIIF2Type type  = RIIF2Type.childComponentType(identifier);
+        Token IdentifierToken = Identifier.getSymbol();
+
+        RIIF2Type type  = RIIF2Type.childComponentType(identifier, IdentifierToken.getLine(), IdentifierToken.getCharPositionInLine());
 
         this.putRIIF2Type(ctx,type);
     }

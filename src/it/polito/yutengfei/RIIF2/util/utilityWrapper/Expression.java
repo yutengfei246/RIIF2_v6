@@ -47,6 +47,8 @@ public class Expression implements Initializer {
 
     private Queue<Operation> oprQueue = new LinkedList<>();
     private boolean performed = false;
+    private int line;
+    private int column;
 
     public void setType(String type) {
         this.type = type;
@@ -311,5 +313,21 @@ public class Expression implements Initializer {
     @Override
     public LinkedList getInitializer() {
         return null;
+    }
+
+    public void setLine(int line) {
+        this.line = line;
+    }
+
+    public void setColumn(int column) {
+        this.column = column;
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    public int getColumn() {
+        return column;
     }
 }

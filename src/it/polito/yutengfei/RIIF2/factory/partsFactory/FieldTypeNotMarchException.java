@@ -1,7 +1,12 @@
 package it.polito.yutengfei.RIIF2.factory.partsFactory;
 
-/**
- * Created by yutengfei on 18/12/16.
- */
 public class FieldTypeNotMarchException extends Throwable {
+
+    FieldTypeNotMarchException(String id, int line, int column) {
+        this.id = id;
+        this.line = line;
+        this.column = column;
+    }
+
+    public void print(){};
 }

@@ -80,7 +80,7 @@ public class FMFactory implements Factory {
 
     private Attribute createAttribute(String Id , String type, String value) {
         Attribute attribute = new Attribute();
-        attribute.setId(Id);
+        attribute.setName(Id);
         attribute.setType(type);
         attribute.setValue(value);
 
@@ -148,7 +148,7 @@ public class FMFactory implements Factory {
 
     private void initialAttribute(Attribute attribute, String attributeIndex) throws FieldTypeNotMarchException {
 
-        attribute.setId(attributeIndex);
+        attribute.setName(attributeIndex);
         if (Objects.equals(attributeIndex, RIIF2Grammar.RATE))
             attribute.setType(RIIF2Grammar.DOUBLE);
         else attribute.setType(RIIF2Grammar.STRING);

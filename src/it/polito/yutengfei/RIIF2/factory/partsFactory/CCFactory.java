@@ -39,7 +39,7 @@ public class CCFactory implements Factory {
     private void childComponentDeclarator() throws VeriableAlreadyExistException, SomeVariableMissingException {
 
         RIIF2Type type = childComponentDeclarator.getCCType();
-        String typeCcId = type.getCcId();
+        String typeCcId = type.getValue();
 
         if ( !Repository.containsComponent(typeCcId))
             throw new SomeVariableMissingException();

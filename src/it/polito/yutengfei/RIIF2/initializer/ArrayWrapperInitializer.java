@@ -5,6 +5,7 @@ import java.util.LinkedList;
 public class ArrayWrapperInitializer implements Initializer<ArrayInitializer>{
     private LinkedList<ArrayInitializer> initializer
             = new LinkedList<>();
+    private String type;
 
     @Override
     public void addItem(ArrayInitializer item) {
@@ -19,6 +20,16 @@ public class ArrayWrapperInitializer implements Initializer<ArrayInitializer>{
     @Override
     public LinkedList<ArrayInitializer> getInitializer() {
         return this.initializer;
+    }
+
+    @Override
+    public String getType() {
+        return this.type;
+    }
+
+    @Override
+    public void setType(String type) {
+        this.type = type;
     }
 
     @Override

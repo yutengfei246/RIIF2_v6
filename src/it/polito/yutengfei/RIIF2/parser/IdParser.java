@@ -2,6 +2,7 @@ package it.polito.yutengfei.RIIF2.parser;
 
 import it.polito.yutengfei.RIIF2.RIIF2Parser;
 import it.polito.yutengfei.RIIF2.id.Id;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -30,7 +31,9 @@ abstract class IdParser extends TypeParser {
         TerminalNode Identifier = ctx.Identifier();
         String identifier = Identifier.getText();
 
-        id = Id.attributeIndex(identifier);
+        Token IdentifierToken = Identifier.getSymbol();
+
+        id = Id.attributeIndex(identifier, IdentifierToken.getLine(), IdentifierToken.getCharPositionInLine());
         this.putId(ctx,id);
     }
 
@@ -42,7 +45,9 @@ abstract class IdParser extends TypeParser {
         TerminalNode Identifier = ctx.Identifier();
         String identifier = Identifier.getText();
 
-        id = Id.associativeIndex(identifier);
+        Token IdentifierToken = Identifier.getSymbol();
+
+        id = Id.associativeIndex(identifier, IdentifierToken.getLine(), IdentifierToken.getCharPositionInLine());
         this.putId(ctx,id);
     }
 
@@ -54,7 +59,9 @@ abstract class IdParser extends TypeParser {
         TerminalNode Identifier = ctx.Identifier();
         String identifier = Identifier.getText();
 
-        id = Id.hierIndex(identifier);
+        Token IdentifierToken = Identifier.getSymbol();
+
+        id = Id.hierIndex(identifier, IdentifierToken.getLine(), IdentifierToken.getCharPositionInLine());
         this.putId(ctx,id);
     }
 
@@ -66,7 +73,9 @@ abstract class IdParser extends TypeParser {
         TerminalNode Identifier = ctx.Identifier();
         String identifier = Identifier.getText();
 
-        id = Id.primitiveId(identifier);
+        Token IdentifierToken = ctx.Identifier().getSymbol();
+
+        id = Id.primitiveId(identifier, IdentifierToken.getLine(), IdentifierToken.getCharPositionInLine() );
         this.putId(ctx,id);
     }
 
@@ -146,11 +155,13 @@ abstract class IdParser extends TypeParser {
 
         List<TerminalNode> Identifiers = ctx.Identifier();
 
+        int line = ctx.start.getLine();
+        int column = ctx.start.getCharPositionInLine();
         if (Identifiers.size() == 1){
             TerminalNode Identifier = ctx.Identifier(0);
             String identifier = Identifier.getText();
 
-            id = Id.tableId(attributeId,"#",identifier);
+            id = Id.tableId(attributeId,"#",identifier, line, column);
             this.putId(ctx,id);
         }
         else {
@@ -160,7 +171,7 @@ abstract class IdParser extends TypeParser {
             String identifier1 = Identifier1.getText();
             String identifier2 = Identifier2.getText();
 
-            id = Id.tableId(attributeId, identifier1, identifier2);
+            id = Id.tableId(attributeId, identifier1, identifier2, line, column);
             this.putId(ctx,id);
         }
     }
@@ -172,11 +183,16 @@ abstract class IdParser extends TypeParser {
 
         List<TerminalNode> Identifiers = ctx.Identifier();
 
+
+        int line = ctx.start.getLine();
+        int column = ctx.start.getCharPositionInLine();
+
         if (Identifiers.size() == 1){
             TerminalNode Identifier = ctx.Identifier(0);
+
             String identifier = Identifier.getText();
 
-            id = Id.tableId("#", identifier);
+            id = Id.tableId("#", identifier,line,column);
         }else {
             TerminalNode Identifier1 = ctx.Identifier(0);
             TerminalNode Identifier2 = ctx.Identifier(1);
@@ -184,7 +200,7 @@ abstract class IdParser extends TypeParser {
             String identifier1 = Identifier1.getText();
             String identifier2 = Identifier2.getText();
 
-            id = Id.tableId(identifier1, identifier2);
+            id = Id.tableId(identifier1, identifier2, line,column);
         }
 
         this.putId(ctx,id);

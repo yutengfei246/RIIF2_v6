@@ -5,6 +5,7 @@ import java.util.LinkedList;
 public class ListInitializer implements Initializer<String>{
 
     private LinkedList<String> initializer = new LinkedList<>();
+    private String type;
 
     @Override
     public void addItem(String item) {
@@ -19,6 +20,16 @@ public class ListInitializer implements Initializer<String>{
     @Override
     public LinkedList<String> getInitializer() {
         return this.initializer;
+    }
+
+    @Override
+    public String getType() {
+        return this.type;
+    }
+
+    @Override
+    public void setType(String type) {
+        this.type =type;
     }
 
     @Override

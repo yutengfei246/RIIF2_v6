@@ -2,44 +2,72 @@ package it.polito.yutengfei.RIIF2.parser.typeUtility;
 
 
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Item;
+import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Label;
+import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-public class Attribute implements Serializable{
+public class Attribute extends Label<Object> {
 
-    private String type;
-    private Object value; // in case is Item or Header, the value is LinkedList instance
-    private String id;
-
-    public String getType() {
-        return type;
+    @Override
+    public void setAssociative(Boolean b) {
     }
 
-    public void setType(String type) {
-        this.type = type;
+    @Override
+    public void putAttribute(String key, Attribute attribute) {
+
     }
 
-    public Object getValue() {
-        return value;
+    @Override
+    public void putAssoc(String name, Object assocIndex) {
+
     }
 
-    public void setValue(Object value) {
-        this.value = value;
+    @Override
+    public ? extends Label getAssociative(String index) {
+        return null;
     }
 
-    public String getId(){
-        return id;
+    @Override
+    public Attribute getAttribute(String index) {
+        return null;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    @Override
+    public boolean containsAssociativeIndex(String index) {
+        return false;
     }
+
+    @Override
+    public boolean containsAttributeIndex(String index) {
+        return false;
+    }
+
+    @Override
+    public void setVector(Vector vector) {
+
+    }
+
+    @Override
+    public void addVectorItem(Object value) {
+
+    }
+
+    @Override
+    public void setPlatform(RIIF2Recorder recorder) {
+
+    }
+
+    @Override
+    public RIIF2Recorder getPlatform() {
+        return null;
+    }
+
 
     public String  print() {
-        if (Objects.equals(this.getId(), RIIF2Grammar.ITEMS)){
+        if (Objects.equals(this.getName(), RIIF2Grammar.ITEMS)){
             StringBuilder stringBuffer = new StringBuilder();
 
             stringBuffer.append("{");
@@ -62,7 +90,7 @@ public class Attribute implements Serializable{
             return stringBuffer.toString();
         }
 
-        return (this.getId()
+        return (this.getName()
                 + " -Type : "
                 + this.getType()
                 + " -value :"
