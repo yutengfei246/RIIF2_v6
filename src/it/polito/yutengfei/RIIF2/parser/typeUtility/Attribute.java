@@ -4,10 +4,11 @@ package it.polito.yutengfei.RIIF2.parser.typeUtility;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Item;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-public class Attribute {
+public class Attribute implements Serializable{
 
     private String type;
     private Object value; // in case is Item or Header, the value is LinkedList instance

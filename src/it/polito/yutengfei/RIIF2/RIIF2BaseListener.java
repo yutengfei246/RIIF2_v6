@@ -1144,13 +1144,13 @@ public class RIIF2BaseListener implements RIIF2Listener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterPrimaryVariableId(RIIF2Parser.PrimaryVariableIdContext ctx) { }
+	@Override public void enterPrimaryAisDeclaratorId(RIIF2Parser.PrimaryAisDeclaratorIdContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitPrimaryVariableId(RIIF2Parser.PrimaryVariableIdContext ctx) { }
+	@Override public void exitPrimaryAisDeclaratorId(RIIF2Parser.PrimaryAisDeclaratorIdContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

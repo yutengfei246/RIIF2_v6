@@ -1,6 +1,8 @@
 package it.polito.yutengfei.RIIF2.parser;
 
+import it.polito.yutengfei.RIIF2.Declarator.Declarator;
 import it.polito.yutengfei.RIIF2.RIIF2Parser;
+import it.polito.yutengfei.RIIF2.id.DeclaratorId;
 import it.polito.yutengfei.RIIF2.id.Id;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
@@ -97,12 +99,12 @@ abstract class ExpressionParser extends DeclaratorIdParser {
     }
 
     @Override
-    public void exitPrimaryVariableId(RIIF2Parser.PrimaryVariableIdContext ctx) {
+    public void exitPrimaryAisDeclaratorId(RIIF2Parser.PrimaryAisDeclaratorIdContext ctx) {
         Expression expression = new Expression();
 
-        Id id = getId(ctx.variableId());
+        DeclaratorId declaratorId = super.getDeclaratorId(ctx.aisDeclaratorId());
         expression.setType(RIIF2Grammar.USER_DEFINED);
-        expression.setValue(id);
+        expression.setValue(declaratorId);
 
         this.putExpression(ctx,expression);
     }

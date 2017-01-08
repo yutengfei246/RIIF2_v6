@@ -382,7 +382,7 @@ primary
     | SELF  #primarySelf
     | TRUE  #primaryTrue
     | FALSE #primaryFalse
-    | variableId   #primaryVariableId
+    | aisDeclaratorId   #primaryAisDeclaratorId
     | literal   #primaryLiteral
     | funcCall  #primaryFuncCall
     | arrayInitializer  #primaryArrayInitializer

@@ -62,7 +62,7 @@ public class FieldFactory implements Factory{
 
     }
 
-    //Done
+    //Done with two attribute assign automatically
     private void primitiveFieldDeclarator()
             throws FieldTypeNotMarchException, InvalidFieldDeclaration, SomeVariableMissingException, VeriableAlreadyExistException {
 
@@ -70,6 +70,15 @@ public class FieldFactory implements Factory{
                 && !declaratorId.hasAssociativeIndex() ) {
             this.createFieldLabel();
             this.recorder.addLabel(this.fieldLabel);
+
+            //add the attribute when create the field
+            Attribute attributeMin = this.createAttribute(RIIF2Grammar.MIN,RIIF2Grammar.DOUBLE,null);
+            Attribute attributeMax = this.createAttribute(RIIF2Grammar.MAX,RIIF2Grammar.DOUBLE,null);
+            Attribute attributeUnit = this.createAttribute(RIIF2Grammar.UNIT,RIIF2Grammar.USER_DEFINED,null);
+
+            this.fieldLabel.putAttribute(RIIF2Grammar.MAX, attributeMax);
+            this.fieldLabel.putAttribute(RIIF2Grammar.MIN,attributeMin);
+            this.fieldLabel.putAttribute(RIIF2Grammar.UNIT,attributeUnit);
         } else{
 
             /*other cases to search in recorder and add those properties into recorder*/
@@ -189,10 +198,10 @@ public class FieldFactory implements Factory{
         /* need to add predefined attributes*/
         this.createFieldLabel();
         this.recorder.addLabel(this.fieldLabel);
-        this.setTableValue();
+        this.setTableAttributes();
     }
 
-    private void setTableValue() {
+    private void setTableAttributes() {
         /* set the pre-defined attributes Item and Header to the label */
 
         Attribute attribute
@@ -356,7 +365,8 @@ public class FieldFactory implements Factory{
                 Expression expInitializer = (Expression) this.initializer;
                 String expType = expInitializer.getType();
 
-                if (!Objects.equals(expType, primitiveType))
+                if (!Objects.equals(expType, RIIF2Grammar.USER_DEFINED)
+                        && !Objects.equals(expType, primitiveType))
                     throw new FieldTypeNotMarchException();
 
                 this.fieldLabel.setValue(expInitializer.getValue());

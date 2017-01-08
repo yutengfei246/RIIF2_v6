@@ -3331,7 +3331,6 @@ public class RIIF2Parser extends Parser {
 	public final AisDeclaratorIdContext aisDeclaratorId() throws RecognitionException {
 		AisDeclaratorIdContext _localctx = new AisDeclaratorIdContext(_ctx, getState());
 		enterRule(_localctx, 94, RULE_aisDeclaratorId);
-		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -3354,23 +3353,25 @@ public class RIIF2Parser extends Parser {
 				break;
 			}
 			setState(458);
-			_la = _input.LA(1);
-			if (_la==T__13) {
+			_errHandler.sync(this);
+			switch ( getInterpreter().adaptivePredict(_input,35,_ctx) ) {
+			case 1:
 				{
 				setState(457);
 				hierPostfix();
 				}
+				break;
 			}
-
 			setState(461);
-			_la = _input.LA(1);
-			if (_la==T__11) {
+			_errHandler.sync(this);
+			switch ( getInterpreter().adaptivePredict(_input,36,_ctx) ) {
+			case 1:
 				{
 				setState(460);
 				attributeIndex();
 				}
+				break;
 			}
-
 			setState(464);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,37,_ctx) ) {
@@ -5289,22 +5290,22 @@ public class RIIF2Parser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class PrimaryVariableIdContext extends PrimaryContext {
-		public VariableIdContext variableId() {
-			return getRuleContext(VariableIdContext.class,0);
+	public static class PrimaryAisDeclaratorIdContext extends PrimaryContext {
+		public AisDeclaratorIdContext aisDeclaratorId() {
+			return getRuleContext(AisDeclaratorIdContext.class,0);
 		}
-		public PrimaryVariableIdContext(PrimaryContext ctx) { copyFrom(ctx); }
+		public PrimaryAisDeclaratorIdContext(PrimaryContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof RIIF2Listener ) ((RIIF2Listener)listener).enterPrimaryVariableId(this);
+			if ( listener instanceof RIIF2Listener ) ((RIIF2Listener)listener).enterPrimaryAisDeclaratorId(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof RIIF2Listener ) ((RIIF2Listener)listener).exitPrimaryVariableId(this);
+			if ( listener instanceof RIIF2Listener ) ((RIIF2Listener)listener).exitPrimaryAisDeclaratorId(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof RIIF2Visitor ) return ((RIIF2Visitor<? extends T>)visitor).visitPrimaryVariableId(this);
+			if ( visitor instanceof RIIF2Visitor ) return ((RIIF2Visitor<? extends T>)visitor).visitPrimaryAisDeclaratorId(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -5460,11 +5461,11 @@ public class RIIF2Parser extends Parser {
 				}
 				break;
 			case Identifier:
-				_localctx = new PrimaryVariableIdContext(_localctx);
+				_localctx = new PrimaryAisDeclaratorIdContext(_localctx);
 				enterOuterAlt(_localctx, 5);
 				{
 				setState(643);
-				variableId();
+				aisDeclaratorId();
 				}
 				break;
 			case StringLiteral:
@@ -6075,7 +6076,7 @@ public class RIIF2Parser extends Parser {
 		"\2\2\u027a\u027d\3\2\2\2\u027b\u0279\3\2\2\2\u027b\u027c\3\2\2\2\u027c"+
 		"\u008b\3\2\2\2\u027d\u027b\3\2\2\2\u027e\u027f\7#\2\2\u027f\u0280\5\u008a"+
 		"F\2\u0280\u0281\7$\2\2\u0281\u028a\3\2\2\2\u0282\u028a\7C\2\2\u0283\u028a"+
-		"\7G\2\2\u0284\u028a\7H\2\2\u0285\u028a\5h\65\2\u0286\u028a\5\u0094K\2"+
+		"\7G\2\2\u0284\u028a\7H\2\2\u0285\u028a\5`\61\2\u0286\u028a\5\u0094K\2"+
 		"\u0287\u028a\5\u008eH\2\u0288\u028a\5D#\2\u0289\u027e\3\2\2\2\u0289\u0282"+
 		"\3\2\2\2\u0289\u0283\3\2\2\2\u0289\u0284\3\2\2\2\u0289\u0285\3\2\2\2\u0289"+
 		"\u0286\3\2\2\2\u0289\u0287\3\2\2\2\u0289\u0288\3\2\2\2\u028a\u008d\3\2"+

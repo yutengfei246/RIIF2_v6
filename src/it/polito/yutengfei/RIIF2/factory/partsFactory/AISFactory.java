@@ -44,7 +44,8 @@ public class AISFactory implements Factory{
     }
 
     private void initializer() {
-        AisDeclarator aisDeclarator = (AisDeclarator) this.componentFactory.getDeclarator();
+        AisDeclarator aisDeclarator
+                = (AisDeclarator) this.componentFactory.getDeclarator();
         this.initializer = aisDeclarator.getInitializer();
         this.declaratorId = aisDeclarator.getDeclaratorId();
 
@@ -184,7 +185,6 @@ public class AISFactory implements Factory{
                     preRecorder = theRecorder;
                 else {
                     this.aisLabel = preRecorder.getAssignmentLabel(idName);
-                    System.out.println("theRecorder is nullable and idName is " + idName);
 
                     if (  ! (this.aisLabel instanceof ChildComponent) )
                         throw new FieldTypeNotMarchException();
@@ -212,6 +212,61 @@ public class AISFactory implements Factory{
                 throw new SomeVariableMissingException();
         }
 
+    }
+
+    /*From current, extended, to implements....  */
+    private Label getUserDefinedLabel( Expression expInitializer ){
+        Label rtnLabel  = null;
+
+        if (!Objects.equals(expInitializer.getType(), RIIF2Grammar.USER_DEFINED))
+            return null;
+
+        DeclaratorId declaratorId /*ais declaratorId */
+                = (DeclaratorId) expInitializer.getValue();
+        Id primitiveId = declaratorId.getPrimitiveId();
+
+        String id = primitiveId.getId();
+        if (Objects.equals(primitiveId.getType(), RIIF2Grammar.TYPE_PRIMITIVE))
+            rtnLabel = this.recorder.getLabel(id);
+
+        if (Objects.equals(primitiveId.getType(), RIIF2Grammar.TYPE_HIER)){
+            List<Id> ids = primitiveId.hierPostfixIds();
+
+            RIIF2Recorder currRecorder, preRecorder;
+            currRecorder = this.recorder;
+            int i = -1 ;
+
+            for (Id id1 : ids){
+                i++;
+                /*current recorder*/
+                rtnLabel = currRecorder.getLabel(id1.getId());
+                if (rtnLabel == null){
+                    /*go extended recorder*/
+                    System.out.println("Going to find ");
+                    preRecorder = currRecorder;
+                    currRecorder = currRecorder.getExRecorder(id1.getId());
+
+                    if (currRecorder == null){
+                        System.out.println("Going to not find ");
+                        currRecorder = preRecorder.getImplRecorder(id1.getId());
+                        if (currRecorder == null)
+                            return null;
+                    }
+
+                }
+
+                if (i < ids.size() ){
+                    if ( rtnLabel != null )
+                        if (! (rtnLabel instanceof ChildComponent) )
+                            return null;
+                        else
+                            currRecorder = (RIIF2Recorder) rtnLabel.getValue();
+                }
+            }
+            System.out.println("Return find ");
+            rtnLabel = currRecorder.getLabel(id);
+        }
+        return rtnLabel;
     }
 
     private void setPureValue()
@@ -352,6 +407,21 @@ public class AISFactory implements Factory{
                     attribute.setValue(items);
                 }
             }
+
+            if (attributeIndex.equals(RIIF2Grammar.UNIT)){
+                if (this.initializer instanceof Expression){
+                    Expression expression = (Expression) this.initializer;
+
+                    if (!Objects.equals(expression.getType(), RIIF2Grammar.USER_DEFINED))
+                        throw new FieldTypeNotMarchException();
+
+                    DeclaratorId declaratorId = (DeclaratorId) expression.getValue();
+                    String attributeValue = declaratorId.getPrimitiveId().getId();
+                    attribute.setValue( attributeValue);
+
+                }else
+                    throw new FieldTypeNotMarchException();
+            }
         }
         this.initialAttribute(attribute);
     }
@@ -390,13 +460,25 @@ public class AISFactory implements Factory{
         return attribute;
     }
 
-    private void initialAttribute(Attribute attribute) throws FieldTypeNotMarchException {
+    private void initialAttribute(Attribute attribute)
+            throws FieldTypeNotMarchException {
 
         if (this.initializer instanceof Expression){
             Expression expInitializer = (Expression) this.initializer;
 
-            if ( !Objects.equals(expInitializer.getType(), attribute.getType()) )
+            System.out.println("expInitializer type " + expInitializer.getType() + " attribute type " + attribute.getType() );
+            if (!Objects.equals(expInitializer.getType(), RIIF2Grammar.USER_DEFINED)
+                    && !Objects.equals(expInitializer.getType(), attribute.getType()) )
                 throw new FieldTypeNotMarchException();
+
+
+            if (Objects.equals(expInitializer.getType(), RIIF2Grammar.USER_DEFINED)){
+                Label usedDefinedLabel = this.getUserDefinedLabel(expInitializer);
+                if (usedDefinedLabel == null )
+                    throw new FieldTypeNotMarchException();
+
+                attribute.setValue( usedDefinedLabel.getValue());
+            }
             attribute.setValue( expInitializer.getValue() );
         }
 
