@@ -9,7 +9,7 @@ import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import java.util.List;
 import java.util.Objects;
 
-public class Attribute extends Label<Object> {
+public class Attribute extends Label<Label> {
 
     @Override
     public void setAssociative(Boolean b) {
@@ -21,12 +21,12 @@ public class Attribute extends Label<Object> {
     }
 
     @Override
-    public void putAssoc(String name, Object assocIndex) {
+    public void putAssoc(String name, Label assocIndex) {
 
     }
 
     @Override
-    public ? extends Label getAssociative(String index) {
+    public Label getAssociative(String index) {
         return null;
     }
 
@@ -51,7 +51,7 @@ public class Attribute extends Label<Object> {
     }
 
     @Override
-    public void addVectorItem(Object value) {
+    public void addVectorItem(Label value) {
 
     }
 
@@ -66,7 +66,7 @@ public class Attribute extends Label<Object> {
     }
 
 
-    public String  print() {
+    public void print() {
         if (Objects.equals(this.getName(), RIIF2Grammar.ITEMS)){
             StringBuilder stringBuffer = new StringBuilder();
 
@@ -87,10 +87,10 @@ public class Attribute extends Label<Object> {
             });
             stringBuffer.append("}");
 
-            return stringBuffer.toString();
+            System.out.println(stringBuffer);
         }
 
-        return (this.getName()
+        System.out.println(this.getName()
                 + " -Type : "
                 + this.getType()
                 + " -value :"

@@ -100,7 +100,7 @@ public abstract class Label<T> implements Serializable {
 
     public abstract void putAssoc(String name, T assocIndex);
 
-    public abstract Label getAssociative(String index);
+    public abstract T getAssociative(String index);
 
     public abstract Attribute getAttribute(String index);
 

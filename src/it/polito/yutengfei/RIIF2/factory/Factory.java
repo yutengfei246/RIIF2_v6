@@ -1,9 +1,8 @@
 package it.polito.yutengfei.RIIF2.factory;
 
-import it.polito.yutengfei.RIIF2.factory.partsFactory.FieldTypeNotMarchException;
-import it.polito.yutengfei.RIIF2.factory.partsFactory.InvalidFieldDeclaration;
-import it.polito.yutengfei.RIIF2.factory.partsFactory.SomeVariableMissingException;
-import it.polito.yutengfei.RIIF2.factory.partsFactory.VeriableAlreadyExistException;
+import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
+import it.polito.yutengfei.RIIF2.factory.Exceptions.SomeVariableMissingException;
+import it.polito.yutengfei.RIIF2.factory.Exceptions.VeriableAlreadyExistException;
 import it.polito.yutengfei.RIIF2.recoder.Recorder;
 
 public interface Factory {

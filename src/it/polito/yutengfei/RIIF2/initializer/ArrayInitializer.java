@@ -7,7 +7,8 @@ import java.util.LinkedList;
 public class ArrayInitializer implements Initializer<Expression>{
 
     private LinkedList<Expression> initializer = new LinkedList<>();
-    private String type;
+    private int line;
+    private int column;
 
     @Override
     public void addItem(Expression item) {
@@ -30,14 +31,23 @@ public class ArrayInitializer implements Initializer<Expression>{
     }
 
     @Override
-    public String getType() {
-        return this.type;
+    public void setLine(int line) {
+        this.line = line ;
     }
 
     @Override
-    public void setType(String type) {
-        this.type = type ;
+    public int getLine() {
+        return this.line;
     }
 
+    @Override
+    public void setColumn(int column) {
+        this.column = column;
+    }
+
+    @Override
+    public int getColumn() {
+        return this.column;
+    }
 
 }

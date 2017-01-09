@@ -1,14 +1,19 @@
-package it.polito.yutengfei.RIIF2.factory.partsFactory;
+package it.polito.yutengfei.RIIF2.factory.Exceptions;
 
 public class VeriableAlreadyExistException extends Throwable {
-    private final String id;
-    private final int line;
-    private final int column;
+    private String id;
+    private int line;
+    private int column;
+    private String platformIdentifier;
 
-    VeriableAlreadyExistException(String id, int line, int column) {
+    public VeriableAlreadyExistException(String id, int line, int column) {
         this.id = id;
         this.line = line;
         this.column = column;
+    }
+
+    public VeriableAlreadyExistException(String identifier) {
+        this.platformIdentifier = identifier;
     }
 
     public void print(){

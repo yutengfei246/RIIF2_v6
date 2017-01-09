@@ -2,17 +2,17 @@ package it.polito.yutengfei.RIIF2.factory.partsFactory;
 
 import it.polito.yutengfei.RIIF2.Declarator.FailModeDeclarator;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.FailMode;
+import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Label;
 import it.polito.yutengfei.RIIF2.factory.ComponentFactory;
+import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
+import it.polito.yutengfei.RIIF2.factory.Exceptions.SomeVariableMissingException;
+import it.polito.yutengfei.RIIF2.factory.Exceptions.VeriableAlreadyExistException;
 import it.polito.yutengfei.RIIF2.factory.Factory;
 import it.polito.yutengfei.RIIF2.id.DeclaratorId;
-import it.polito.yutengfei.RIIF2.id.Id;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.RIIF2Type;
-import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
-
-import java.util.Objects;
 
 public class FMFactory implements Factory {
 
@@ -21,7 +21,7 @@ public class FMFactory implements Factory {
 
     private DeclaratorId declaratorId;
 
-    private FailMode fm;
+    private Label<Label> fm = null;
 
     public FMFactory(ComponentFactory componentFactory, RIIF2Recorder recorder) {
         this.recorder = recorder;
@@ -33,130 +33,119 @@ public class FMFactory implements Factory {
         this.declaratorId  = failModeDeclarator.getDeclaratorId();
     }
 
-
-    //Done
-    private void failModeDeclarator()
-            throws FieldTypeNotMarchException ,
-                    InvalidFieldDeclaration,
-                    SomeVariableMissingException,
-                    VeriableAlreadyExistException {
+    private void positionFm() throws VeriableAlreadyExistException, SomeVariableMissingException, FieldTypeNotMarchException {
 
         String fmName = this.declaratorId.getId();
 
-        /*fail_mode fm fail_mode fm[]  fail_mode[1:6] */
-        if ( !declaratorId.hasAttributeIndex()
-                && !declaratorId.hasAssociativeIndex() ) {
+        if ( !this.declaratorId.hasAttributeIndex()
+                && !this.declaratorId.hasAssociativeIndex() ) {
 
             if (this.recorder.contains(fmName))
-                throw new VeriableAlreadyExistException();
+                throw new VeriableAlreadyExistException(fmName,
+                        this.declaratorId.getLine(),
+                        this.declaratorId.getColumn() );
 
             this.createFailMode(fmName);
-            this.recorder.addLabel(this.fm);
 
-            if ( ! declaratorId.hasAttributeIndex() ){
-
-                Attribute attributeMin = this.createAttribute(RIIF2Grammar.MIN,RIIF2Grammar.DOUBLE,null);
-                Attribute attributeMax = this.createAttribute(RIIF2Grammar.MAX,RIIF2Grammar.DOUBLE,null);
-                Attribute attributeUnit = this.createAttribute(RIIF2Grammar.UNIT, RIIF2Grammar.USER_DEFINED,null);
-
-                this.fm.putAttribute(RIIF2Grammar.MAX,attributeMax);
-                this.fm.putAttribute(RIIF2Grammar.MIN,attributeMin);
-                this.fm.putAttribute(RIIF2Grammar.UNIT,attributeUnit);
-
-            }
         }else {
-            /*other cases to search in recorder and add those properties into recorder*/
-            if (!this.recorder.containsFailMode(fmName))
-                throw new SomeVariableMissingException();
-
             this.fm = this.recorder.getFailMode(fmName);
+
+            if (this.fm == null)
+                throw new SomeVariableMissingException(this.declaratorId.getId(),
+                        this.declaratorId.getLine(), this.declaratorId.getColumn());
         }
 
         if (declaratorId.hasAssociativeIndex() && declaratorId.hasAttributeIndex())
-            this.newFailModeDeclarator2();
+            this.positionFmForFailModeDeclarator2();
         else
-            this.newFailModeDeclarator1();
+            this.positionFmForFailModeDeclarator1();
+
     }
 
-    private Attribute createAttribute(String Id , String type, String value) {
-        Attribute attribute = new Attribute();
-        attribute.setName(Id);
-        attribute.setType(type);
-        attribute.setValue(value);
+    /**
+     *  Declarator :: Identifier typeType ? attribute ?
+     * */
+    private void positionFmForFailModeDeclarator1() {
 
-        return attribute;
-    }
-    /*Identifier typeType ? attribute ?*/
-    private void newFailModeDeclarator1() {
+        if (this.declaratorId.hasAttributeIndex()){
 
-        if (!this.declaratorId.hasAttributeIndex()){
-            /*in this case we need to create associated typeType to the label*/
-            if (this.declaratorId.hasTypeType()){
-                RIIF2Type typeType = this.declaratorId.getTypeType();
-                if (Objects.equals(typeType.getType(), RIIF2Grammar.TYPE_ASSOCIATIVE))
-                    this.fm.setAssociative(true);
+            String attributeIndex = this.declaratorId.getAttributeIndex().getId();
+            Attribute attribute = PreDefinedAttribute.createAttribute(attributeIndex,
+                    RIIF2Grammar.STRING, null);
 
-                if (Objects.equals(typeType.getType(), RIIF2Grammar.TYPE_VECTOR)) {
-                    Vector vector = typeType.getVector();
-                    this.fm.setVector(vector);
-                }
-            }
-
-        }else{
-            //TODO:: has attribute
-            if (this.declaratorId.hasTypeType()){
-
-            }else{
-
-            }
+            this.fm.putAttribute(this.declaratorId.getAttributeIndex().getId(),
+                    attribute);
+            this.fm = attribute;
         }
     }
 
-    /*DeclaratorId :: Identifier associativeIndex attributeIndex*/
-    /*Initializer :: list expression array*/
-    //Done
-    private void newFailModeDeclarator2()
-            throws SomeVariableMissingException,
-            VeriableAlreadyExistException,
-            FieldTypeNotMarchException {
-         /*retrieve the associativeIndex from the label if not exits throw an exception*/
-        Id associativeIndexId = declaratorId.getAssociativeIndex();
-        String associativeIndex  = associativeIndexId.getId();
+    /**
+     *  DeclaratorId :: Identifier associativeIndex attributeIndex ?
+     *  */
+    private void positionFmForFailModeDeclarator2()
+            throws SomeVariableMissingException, VeriableAlreadyExistException, FieldTypeNotMarchException {
 
-        if (!this.fm.containsAssociativeIndex(associativeIndex))
-            throw new SomeVariableMissingException();
+        String associativeIndex = this.declaratorId.getAssociativeIndex().getId();
 
-        this.fm = this.fm.getAssociative(associativeIndex);
+        if ( !this.fm.containsAssociativeIndex(associativeIndex)){
+            Label<Label> associative = this.createLabel(associativeIndex,RIIF2Grammar.FAIL_MODE,null);
+            this.fm.putAssoc(associativeIndex,associative);
+            this.fm = associative;
+        }else
+            this.fm = this.fm.getAssociative(associativeIndex);
 
-        Id attributeIndexId = declaratorId.getAttributeIndex();
-        String attributeIndex = attributeIndexId.getId();
+        if ( !this.declaratorId.hasAssociativeIndex() )
+            return;
 
-        if (this.fm.containsAttributeIndex(attributeIndex))
-            throw new VeriableAlreadyExistException();
+        String attributeIndex = this.declaratorId.getAttributeIndex().getId();
 
-        Attribute attribute = new Attribute();
-        this.initialAttribute(attribute,attributeIndex);
+        if (attributeIndex.equals(RIIF2Grammar.RATE)
+                || associativeIndex.equals(RIIF2Grammar.UNIT))
+            return;
 
+        Attribute attribute
+                = PreDefinedAttribute.createAttribute(attributeIndex,RIIF2Grammar.STRING,null);
         this.fm.putAttribute(attributeIndex,attribute);
+        this.fm = attribute;
+    }
+
+    private Label<Label> createLabel(String associativeIndex, String string, Object o) {
+        Label<Label> label = new FailMode();
+        label.setName(associativeIndex);
+        label.setType(string);
+        label.setValue(o);
+
+        return label;
     }
 
     private void createFailMode(String fmName) {
         this.fm = new FailMode();
         this.fm.setType(RIIF2Grammar.FAIL_MODE);
         this.fm.setName(fmName);
+
+        if (this.declaratorId.hasTypeType() ){
+            RIIF2Type TypeType = this.declaratorId.getTypeType();
+            String typeType = TypeType.getType();
+
+            if (typeType.equals(RIIF2Grammar.TYPE_ASSOCIATIVE))
+                this.fm.setAssociative(true);
+
+            if (typeType.equals(RIIF2Grammar.TYPE_VECTOR))
+                this.fm.setValue(TypeType.getVector());
+        }
+
+        PreDefinedAttribute.FMAttribute(this.fm);
+        this.recorder.addLabel(this.fm);
     }
 
-    private void initialAttribute(Attribute attribute, String attributeIndex) throws FieldTypeNotMarchException {
-
-        attribute.setName(attributeIndex);
-        if (Objects.equals(attributeIndex, RIIF2Grammar.RATE))
-            attribute.setType(RIIF2Grammar.DOUBLE);
-        else attribute.setType(RIIF2Grammar.STRING);
-    }
 
     @Override
-    public void commit() throws SomeVariableMissingException, VeriableAlreadyExistException, InvalidFieldDeclaration, FieldTypeNotMarchException {
+    public void commit() throws SomeVariableMissingException, VeriableAlreadyExistException, FieldTypeNotMarchException {
         this.initializer();
         this.failModeDeclarator();
+    }
+
+    private void failModeDeclarator() throws VeriableAlreadyExistException, SomeVariableMissingException, FieldTypeNotMarchException {
+        this.positionFm();
     }
 }

@@ -4,25 +4,24 @@ import it.polito.yutengfei.RIIF2.Declarator.ChildComponentDeclarator;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.ChildComponent;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Label;
 import it.polito.yutengfei.RIIF2.factory.ComponentFactory;
+import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
+import it.polito.yutengfei.RIIF2.factory.Exceptions.SomeVariableMissingException;
+import it.polito.yutengfei.RIIF2.factory.Exceptions.VeriableAlreadyExistException;
 import it.polito.yutengfei.RIIF2.factory.Factory;
 import it.polito.yutengfei.RIIF2.id.DeclaratorId;
-import it.polito.yutengfei.RIIF2.id.Id;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.RIIF2Type;
-import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.recoder.Repository;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
-
-import java.util.Objects;
 
 public class CCFactory implements Factory {
     private final ComponentFactory componentFactory;
     private final RIIF2Recorder recorder;
 
-    private Label<ChildComponent> ccLabel;
+    private Label<Label> ccLabel;
 
-    private ChildComponentDeclarator childComponentDeclarator;
     private DeclaratorId declaratorId;
+    private RIIF2Type ccType;
 
     public CCFactory(ComponentFactory componentFactory, RIIF2Recorder recorder) {
         this.componentFactory = componentFactory;
@@ -30,68 +29,56 @@ public class CCFactory implements Factory {
     }
 
     private void initializer() {
-        this.childComponentDeclarator = (ChildComponentDeclarator) this.componentFactory.getDeclarator();
-        this.declaratorId = this.childComponentDeclarator.getDeclaratorId();
+        ChildComponentDeclarator childComponentDeclarator = (ChildComponentDeclarator) this.componentFactory.getDeclarator();
+        this.declaratorId = childComponentDeclarator.getDeclaratorId();
+        this.ccType = childComponentDeclarator.getCCType();
     }
 
-
-
-    private void childComponentDeclarator() throws VeriableAlreadyExistException, SomeVariableMissingException {
-
-        RIIF2Type type = childComponentDeclarator.getCCType();
-        String typeCcId = type.getValue();
+    private void positionCC() throws SomeVariableMissingException, FieldTypeNotMarchException {
+        String typeCcId = this.ccType.getValue();
 
         if ( !Repository.containsComponent(typeCcId))
-            throw new SomeVariableMissingException();
+            throw new SomeVariableMissingException(typeCcId,
+                    this.ccType.getLine(), this.ccType.getColumn());
 
         RIIF2Recorder recorder
                 = (RIIF2Recorder) Repository.getDeepCopedRecorderFromComponentRepository( typeCcId );
 
-        String id = declaratorId.getId();
-        /* child_component cc cc1 */
-        /* child_component cc cc1[] */
-        /* child_component cc cc1[1:6] */
-        if ( !declaratorId.hasAssociativeIndex()  ) {
-            this.createCCLabel(id,recorder);
+        String id = this.declaratorId.getId();
 
-            if (declaratorId.hasTypeType()) {
-                RIIF2Type typeType = declaratorId.getTypeType();
-                String typeName = typeType.getType();
-                if (Objects.equals(typeName, RIIF2Grammar.TYPE_ASSOCIATIVE))
-                    this.ccLabel.setAssociative(true);
-                if (Objects.equals(typeName, RIIF2Grammar.TYPE_VECTOR)) {
-                    Vector vector = typeType.getVector();
-                    this.ccLabel.setValue(vector);
-                }
-            }
+        if ( !this.declaratorId.hasAssociativeIndex()  ) {
+            this.createCCLabel(id, recorder);
 
-            this.recorder.addLabel(this.ccLabel);
-
-        }else { /*child_component cc cc1[index] */
-            if ( ! this.recorder.containsChildComponent(id))
-                throw new SomeVariableMissingException();
+        } else{
+            if ( !this.recorder.containsChildComponent(id))
+                throw new SomeVariableMissingException(id,
+                        this.declaratorId.getLine(), this.declaratorId.getColumn());
 
             this.ccLabel = this.recorder.getChildComponent(id);
-            this.newChildComponentIndex(recorder);
+
+            String associativeIndex = this.declaratorId.getAssociativeIndex().getId();
+            if ( !this.ccLabel.isAssociative()
+                    || this.ccLabel.containsAssociativeIndex(associativeIndex) )
+                throw new FieldTypeNotMarchException(id,
+                        this.declaratorId.getLine(), this.declaratorId.getColumn());
+
+            Label<Label> associativeLabel
+                    = this.createCCLabel1(associativeIndex,recorder);
+
+            this.ccLabel.putAssoc(associativeIndex,associativeLabel);
         }
+
+
     }
 
-    private void newChildComponentIndex(RIIF2Recorder recorder)
-            throws SomeVariableMissingException {
+    private Label<Label> createCCLabel1(String associativeIndex, RIIF2Recorder recorder) {
+        Label<Label> label = new ChildComponent();
 
-            Id associativeIndex = declaratorId.getAssociativeIndex();
-            String id = associativeIndex.getId();
+        label.setName(associativeIndex);
+        label.setType(RIIF2Grammar.TYPE_CC);
+        label.setValue(recorder);
 
-            if ( !this.ccLabel.isAssociative()
-                    || this.ccLabel.containsAssociativeIndex(id) )
-                throw new SomeVariableMissingException();
-
-            ChildComponent childComponent = new ChildComponent();
-            childComponent.setType(RIIF2Grammar.TYPE_CC);
-            childComponent.setName( id );
-            childComponent.setValue(recorder);
-            this.ccLabel.putAssoc(id, childComponent);
-
+        return label;
     }
 
     private void createCCLabel(String id, RIIF2Recorder recorder) {
@@ -100,11 +87,30 @@ public class CCFactory implements Factory {
         this.ccLabel.setName(id);
         this.ccLabel.setType(RIIF2Grammar.TYPE_CC);
         this.ccLabel.setValue(recorder);
+
+        if ( this.declaratorId.hasTypeType() ){
+
+            RIIF2Type TypeType = this.declaratorId.getTypeType();
+            String typeType = TypeType.getType();
+
+            if (typeType.equals(RIIF2Grammar.TYPE_ASSOCIATIVE))
+                this.ccLabel.setAssociative(true);
+
+            if (typeType.equals(RIIF2Grammar.TYPE_VECTOR) )
+                this.ccLabel.setValue(TypeType.getVector());
+        }
+
+        this.recorder.addLabel(this.ccLabel);
     }
 
     @Override
-    public void commit() throws SomeVariableMissingException, VeriableAlreadyExistException {
+    public void commit() throws SomeVariableMissingException, VeriableAlreadyExistException, FieldTypeNotMarchException {
         this.initializer();
         this.childComponentDeclarator();
+    }
+
+    private void childComponentDeclarator() throws VeriableAlreadyExistException, SomeVariableMissingException, FieldTypeNotMarchException {
+
+        this.positionCC();
     }
 }

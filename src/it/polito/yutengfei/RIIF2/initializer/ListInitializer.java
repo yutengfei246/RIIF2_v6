@@ -5,7 +5,8 @@ import java.util.LinkedList;
 public class ListInitializer implements Initializer<String>{
 
     private LinkedList<String> initializer = new LinkedList<>();
-    private String type;
+    private int line;
+    private int column;
 
     @Override
     public void addItem(String item) {
@@ -23,13 +24,23 @@ public class ListInitializer implements Initializer<String>{
     }
 
     @Override
-    public String getType() {
-        return this.type;
+    public void setLine(int line) {
+        this.line= line;
     }
 
     @Override
-    public void setType(String type) {
-        this.type =type;
+    public int getLine() {
+        return this.line;
+    }
+
+    @Override
+    public void setColumn(int column) {
+        this.column = column;
+    }
+
+    @Override
+    public int getColumn() {
+        return this.column;
     }
 
     @Override

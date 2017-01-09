@@ -53,11 +53,11 @@ public class RIIF2Type {
 
     public RIIF2Type(String aBoolean, int line, int charPositionInLine) {
         this.type = aBoolean;
+        this.line = line;
+        this.column = charPositionInLine;
     }
 
-    /**
-     * @param line
-     * @param charPositionInLine*****************************************************************************************/
+    /*******************************************************************************************/
 
     public static RIIF2Type primitiveTypeBoolean(int line, int charPositionInLine) {
         return new RIIF2Type(RIIF2Grammar.BOOLEAN, line, charPositionInLine);

@@ -1,6 +1,9 @@
 package it.polito.yutengfei.RIIF2.factory.partsFactory;
 
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Platform;
+import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
+import it.polito.yutengfei.RIIF2.factory.Exceptions.SomeVariableMissingException;
+import it.polito.yutengfei.RIIF2.factory.Exceptions.VeriableAlreadyExistException;
 import it.polito.yutengfei.RIIF2.factory.Factory;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 
@@ -23,10 +26,10 @@ public class PlatformFactory implements Factory{
     }
 
     @Override
-    public void commit() throws SomeVariableMissingException, VeriableAlreadyExistException, InvalidFieldDeclaration, FieldTypeNotMarchException {
+    public void commit() throws SomeVariableMissingException, VeriableAlreadyExistException, FieldTypeNotMarchException {
 
         if (this.recorder.contains(identifier) )
-            throw new VeriableAlreadyExistException();
+            throw new VeriableAlreadyExistException(identifier);
 
         this.recorder.setPlatform( this.createPlatform() );
     }

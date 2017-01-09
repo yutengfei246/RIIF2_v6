@@ -1,6 +1,9 @@
 package it.polito.yutengfei.RIIF2.factory;
 
 import it.polito.yutengfei.RIIF2.Declarator.Declarator;
+import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
+import it.polito.yutengfei.RIIF2.factory.Exceptions.SomeVariableMissingException;
+import it.polito.yutengfei.RIIF2.factory.Exceptions.VeriableAlreadyExistException;
 import it.polito.yutengfei.RIIF2.factory.partsFactory.*;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.RIIF2Type;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
