@@ -56,6 +56,11 @@ public class Attribute extends Label<Label> {
     }
 
     @Override
+    public Label getVector(int index) {
+        return null;
+    }
+
+    @Override
     public void setPlatform(RIIF2Recorder recorder) {
 
     }

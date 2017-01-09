@@ -47,6 +47,9 @@ public class Constant extends Label<Label> {
 
         this.vectorValue = new LinkedList<>();
 
+        for (int i= 0; i < left*right ; i++ )
+            this.vectorValue.add(new Constant());
+
     }
 
     @Override
@@ -75,6 +78,11 @@ public class Constant extends Label<Label> {
     }
 
     @Override
+    public Label getVector(int index) {
+        return this.vectorValue.get(index);
+    }
+
+    @Override
     public void setPlatform(RIIF2Recorder recorder) {
 
     }
@@ -95,10 +103,11 @@ public class Constant extends Label<Label> {
             System.out.print(" := null " );
         System.out.println(";");
 
-        if (this.attributeMap.size() != 0 ){
-            this.attributeMap.forEach((s, attribute) ->
-                    System.out.println("Attribute : " + s  + attribute.print())
-            );
+        if (this.attributeMap.size() != 0 ) {
+            this.attributeMap.forEach((s, attribute) ->{
+                    System.out.println("Attribute : " + s);
+                    attribute.print();
+        });
         }
     }
 }

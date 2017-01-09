@@ -51,6 +51,9 @@ public class ChildComponent extends Label<Label> {
 
         this.vectorValue = new LinkedList<>();
 
+        for ( int i = 0; i < right*left; i++)
+            this.vectorValue.add(new ChildComponent());
+
     }
 
     @Override
@@ -66,6 +69,11 @@ public class ChildComponent extends Label<Label> {
     @Override
     public void addVectorItem(Label value) {
         this.vectorValue.add(value);
+    }
+
+    @Override
+    public Label getVector(int index) {
+        return this.vectorValue.get(index);
     }
 
     @Override

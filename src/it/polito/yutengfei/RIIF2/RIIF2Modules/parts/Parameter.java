@@ -50,6 +50,9 @@ public class Parameter extends Label<Label> {
 
         this.vectorValue = new LinkedList<>();
 
+        for (int i= 0; i < left*right ; i++  )
+            this.vectorValue.add(new Parameter());
+
     }
 
     @Override
@@ -78,6 +81,11 @@ public class Parameter extends Label<Label> {
     }
 
     @Override
+    public Label getVector(int index) {
+        return this.vectorValue.get(index);
+    }
+
+    @Override
     public void setPlatform(RIIF2Recorder recorder) {
 
     }
@@ -100,15 +108,15 @@ public class Parameter extends Label<Label> {
 
         if (this.attributeMap.size() != 0 ){
             this.attributeMap.forEach((s, attribute) ->
-                System.out.println("Attribute : " + s  + attribute.print())
+                attribute.print()
             );
         }
 
         if (this.assocs != null && this.assocs.size() != 0){
             System.out.println("--assoc--");
-            this.assocs.forEach((s, parameter) -> {
-                parameter.print();
-            });
+            this.assocs.forEach((s, parameter) ->
+                parameter.print()
+            );
             System.out.println("--assoc end--");
         }
 

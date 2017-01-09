@@ -6,18 +6,18 @@ import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 
 import java.io.Serializable;
 
-public abstract class Label<T> implements Serializable {
+public abstract class Label<T extends Label> implements Serializable {
 
     private Boolean associative = false;
     private Boolean vector = false;
 
-    private String name;
-    private String type;
-    private Object value;
+    private String name = null;
+    private String type = null;
+    private Object value = null;
 
-    private int vectorLength;
-    private int vectorLeft;
-    private int vectorRight;
+    private int vectorLength = 0;
+    private int vectorLeft = 0;
+    private int vectorRight = 0;
 
 
     public Boolean isAssociative() {
@@ -111,6 +111,8 @@ public abstract class Label<T> implements Serializable {
     public abstract void setVector(Vector vector);
 
     public abstract void addVectorItem(T value);
+
+    public abstract T getVector(int index);
 
     public abstract void setPlatform(RIIF2Recorder recorder);
 

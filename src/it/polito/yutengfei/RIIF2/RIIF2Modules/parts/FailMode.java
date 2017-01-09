@@ -56,6 +56,9 @@ public class FailMode extends Label<Label> {
         super.setVectorLength( left * right);
 
         this.vectorValue = new LinkedList<>();
+
+        for (int i=0 ; i< right*left ; i++)
+            this.vectorValue.add(new FailMode());
     }
 
     @Override
@@ -74,6 +77,11 @@ public class FailMode extends Label<Label> {
     }
 
     @Override
+    public Label getVector(int index) {
+        return this.vectorValue.get(index);
+    }
+
+    @Override
     public void setPlatform(RIIF2Recorder recorder) {
 
     }
@@ -89,9 +97,10 @@ public class FailMode extends Label<Label> {
         System.out.println(" ; ");
 
         if (this.attributeMap.size() != 0 ){
-            this.attributeMap.forEach((s, attribute) ->
-                    System.out.println("Fail_Mode:" + this.getName()+ "@Attribute:" + attribute.print())
-            );
+            this.attributeMap.forEach((s, attribute) -> {
+                System.out.print("Fail_Mode:" + this.getName() + "@Attribute:");
+                attribute.print();
+            });
         }
     }
 }

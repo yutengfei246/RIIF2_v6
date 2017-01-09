@@ -36,9 +36,9 @@ public class AISFactory implements Factory{
     private Initializer initializer;
 
     private Id primitiveId;
-    private Id tableId;
 
     private Label aisLabel = null;
+    private Vector vector = null;
 
     public AISFactory(ComponentFactory componentFactory, String assignment, RIIF2Recorder recorder) {
         this.componentFactory = componentFactory;
@@ -53,7 +53,6 @@ public class AISFactory implements Factory{
         this.declaratorId = aisDeclarator.getDeclaratorId();
 
         this.primitiveId = this.declaratorId.getPrimitiveId();
-        this.tableId = this.declaratorId.getTableId();
 
     }
 
@@ -61,12 +60,8 @@ public class AISFactory implements Factory{
 
         if (this.primitiveId != null ) {
             this.positionAisLabelPrimitiveId();
+            this.positionAisLabel1();
             this.newAISDeclarator();
-        }
-
-        if (this.tableId != null ){
-            //TODO: table Id
-            System.out.println("Table need to be done ...");
         }
     }
 
@@ -158,6 +153,76 @@ public class AISFactory implements Factory{
                         this.primitiveId.getLine(),this.primitiveId.getColumn());
         }
 
+    }
+
+    /**
+     * declaratorId ::
+     * primitiveId (aisType|associativeIndex) ? hierPostfix ? attributeIndex?
+     * */
+    private void positionAisLabel1() throws FieldTypeNotMarchException, SomeVariableMissingException {
+
+        if (this.declaratorId.hasAssociativeIndex()){
+            Id associativeId = this.declaratorId.getAssociativeIndex();
+            String associativeIndex = associativeId.getId();
+
+            if (!this.aisLabel.isAssociative())
+                throw new FieldTypeNotMarchException(associativeIndex,
+                        associativeId.getLine(), associativeId.getColumn());
+
+            this.aisLabel = this.aisLabel.getAssociative(associativeIndex);
+        }
+
+        if (this.declaratorId.hasHierPostfix()){
+
+            Id hierPostfixId = this.declaratorId.getHierPostfix();
+            String hierPostfixName = hierPostfixId.getId();
+            if ( !(this.aisLabel instanceof ChildComponent) ) {
+                throw new FieldTypeNotMarchException(hierPostfixName,
+                        hierPostfixId.getLine(), hierPostfixId.getColumn());
+            }
+
+            RIIF2Recorder ccRecorder
+                    = (RIIF2Recorder) ((ChildComponent)this.aisLabel).getValue();
+
+            this.aisLabel = ccRecorder.getAssignmentLabel(hierPostfixName) != null
+                    ? ccRecorder.getAssignmentLabel(hierPostfixName)
+                    : ccRecorder.getImposeLabel(hierPostfixName) != null
+                    ? ccRecorder.getImposeLabel(hierPostfixName)
+                    : null;
+
+            if (this.aisLabel == null)
+                throw new SomeVariableMissingException(hierPostfixName,
+                        hierPostfixId.getLine(), hierPostfixId.getColumn());
+        }
+
+        if (this.declaratorId.hasAttributeIndex()){
+
+            Id attributeId = this.declaratorId.getAttributeIndex();
+            String attributeIndex = attributeId.getId();
+
+            this.aisLabel = this.aisLabel.getAttribute(attributeIndex);
+            if (this.aisLabel == null)
+                throw new SomeVariableMissingException(attributeIndex,
+                        attributeId.getLine(),attributeId.getColumn());
+        }
+
+        if (this.declaratorId.hasTableIndex()){
+
+            Id tableId = this.declaratorId.getTableId();
+            String tableIndex1 = tableId.getXX();
+            String tableIndex2 = tableId.getYY();
+
+            if (!this.aisLabel.getType().equals(RIIF2Grammar.ITEMS)
+                    || !this.aisLabel.getType().equals(RIIF2Grammar.HEADER) )
+                throw new FieldTypeNotMarchException(tableIndex1,
+                        tableId.getLine(),tableId.getColumn() );
+
+            //TODO: start from here
+            if (tableIndex1.equals(RIIF2Grammar.SHARP)){
+
+            }
+
+        }
     }
 
     /**

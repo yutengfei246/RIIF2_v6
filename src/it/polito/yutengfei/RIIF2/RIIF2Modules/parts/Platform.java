@@ -6,7 +6,7 @@ import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 
 
-public class Platform extends Label<RIIF2Recorder>{
+public class Platform extends Label<Label>{
 
     private RIIF2Recorder value;
 
@@ -21,7 +21,7 @@ public class Platform extends Label<RIIF2Recorder>{
     }
 
     @Override
-    public void putAssoc(String name, RIIF2Recorder assocIndex) {
+    public void putAssoc(String name, Label assocIndex) {
 
     }
 
@@ -29,6 +29,7 @@ public class Platform extends Label<RIIF2Recorder>{
     public Label getAssociative(String index) {
         return null;
     }
+
 
     @Override
     public Attribute getAttribute(String index) {
@@ -51,8 +52,13 @@ public class Platform extends Label<RIIF2Recorder>{
     }
 
     @Override
-    public void addVectorItem(RIIF2Recorder value) {
+    public void addVectorItem(Label value) {
 
+    }
+
+    @Override
+    public Label getVector(int index) {
+        return null;
     }
 
     @Override

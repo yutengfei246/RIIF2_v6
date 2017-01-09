@@ -41,4 +41,5 @@ public class RIIF2Grammar {;
     public static final String MIN = "min";
     public static final String MAX = "max";
     public static final String UNIT = "unit";
+    public static final String SHARP = "#";
 }

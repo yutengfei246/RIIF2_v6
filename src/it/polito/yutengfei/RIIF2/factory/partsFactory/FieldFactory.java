@@ -217,30 +217,32 @@ public class FieldFactory implements Factory{
                         this.initializer.getLine(),
                         this.initializer.getColumn());
 
+            final int[] i = {0};
             arrayInitializer.getInitializer()
                     .forEach(expression -> {
                         if (!Objects.equals(expression.getType(), this.fieldLabel.getType()))
                             throw new IllegalArgumentException();
 
-                        Label usedLabel = null ;
-                        if (this.fieldLabel instanceof Parameter)
-                            usedLabel = new Parameter();
-                        if (this.fieldLabel instanceof Constant)
-                            usedLabel = new Constant();
+                        if (this.fieldLabel.isAssociative()) {
+                            Label usedLabel = null;
+                            if (this.fieldLabel instanceof Parameter)
+                                usedLabel = new Parameter();
+                            if (this.fieldLabel instanceof Constant)
+                                usedLabel = new Constant();
 
-                        assert usedLabel != null;
+                            assert usedLabel != null;
 
-                        usedLabel.setType(this.fieldType.getType());
-                        if (this.fieldLabel.isVector()) {
-                            usedLabel.setName(null);
-                            usedLabel.setValue(expression.getValue());
-
-                            this.fieldLabel.addVectorItem(usedLabel);
+                            usedLabel.setType(this.fieldType.getType());
+                            usedLabel.setName(expression.getValue().toString());
+                            this.fieldLabel.putAssoc(expression.getValue().toString(), usedLabel);
                         }
 
-                        if (this.fieldLabel.isAssociative()){
-                            usedLabel.setName( expression.getValue().toString() );
-                            this.fieldLabel.putAssoc(expression.getValue().toString(),usedLabel);
+                        if (this.fieldLabel.isVector()) {
+                            Label usedLabel= this.fieldLabel.getVector(i[0]);
+                            i[0]++;
+
+                            usedLabel.setValue(expression.getValue());
+                            usedLabel.setType( expression.getType() );
                         }
 
                     });

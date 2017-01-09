@@ -156,5 +156,11 @@ public class Id {
     public int getColumn() { return column; }
 
 
+    public String getXX() {
+        return xx;
+    }
 
+    public String getYY() {
+        return yy;
+    }
 }
