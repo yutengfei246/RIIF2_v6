@@ -4293,11 +4293,11 @@ public class RIIF2Parser extends Parser {
 	}
 
 	public static class AisTypeContext extends ParserRuleContext {
-		public AssociativeTypeContext associativeType() {
-			return getRuleContext(AssociativeTypeContext.class,0);
-		}
 		public FlatVectorContext flatVector() {
 			return getRuleContext(FlatVectorContext.class,0);
+		}
+		public AssociativeTypeContext associativeType() {
+			return getRuleContext(AssociativeTypeContext.class,0);
 		}
 		public AisTypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -4329,14 +4329,14 @@ public class RIIF2Parser extends Parser {
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(552);
-				associativeType();
+				flatVector();
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(553);
-				flatVector();
+				associativeType();
 				}
 				break;
 			}
@@ -6046,7 +6046,7 @@ public class RIIF2Parser extends Parser {
 		"\3\2\2\2\u0224\u0220\3\2\2\2\u0224\u0221\3\2\2\2\u0224\u0222\3\2\2\2\u0224"+
 		"\u0223\3\2\2\2\u0225y\3\2\2\2\u0226\u0229\5~@\2\u0227\u0229\5\u0080A\2"+
 		"\u0228\u0226\3\2\2\2\u0228\u0227\3\2\2\2\u0229{\3\2\2\2\u022a\u022d\5"+
-		"~@\2\u022b\u022d\5\u0082B\2\u022c\u022a\3\2\2\2\u022c\u022b\3\2\2\2\u022d"+
+		"\u0082B\2\u022b\u022d\5~@\2\u022c\u022a\3\2\2\2\u022c\u022b\3\2\2\2\u022d"+
 		"}\3\2\2\2\u022e\u022f\7\f\2\2\u022f\u0230\7\r\2\2\u0230\177\3\2\2\2\u0231"+
 		"\u0232\7\f\2\2\u0232\u0233\5\u008aF\2\u0233\u0234\7\6\2\2\u0234\u0235"+
 		"\5\u008aF\2\u0235\u0236\7\r\2\2\u0236\u0081\3\2\2\2\u0237\u0238\7\f\2"+

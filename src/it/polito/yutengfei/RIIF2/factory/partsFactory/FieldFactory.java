@@ -8,6 +8,7 @@ import it.polito.yutengfei.RIIF2.factory.Exceptions.SomeVariableMissingException
 import it.polito.yutengfei.RIIF2.factory.Exceptions.VeriableAlreadyExistException;
 import it.polito.yutengfei.RIIF2.factory.Factory;
 import it.polito.yutengfei.RIIF2.id.DeclaratorId;
+import it.polito.yutengfei.RIIF2.id.Id;
 import it.polito.yutengfei.RIIF2.initializer.ArrayInitializer;
 import it.polito.yutengfei.RIIF2.initializer.ArrayWrapperInitializer;
 import it.polito.yutengfei.RIIF2.initializer.Initializer;
@@ -169,7 +170,7 @@ public class FieldFactory implements Factory{
     }
 
 
-    private void inLineInitializer() throws FieldTypeNotMarchException {
+    private void inLineInitializer() throws FieldTypeNotMarchException, SomeVariableMissingException {
 
         if (this.initializer == null)
             return;
@@ -177,17 +178,24 @@ public class FieldFactory implements Factory{
         if (initializer instanceof Expression){
             Expression expInitializer = (Expression) this.initializer;
 
-
             if ( !this.fieldLabel.getType().equals( expInitializer.getType() )
                     && !expInitializer.getType().equals(RIIF2Grammar.USER_DEFINED))
                 throw new FieldTypeNotMarchException(expInitializer.getValue().toString(),
                         expInitializer.getLine(),expInitializer.getColumn());
 
             if ( expInitializer.getType().equals(RIIF2Grammar.USER_DEFINED )){
-                //TODO:: user defined type
-            }
+                Label label
+                        = PreDefinedAttribute.getUserDefinedLabel(expInitializer,this.recorder);
 
-            this.fieldLabel.setValue(expInitializer.getValue());
+                DeclaratorId aisId = (DeclaratorId) expInitializer.getValue();
+                Id primitiveId = aisId.getPrimitiveId();
+
+                if (label == null)
+                    throw new SomeVariableMissingException(primitiveId.getId(),
+                            expInitializer.getLine(),expInitializer.getColumn());
+                this.fieldLabel.setValue(label.getValue());
+            }else
+                this.fieldLabel.setValue(expInitializer.getValue());
         }
 
         if (initializer instanceof ListInitializer){
@@ -290,9 +298,9 @@ public class FieldFactory implements Factory{
 
     private void createFieldLabel(String name){
 
-        if (this.fieldLabel.getType().equals(RIIF2Grammar.FIELD_PARAMETER) )
+        if (this.fieldType.getType().equals(RIIF2Grammar.FIELD_PARAMETER) )
             this.fieldLabel = new Parameter();
-        if (this.fieldLabel.getType().equals(RIIF2Grammar.FIELD_CONSTANT) )
+        if (this.fieldType.getType().equals(RIIF2Grammar.FIELD_CONSTANT) )
             fieldLabel = new Constant();
 
         assert this.fieldLabel != null;

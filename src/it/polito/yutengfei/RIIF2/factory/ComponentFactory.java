@@ -84,9 +84,6 @@ public class ComponentFactory {
         } catch (VeriableAlreadyExistException e) {
             e.printStackTrace();
             e.print();
-        } catch (InvalidFieldDeclaration invalidFieldDeclaration) {
-            invalidFieldDeclaration.printStackTrace();
-            invalidFieldDeclaration.print();
         } catch (FieldTypeNotMarchException e) {
             e.printStackTrace();
             e.print();

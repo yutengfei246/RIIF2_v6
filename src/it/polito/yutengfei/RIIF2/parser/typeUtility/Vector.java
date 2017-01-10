@@ -33,4 +33,10 @@ public class Vector {
     public Expression getRight(){
         return this.right;
     }
+
+    public int getLength() {
+        int le = (int) this.left.getValue();
+        int ri = (int) this.right.getValue();
+        return le*ri;
+    }
 }

@@ -11,6 +11,7 @@ import java.util.Objects;
 
 public class Attribute extends Label<Label> {
 
+
     @Override
     public void setAssociative(Boolean b) {
     }
@@ -70,7 +71,7 @@ public class Attribute extends Label<Label> {
         return null;
     }
 
-
+    @Override
     public void print() {
         if (Objects.equals(this.getName(), RIIF2Grammar.ITEMS)){
             StringBuilder stringBuffer = new StringBuilder();

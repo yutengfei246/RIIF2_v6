@@ -330,8 +330,8 @@ typeType
     ;
 
 aisType
-    : associativeType
-    | flatVector
+    : flatVector
+    | associativeType
     ;
 
 associativeType

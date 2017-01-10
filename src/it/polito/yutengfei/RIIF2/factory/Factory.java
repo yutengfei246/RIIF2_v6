@@ -10,5 +10,5 @@ public interface Factory {
         return new ComponentFactory( recorder );
     }
 
-    void commit() throws SomeVariableMissingException, VeriableAlreadyExistException, InvalidFieldDeclaration, FieldTypeNotMarchException;
+    void commit() throws SomeVariableMissingException, VeriableAlreadyExistException,  FieldTypeNotMarchException;
 }
