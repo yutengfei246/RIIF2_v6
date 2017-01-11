@@ -1,5 +1,7 @@
 package it.polito.yutengfei.RIIF2.util.utilityWrapper;
 
+import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
+
 /**
  *
  * On the other hand the inner value has to be Array or row array

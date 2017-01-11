@@ -81,7 +81,7 @@ public class CCFactory implements Factory {
         return label;
     }
 
-    private void createCCLabel(String id, RIIF2Recorder recorder) {
+    private void createCCLabel(String id, RIIF2Recorder recorder) throws FieldTypeNotMarchException {
         this.ccLabel = new ChildComponent();
 
         this.ccLabel.setName(id);

@@ -186,8 +186,8 @@ public class FieldFactory implements Factory{
 
             if (this.fieldLabel.getName().equals(RIIF2Grammar.UNIT)) {
 
-                if (!expInitializer.isPerformed())
-                    throw new FieldTypeNotMarchException(expInitializer.getValue().toString(),
+                if  (! (expInitializer.value() instanceof DeclaratorId ) )
+                    throw new FieldTypeNotMarchException(expInitializer.value().toString(),
                             expInitializer.getLine(), expInitializer.getColumn());
 
                 String type = ((DeclaratorId) expInitializer.value()).getPrimitiveId().getId();

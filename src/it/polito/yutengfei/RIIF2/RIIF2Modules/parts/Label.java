@@ -1,5 +1,6 @@
 package it.polito.yutengfei.RIIF2.RIIF2Modules.parts;
 
+import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
@@ -108,7 +109,7 @@ public abstract class Label<T extends Label> implements Serializable {
 
     public abstract boolean containsAttributeIndex(String index);
 
-    public abstract void setVector(Vector vector, RIIF2Recorder recorder);
+    public abstract void setVector(Vector vector, RIIF2Recorder recorder) ;
 
     public abstract void addVectorItem(T value);
 

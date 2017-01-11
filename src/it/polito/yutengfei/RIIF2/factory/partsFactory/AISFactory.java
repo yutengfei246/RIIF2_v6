@@ -299,9 +299,8 @@ public class AISFactory implements Factory{
                 expInitializer.setExpressionOperator( this.eo ) ;
 
                 if (label.getName().equals(RIIF2Grammar.UNIT) ){
-
-                    if ( !expInitializer.isPerformed())
-                        throw new FieldTypeNotMarchException(expInitializer.getValue().toString(),
+                    if ( !( expInitializer.value() instanceof DeclaratorId) )
+                        throw new FieldTypeNotMarchException(expInitializer.value().toString(),
                                 expInitializer.getLine(), expInitializer.getColumn());
 
                     String type =  ( (DeclaratorId)expInitializer.value() ).getPrimitiveId().getId();
@@ -313,7 +312,7 @@ public class AISFactory implements Factory{
                         && label.getType().equals(RIIF2Grammar.DOUBLE) ){
                     label.setValue((double) (int) expInitializer.getValue());
                 }else
-                    throw new FieldTypeNotMarchException(expInitializer.getType() +" , " + label.getType() + label.getName(),
+                    throw new FieldTypeNotMarchException( label.getName() + ":" + label.getName() + " , " + expInitializer.getType(),
                             expInitializer.getLine(),
                             expInitializer.getColumn());
             }
@@ -343,7 +342,8 @@ public class AISFactory implements Factory{
                     expressions.forEach(expression -> {
                         expression.setExpressionOperator(this.eo);
                         Item.UnitItem unitItem
-                                = item.createUnitItem(expression.getType(), expression.getValue());
+                                = null;
+                        unitItem = item.createUnitItem(expression.getType(), expression.getValue());
                         item.addUnitItem(unitItem);
                     });
 
@@ -377,14 +377,16 @@ public class AISFactory implements Factory{
                                 expression.setExpressionOperator(eo);
 
                                 ArrayInitializer arrayInitializer
-                                        = (ArrayInitializer) expression.getValue();
+                                        = null;
+                                arrayInitializer = (ArrayInitializer) expression.getValue();
                                 List<Expression> initializer
                                         = arrayInitializer.getInitializer();
 
                                 initializer.forEach(expression1 -> {
                                     expression1.setExpressionOperator(eo);
                                     Item.UnitItem unitItem
-                                            = item.createUnitItem(expression1.getType(), expression1.getValue());
+                                            = null;
+                                    unitItem = item.createUnitItem(expression1.getType(), expression1.getValue());
                                     item.addUnitItem(unitItem);
                                 });
                             }
@@ -403,6 +405,7 @@ public class AISFactory implements Factory{
                                         expression.setExpressionOperator(eo);
                                         unitItemType = expression.getType();
                                         unitItemValue = expression.getValue();
+
                                     }
 
                                     if (rowItem.getType() == RowItem.LIST_STRING) {

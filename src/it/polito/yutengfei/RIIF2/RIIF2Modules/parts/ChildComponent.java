@@ -1,5 +1,6 @@
 package it.polito.yutengfei.RIIF2.RIIF2Modules.parts;
 
+import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;

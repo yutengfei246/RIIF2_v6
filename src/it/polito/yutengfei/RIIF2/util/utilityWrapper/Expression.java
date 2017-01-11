@@ -1,6 +1,7 @@
 package it.polito.yutengfei.RIIF2.util.utilityWrapper;
 
 
+import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
 import it.polito.yutengfei.RIIF2.initializer.Initializer;
 
 import java.util.LinkedList;
@@ -35,7 +36,7 @@ public class Expression implements Initializer {
     private Object value;
 
 
-    private boolean performed = true;
+    private boolean performed = false;
 
     private Queue<Operation> oprQueue = new LinkedList<>();
 
@@ -95,21 +96,47 @@ public class Expression implements Initializer {
     }
 
     public boolean isInteger() {
-        return this.expressionOperator.isInteger(this);
+        try {
+            return this.expressionOperator.isInteger(this);
+        } catch (FieldTypeNotMarchException e) {
+            e.printStackTrace();
+            e.print();
+        }
+        return false;
     }
 
     boolean isArray() {
-        return this.expressionOperator.isArray(this);
+        try {
+            return this.expressionOperator.isArray(this);
+        } catch (FieldTypeNotMarchException e) {
+            e.printStackTrace();
+            e.print();
+        }
+
+        return false;
     }
 
     public String getType() {
-        return this.expressionOperator.getType(this);
+
+        try {
+            return this.expressionOperator.getType( this);
+        } catch (FieldTypeNotMarchException e) {
+            e.printStackTrace();
+            e.print();
+        }
+
+        return null;
     }
 
-
-    //TODO: change getValue implementation in all of the project
     public Object getValue() {
-        return this.expressionOperator.getValue(this);
+        try {
+            return this.expressionOperator.getValue(this);
+        } catch (FieldTypeNotMarchException e) {
+            e.printStackTrace();
+            e.print();
+        }
+
+        return null;
     }
 
     private void push(Operation opr){
@@ -126,7 +153,7 @@ public class Expression implements Initializer {
     }
 
 
-    public  boolean isPerformed() {
+    boolean isPerformed() {
         return performed;
     }
 

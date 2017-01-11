@@ -189,17 +189,17 @@ abstract class ExpressionParser extends DeclaratorIdParser {
 
         Expression expression = null ;
         try {
-            if (ctx.op.getType() == RIIF2Parser.T__18) {
+            if (ctx.op.getType() == RIIF2Parser.T__19) {
                 expression = leftExp.operation(Expression.OP_STAR, rightExp);
                 return;
             }
 
-            if (ctx.op.getType() == RIIF2Parser.T__19) {
+            if (ctx.op.getType() == RIIF2Parser.T__20) {
                 expression = leftExp.operation(Expression.OP_DIV, rightExp);
                 return;
             }
 
-            if (ctx.op.getType() == RIIF2Parser.T__20) {
+            if (ctx.op.getType() == RIIF2Parser.T__21) {
                 expression = leftExp.operation(Expression.OP_MOD, rightExp);
             }
         }finally {

@@ -120,7 +120,7 @@ public class FMFactory implements Factory {
         return label;
     }
 
-    private void createFailMode(String fmName) {
+    private void createFailMode(String fmName) throws FieldTypeNotMarchException {
         this.fm = new FailMode();
         this.fm.setType(RIIF2Grammar.FAIL_MODE);
         this.fm.setName(fmName);

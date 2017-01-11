@@ -3,6 +3,7 @@ package it.polito.yutengfei.RIIF2.factory.partsFactory;
 
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.ChildComponent;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Label;
+import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
 import it.polito.yutengfei.RIIF2.id.DeclaratorId;
 import it.polito.yutengfei.RIIF2.id.Id;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
@@ -57,17 +58,17 @@ public class PreDefinedAttribute {
     }
 
     /*From current, extended, to implements....  */
-    public static Label getUserDefinedLabel( Expression expInitializer , RIIF2Recorder recorder){
+    public static Label getUserDefinedLabel( Expression expInitializer , RIIF2Recorder recorder) {
         Label rtnLabel  = null;
 
         if (!Objects.equals(expInitializer.type(), RIIF2Grammar.USER_DEFINED))
             return null;
 
         DeclaratorId declaratorId /*ais declaratorId */
-                = (DeclaratorId) expInitializer.getValue();
+                = (DeclaratorId) expInitializer.value();
         Id primitiveId = declaratorId.getPrimitiveId();
-
         String id = primitiveId.getId();
+
         if (Objects.equals(primitiveId.getType(), RIIF2Grammar.TYPE_PRIMITIVE))
 
             rtnLabel = recorder.getLabel(id) != null
@@ -76,6 +77,8 @@ public class PreDefinedAttribute {
                     ? recorder.getAssignmentLabel(id)
                     : recorder.getImposeLabel(id) != null
                     ? recorder.getImposeLabel(id)
+                    : recorder.getSetLabel(id) != null
+                    ? recorder.getSetLabel(id)
                     : null ;
 
         if (Objects.equals(primitiveId.getType(), RIIF2Grammar.TYPE_HIER)){

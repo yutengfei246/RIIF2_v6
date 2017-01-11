@@ -1,5 +1,6 @@
 package it.polito.yutengfei.RIIF2.parser.typeUtility;
 
+import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.ExpressionOperator;
 
@@ -9,7 +10,7 @@ public class Vector {
     private Expression right;
 
 
-    public Vector(Expression left, Expression right) throws ExpressionTypeNotMarchException {
+    public Vector(Expression left, Expression right) throws ExpressionTypeNotMarchException, FieldTypeNotMarchException {
 
         if ( ! left.isInteger() || ! right.isInteger() ){
             throw new ExpressionTypeNotMarchException();
@@ -35,7 +36,7 @@ public class Vector {
         return this.right;
     }
 
-    public int getLength(ExpressionOperator eo ) {
+    public int getLength(ExpressionOperator eo ) throws FieldTypeNotMarchException {
 
         this.left.setExpressionOperator(eo);
         this.right.setExpressionOperator(eo);
