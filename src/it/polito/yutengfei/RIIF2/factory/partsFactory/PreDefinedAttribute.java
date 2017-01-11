@@ -9,11 +9,12 @@ import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
+import it.polito.yutengfei.RIIF2.util.utilityWrapper.ExpressionOperator;
 
 import java.util.List;
 import java.util.Objects;
 
-class PreDefinedAttribute {
+public class PreDefinedAttribute {
 
     static void FieldAttribute(Label<Label> fieldLabel) {
         Attribute attributeMin = createAttribute(RIIF2Grammar.MIN,RIIF2Grammar.DOUBLE,null);
@@ -56,10 +57,10 @@ class PreDefinedAttribute {
     }
 
     /*From current, extended, to implements....  */
-    static Label getUserDefinedLabel( Expression expInitializer , RIIF2Recorder recorder){
+    public static Label getUserDefinedLabel( Expression expInitializer , RIIF2Recorder recorder){
         Label rtnLabel  = null;
 
-        if (!Objects.equals(expInitializer.getType(), RIIF2Grammar.USER_DEFINED))
+        if (!Objects.equals(expInitializer.type(), RIIF2Grammar.USER_DEFINED))
             return null;
 
         DeclaratorId declaratorId /*ais declaratorId */

@@ -17,6 +17,7 @@ import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
+import it.polito.yutengfei.RIIF2.util.utilityWrapper.ExpressionOperator;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Row;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.RowItem;
 
@@ -37,6 +38,7 @@ public class AISFactory implements Factory{
 
     private Label aisLabel = null;
     private List<Label> aisLabels = new LinkedList<>();
+    private ExpressionOperator eo;
 
     public AISFactory(ComponentFactory componentFactory, String assignment, RIIF2Recorder recorder) {
         this.componentFactory = componentFactory;
@@ -51,6 +53,8 @@ public class AISFactory implements Factory{
         this.declaratorId = aisDeclarator.getDeclaratorId();
 
         this.primitiveId = this.declaratorId.getPrimitiveId();
+
+        this.eo = new ExpressionOperator(this.recorder);
 
     }
 
@@ -79,10 +83,6 @@ public class AISFactory implements Factory{
                     break;
                 case RIIF2Grammar.SET:
                     this.aisLabel = this.recorder.getSetLabel(labelName);
-
-                    if (this.aisLabel == null)
-                        System.out.println(" ais is null");
-
                     break;
                 default:
                     this.aisLabel = null;
@@ -173,11 +173,11 @@ public class AISFactory implements Factory{
                         associativeId.getLine(), associativeId.getColumn());
 
             Label tempLabel = this.aisLabel;
+
             this.aisLabel = tempLabel.getAssociative(associativeIndex);
 
 
             if (this.aisLabel == null){
-                System.out.println("++++++ NULLLLL"  ); ///TODO:: hehrherh
                 this.aisLabel = this.createLabel(associativeIndex,tempLabel);
                 tempLabel.putAssoc(associativeIndex,this.aisLabel);
             }
@@ -196,12 +196,18 @@ public class AISFactory implements Factory{
 
                 Vector vector = aisType.getVector();
                 if ( !this.aisLabel.isVector()
-                        || this.aisLabel.getVectorLength() < vector.getLength())
+                        || this.aisLabel.getVectorLength() < vector.getLength(new ExpressionOperator(this.recorder)))
                     throw new FieldTypeNotMarchException(this.aisLabel.getName(),
                             aisType.getLine(), aisType.getColumn() );
 
-                int i = (int) vector.getLeft().getValue();
-                int j = (int) vector.getRight().getValue();
+                Expression expression = vector.getLeft();
+                expression.setExpressionOperator(this.eo);
+
+                int i = (int) expression.getValue();
+
+                expression = vector.getRight();
+                expression.setExpressionOperator(this.eo);
+                int j = (int) expression.getValue();
 
                 for (; i <= j ; i ++){
                     Label label = this.aisLabel.getVector(i);
@@ -284,58 +290,22 @@ public class AISFactory implements Factory{
         }
     }
 
-    private Label createLabel(String associativeIndex, Label tempLabel) {
-
-        Label<Label> rtnLabel = null;
-        if ( tempLabel instanceof Parameter) {
-            rtnLabel = new Parameter();
-            PreDefinedAttribute.FieldAttribute(rtnLabel);
-        }
-        if (tempLabel instanceof Constant) {
-            rtnLabel = new Constant();
-            PreDefinedAttribute.FieldAttribute(rtnLabel);
-        }
-        if (tempLabel instanceof FailMode) {
-            rtnLabel = new FailMode();
-            PreDefinedAttribute.FMAttribute( rtnLabel );
-        }
-        if (tempLabel instanceof ChildComponent) {
-            rtnLabel = new ChildComponent();
-            rtnLabel.setValue(tempLabel.getValue());
-        }
-
-        System.out.print("..................");
-        rtnLabel.print();
-        assert rtnLabel != null;
-        rtnLabel.setName(associativeIndex);
-        rtnLabel.setType(tempLabel.getType());
-
-        return rtnLabel;
-    }
-
     private void assignInitializer() throws FieldTypeNotMarchException {
 
         for (Label label : this.aisLabels) {
 
             if (this.initializer instanceof Expression) {
                 Expression expInitializer = (Expression) this.initializer;
+                expInitializer.setExpressionOperator( this.eo ) ;
 
-                if (expInitializer.getType().equals(RIIF2Grammar.USER_DEFINED)) {
+                if (label.getName().equals(RIIF2Grammar.UNIT) ){
 
-                    if (!label.getName().equals(RIIF2Grammar.UNIT)) {
-                        Id primitiveId = ((DeclaratorId) expInitializer.getValue()).getPrimitiveId();
+                    if ( !expInitializer.isPerformed())
+                        throw new FieldTypeNotMarchException(expInitializer.getValue().toString(),
+                                expInitializer.getLine(), expInitializer.getColumn());
 
-                        Label userDefinedLabel = PreDefinedAttribute.getUserDefinedLabel(expInitializer, this.recorder);
-                        if (userDefinedLabel == null)
-                            throw new FieldTypeNotMarchException(primitiveId.getId(),
-                                    primitiveId.getLine(), primitiveId.getColumn());
-
-                        label.setValue(userDefinedLabel.getValue());
-                    }else{
-
-                        String type =  ( (DeclaratorId)expInitializer.getValue() ).getPrimitiveId().getId();
-                        label.setValue(type);
-                    }
+                    String type =  ( (DeclaratorId)expInitializer.value() ).getPrimitiveId().getId();
+                    label.setValue(type);
 
                 }else if (expInitializer.getType().equals( label.getType()) ) {
                     label.setValue(expInitializer.getValue());
@@ -365,11 +335,13 @@ public class AISFactory implements Factory{
 
                 List<Item> items = new LinkedList<>();
                 List<ArrayInitializer> arrayInitializers = arrayWrapperInitializer.getInitializer();
+
                 arrayInitializers.forEach(arrayInitializer -> {
 
                     Item item = new Item();
                     List<Expression> expressions = arrayInitializer.getInitializer();
                     expressions.forEach(expression -> {
+                        expression.setExpressionOperator(this.eo);
                         Item.UnitItem unitItem
                                 = item.createUnitItem(expression.getType(), expression.getValue());
                         item.addUnitItem(unitItem);
@@ -378,10 +350,6 @@ public class AISFactory implements Factory{
                     items.add(item);
                 });
                 label.setValue(items);
-            }
-
-            if (this.initializer instanceof ListInitializer){
-
             }
 
             if (this.initializer instanceof TableInitializer){
@@ -406,12 +374,15 @@ public class AISFactory implements Factory{
                             if (row.getType() == Row.EXPRESSION) {
                                 Expression expression
                                         = (Expression) row.getValue();
+                                expression.setExpressionOperator(eo);
+
                                 ArrayInitializer arrayInitializer
                                         = (ArrayInitializer) expression.getValue();
                                 List<Expression> initializer
                                         = arrayInitializer.getInitializer();
 
                                 initializer.forEach(expression1 -> {
+                                    expression1.setExpressionOperator(eo);
                                     Item.UnitItem unitItem
                                             = item.createUnitItem(expression1.getType(), expression1.getValue());
                                     item.addUnitItem(unitItem);
@@ -429,6 +400,7 @@ public class AISFactory implements Factory{
                                     if (rowItem.getType() == RowItem.EXPRESSION) {
                                         Expression expression
                                                 = (Expression) rowItem.getValue();
+                                        expression.setExpressionOperator(eo);
                                         unitItemType = expression.getType();
                                         unitItemValue = expression.getValue();
                                     }
@@ -450,6 +422,33 @@ public class AISFactory implements Factory{
                 label.setValue(items);
             }
         }
+    }
+
+    private Label createLabel(String associativeIndex, Label tempLabel) {
+
+        Label<Label> rtnLabel = null;
+        if ( tempLabel instanceof Parameter) {
+            rtnLabel = new Parameter();
+            PreDefinedAttribute.FieldAttribute(rtnLabel);
+        }
+        if (tempLabel instanceof Constant) {
+            rtnLabel = new Constant();
+            PreDefinedAttribute.FieldAttribute(rtnLabel);
+        }
+        if (tempLabel instanceof FailMode) {
+            rtnLabel = new FailMode();
+            PreDefinedAttribute.FMAttribute( rtnLabel );
+        }
+        if (tempLabel instanceof ChildComponent) {
+            rtnLabel = new ChildComponent();
+            rtnLabel.setValue(tempLabel.getValue());
+        }
+
+        assert rtnLabel != null;
+        rtnLabel.setName(associativeIndex);
+        rtnLabel.setType(tempLabel.getType());
+
+        return rtnLabel;
     }
 
 

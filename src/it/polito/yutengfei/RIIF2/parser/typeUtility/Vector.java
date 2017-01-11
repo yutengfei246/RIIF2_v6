@@ -1,6 +1,7 @@
 package it.polito.yutengfei.RIIF2.parser.typeUtility;
 
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
+import it.polito.yutengfei.RIIF2.util.utilityWrapper.ExpressionOperator;
 
 public class Vector {
 
@@ -34,9 +35,15 @@ public class Vector {
         return this.right;
     }
 
-    public int getLength() {
+    public int getLength(ExpressionOperator eo ) {
+
+        this.left.setExpressionOperator(eo);
+        this.right.setExpressionOperator(eo);
+
         int le = (int) this.left.getValue();
         int ri = (int) this.right.getValue();
         return le*ri;
     }
+
+
 }

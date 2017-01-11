@@ -115,6 +115,8 @@ public class FMFactory implements Factory {
         label.setType(string);
         label.setValue(o);
 
+        PreDefinedAttribute.FMAttribute(label);
+
         return label;
     }
 
@@ -131,7 +133,7 @@ public class FMFactory implements Factory {
                 this.fm.setAssociative(true);
 
             if (typeType.equals(RIIF2Grammar.TYPE_VECTOR))
-                this.fm.setValue(TypeType.getVector());
+                this.fm.setVector(TypeType.getVector(),this.recorder);
         }
 
         PreDefinedAttribute.FMAttribute(this.fm);

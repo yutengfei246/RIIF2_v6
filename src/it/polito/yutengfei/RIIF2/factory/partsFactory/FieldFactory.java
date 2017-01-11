@@ -19,6 +19,7 @@ import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
+import it.polito.yutengfei.RIIF2.util.utilityWrapper.ExpressionOperator;
 
 import java.util.List;
 import java.util.Objects;
@@ -35,6 +36,8 @@ public class FieldFactory implements Factory{
     private Initializer initializer;
     private RIIF2Type fieldType;
 
+    private ExpressionOperator eo;
+
     public FieldFactory(ComponentFactory componentFactory, RIIF2Recorder recorder) {
         this.componentFactory = componentFactory;
         this.recorder = recorder;
@@ -45,6 +48,8 @@ public class FieldFactory implements Factory{
         this.fieldType = this.componentFactory.getFieldType();
         this.declaratorId = this.declarator.getDeclaratorId();
         this.initializer = this.declarator.getInitializer();
+
+        this.eo = new ExpressionOperator(this.recorder);
     }
 
     private void setUpDeclarator()
@@ -175,30 +180,28 @@ public class FieldFactory implements Factory{
         if (this.initializer == null)
             return;
 
-        if (initializer instanceof Expression){
+        if (initializer instanceof Expression) {
             Expression expInitializer = (Expression) this.initializer;
+            expInitializer.setExpressionOperator(eo);
 
-            if ( !this.fieldLabel.getType().equals( expInitializer.getType() )
-                    && !expInitializer.getType().equals(RIIF2Grammar.USER_DEFINED))
-                throw new FieldTypeNotMarchException(expInitializer.getValue().toString(),
-                        expInitializer.getLine(),expInitializer.getColumn());
+            if (this.fieldLabel.getName().equals(RIIF2Grammar.UNIT)) {
 
-            if ( expInitializer.getType().equals(RIIF2Grammar.USER_DEFINED )){
-                Label label
-                        = PreDefinedAttribute.getUserDefinedLabel(expInitializer,this.recorder);
+                if (!expInitializer.isPerformed())
+                    throw new FieldTypeNotMarchException(expInitializer.getValue().toString(),
+                            expInitializer.getLine(), expInitializer.getColumn());
 
-                DeclaratorId aisId = (DeclaratorId) expInitializer.getValue();
-                Id primitiveId = aisId.getPrimitiveId();
+                String type = ((DeclaratorId) expInitializer.value()).getPrimitiveId().getId();
 
-                if (label == null)
-                    throw new SomeVariableMissingException(primitiveId.getId(),
-                            expInitializer.getLine(),expInitializer.getColumn());
-                this.fieldLabel.setValue(label.getValue());
-            }else
+                this.fieldLabel.setValue(type);
+
+            }else if (expInitializer.getType().equals(this.fieldLabel.getType())){
                 this.fieldLabel.setValue(expInitializer.getValue());
-        }
+            }else {
+                throw new FieldTypeNotMarchException(expInitializer.getValue().toString(),
+                        expInitializer.getLine(), expInitializer.getColumn());
+            }
 
-       else if (initializer instanceof ListInitializer){
+        } else if (initializer instanceof ListInitializer){
             ListInitializer listInitializer = (ListInitializer) initializer;
 
             if ( !this.fieldLabel.getType().equals(RIIF2Grammar.LIST) )
@@ -228,6 +231,8 @@ public class FieldFactory implements Factory{
                 final int[] i = {0};
                 arrayInitializer.getInitializer()
                         .forEach(expression -> {
+                            expression.setExpressionOperator(this.eo);
+
                             if (!Objects.equals(expression.getType(), this.fieldLabel.getType()))
                                 throw new IllegalArgumentException();
 
@@ -330,7 +335,7 @@ public class FieldFactory implements Factory{
 
                 if (typeType.equals(RIIF2Grammar.TYPE_VECTOR)) {
                     Vector vector = TypeType.getVector();
-                    this.fieldLabel.setVector(vector);
+                    this.fieldLabel.setVector(vector,this.recorder);
                 }
             }
         }

@@ -1,9 +1,6 @@
 package it.polito.yutengfei.RIIF2.util.utilityWrapper;
 
-/**
- * Created by yutengfei on 11/12/16.
- */
-public class Operation {
+class Operation {
 
 
     private int opr;
@@ -12,26 +9,26 @@ public class Operation {
     private Expression targetExpression = null;
 
 
-    public void setOpr(int opr) {
+    void setOpr(int opr) {
         this.opr = opr;
     }
 
-    public void setOprExpression(Expression oprExpression) {
+    void setOprExpression(Expression oprExpression) {
         if( this.oprExpression != null){
             this.targetExpression = oprExpression;
         }else
             this.oprExpression = oprExpression;
     }
 
-    public int getOpr() {
+    int getOpr() {
         return opr;
     }
 
-    public Expression getOprExpression() {
+    Expression getOprExpression() {
         return oprExpression;
     }
 
-    public Expression getOprTargetExpression() {
+    Expression getOprTargetExpression() {
         return targetExpression;
     }
 }

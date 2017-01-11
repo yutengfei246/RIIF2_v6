@@ -4,6 +4,7 @@ import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
+import it.polito.yutengfei.RIIF2.util.utilityWrapper.ExpressionOperator;
 
 import java.util.*;
 
@@ -39,12 +40,17 @@ public class ChildComponent extends Label<Label> {
     }
 
     @Override
-    public void setVector(Vector vector) {
+    public void setVector(Vector vector, RIIF2Recorder recorder) {
         super.vectorTrue();
 
+        ExpressionOperator eo = new ExpressionOperator(recorder);
+
         Expression exp = vector.getLeft();
+        exp.setExpressionOperator(eo);
         int left = (int) exp.getValue();
+
         exp = vector.getRight();
+        exp.setExpressionOperator(eo);
         int right = (int) exp.getValue();
 
         super.setVectorLength( left * right);

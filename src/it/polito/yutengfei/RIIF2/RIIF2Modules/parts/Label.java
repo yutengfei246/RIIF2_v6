@@ -108,7 +108,7 @@ public abstract class Label<T extends Label> implements Serializable {
 
     public abstract boolean containsAttributeIndex(String index);
 
-    public abstract void setVector(Vector vector);
+    public abstract void setVector(Vector vector, RIIF2Recorder recorder);
 
     public abstract void addVectorItem(T value);
 

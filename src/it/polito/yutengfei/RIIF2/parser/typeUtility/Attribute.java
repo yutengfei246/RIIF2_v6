@@ -47,7 +47,7 @@ public class Attribute extends Label<Label> {
     }
 
     @Override
-    public void setVector(Vector vector) {
+    public void setVector(Vector vector, RIIF2Recorder recorder) {
 
     }
 

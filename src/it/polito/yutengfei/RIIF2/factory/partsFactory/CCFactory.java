@@ -97,7 +97,7 @@ public class CCFactory implements Factory {
                 this.ccLabel.setAssociative(true);
 
             if (typeType.equals(RIIF2Grammar.TYPE_VECTOR) )
-                this.ccLabel.setValue(TypeType.getVector());
+                this.ccLabel.setVector(TypeType.getVector(),this.recorder);
         }
 
         this.recorder.addLabel(this.ccLabel);
