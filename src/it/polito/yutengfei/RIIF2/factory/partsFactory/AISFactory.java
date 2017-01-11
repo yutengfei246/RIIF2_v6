@@ -266,6 +266,8 @@ public class AISFactory implements Factory{
             this.aisLabels = aisLabels;
         }
 
+        //TODO:: how to decide when to use the table index?
+        // set table'Items[#][column] =  arrayWrapperInitializer
         if (this.declaratorId.hasTableIndex()){
 
             Id tableId = this.declaratorId.getTableId();
@@ -328,6 +330,7 @@ public class AISFactory implements Factory{
 
             }
 
+            //TODO: has the possibility to be table initializer
             if (this.initializer instanceof ArrayWrapperInitializer){
                 ArrayWrapperInitializer arrayWrapperInitializer
                         = (ArrayWrapperInitializer) this.initializer;
@@ -341,8 +344,7 @@ public class AISFactory implements Factory{
                     List<Expression> expressions = arrayInitializer.getInitializer();
                     expressions.forEach(expression -> {
                         expression.setExpressionOperator(this.eo);
-                        Item.UnitItem unitItem
-                                = null;
+                        Item.UnitItem unitItem = null;
                         unitItem = item.createUnitItem(expression.getType(), expression.getValue());
                         item.addUnitItem(unitItem);
                     });

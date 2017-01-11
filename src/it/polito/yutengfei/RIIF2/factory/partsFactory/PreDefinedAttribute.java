@@ -58,6 +58,7 @@ public class PreDefinedAttribute {
     }
 
     /*From current, extended, to implements....  */
+    //TODO: to be change, need to consider all of the aisDeclaratorId not just primitiveId
     public static Label getUserDefinedLabel( Expression expInitializer , RIIF2Recorder recorder) {
         Label rtnLabel  = null;
 

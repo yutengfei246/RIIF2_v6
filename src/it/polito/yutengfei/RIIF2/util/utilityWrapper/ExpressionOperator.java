@@ -53,9 +53,7 @@ public class ExpressionOperator {
         this.resolvedThis(oprExpression);
 
         Operation currentOperation;
-        System.out.println("goting to !!");
         while ( ( currentOperation = oprExpression.pop() )  != null ){
-            System.out.println("after to !!" + currentOperation.getOpr() );
             Expression expression = currentOperation.getOprExpression();
             switch (currentOperation.getOpr()){
                 case OP_PLUS:
@@ -130,22 +128,6 @@ public class ExpressionOperator {
         }
 
         oprExpression.performed();
-    }
-
-    private void resolvedThis(Expression oprExpression) throws FieldTypeNotMarchException {
-
-        if ( oprExpression.type().equals(RIIF2Grammar.USER_DEFINED)){
-            Label label = PreDefinedAttribute.getUserDefinedLabel( oprExpression,this.recorder );
-            if (label == null)
-                throw new FieldTypeNotMarchException(oprExpression.value().toString(),
-                        oprExpression.getLine(), oprExpression.getColumn());
-
-            oprExpression.setValue(label.getValue());
-            oprExpression.setType(label.getType());
-
-        }
-
-
     }
 
     private void oprIfElse(Expression expression , Expression targetExpression ){
@@ -226,8 +208,6 @@ public class ExpressionOperator {
 
     private void oprStar(Expression oprExpression, Expression expression) throws FieldTypeNotMarchException {
 
-        System.out.println("???????????????????????????????????????????");
-
         expression.setExpressionOperator(this);
 
         this.expressionRunTimeCheck(oprExpression,expression);
@@ -263,6 +243,7 @@ public class ExpressionOperator {
             oprExpression.setType(RIIF2Grammar.DOUBLE);
         }
 
+        System.out.println(" 1 " + oprExpression.type() + "2 " + expression.getType());
         if ( !oprExpression.type().equals(expression.getType()))
             throw new FieldTypeNotMarchException(oprExpression.getValue().toString(),
                     oprExpression.getLine(),oprExpression.getColumn());
@@ -274,6 +255,20 @@ public class ExpressionOperator {
     }
 
     private void oprPlus(Expression oprExpression) {
+    }
+
+    private void resolvedThis(Expression oprExpression) throws FieldTypeNotMarchException {
+
+        if ( oprExpression.type().equals(RIIF2Grammar.USER_DEFINED)){
+            Label label = PreDefinedAttribute.getUserDefinedLabel( oprExpression,this.recorder );
+            if (label == null)
+                throw new FieldTypeNotMarchException(oprExpression.value().toString(),
+                        oprExpression.getLine(), oprExpression.getColumn());
+
+            oprExpression.setValue(label.getValue());
+            oprExpression.setType(label.getType());
+
+        }
     }
 
 }
