@@ -2,9 +2,7 @@ package it.polito.yutengfei.RIIF2.factory.partsFactory;
 
 
 import it.polito.yutengfei.RIIF2.Declarator.AisDeclarator;
-import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.ChildComponent;
-import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Item;
-import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Label;
+import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.*;
 import it.polito.yutengfei.RIIF2.factory.ComponentFactory;
 import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
 import it.polito.yutengfei.RIIF2.factory.Exceptions.SomeVariableMissingException;
@@ -81,15 +79,15 @@ public class AISFactory implements Factory{
                     break;
                 case RIIF2Grammar.SET:
                     this.aisLabel = this.recorder.getSetLabel(labelName);
+
+                    if (this.aisLabel == null)
+                        System.out.println(" ais is null");
+
                     break;
                 default:
                     this.aisLabel = null;
                     break;
             }
-
-            if (this.aisLabel == null)
-                throw new SomeVariableMissingException(labelName,
-                        this.primitiveId.getLine(), this.primitiveId.getColumn());
         }
 
         if (Objects.equals(this.primitiveId.getType(), RIIF2Grammar.TYPE_HIER)){
@@ -128,7 +126,7 @@ public class AISFactory implements Factory{
             }
 
             if (theRecorder != null)
-                this.aisLabel = theRecorder.getLabel(labelName);
+                this.aisLabel = theRecorder.getAssignmentLabel(labelName);
             else {
                 while (index+1  <  ids.size() ){
                     Id id = ids.get(index);
@@ -148,11 +146,11 @@ public class AISFactory implements Factory{
                         = ((RIIF2Recorder)this.aisLabel.getValue()).getLabel(labelName);
             }
 
-            if (this.aisLabel == null )
-                throw new SomeVariableMissingException(labelName,
-                        this.primitiveId.getLine(),this.primitiveId.getColumn());
         }
 
+        if (this.aisLabel == null )
+            throw new SomeVariableMissingException(labelName,
+                    this.primitiveId.getLine(),this.primitiveId.getColumn());
     }
 
     /**
@@ -160,6 +158,11 @@ public class AISFactory implements Factory{
      * primitiveId (aisType|associativeIndex) ? hierPostfix ? attributeIndex?
      * */
     private void positionAisLabel1() throws FieldTypeNotMarchException, SomeVariableMissingException {
+
+
+        if ( !this.declaratorId.hasAisType() && !this.declaratorId.hasAssociativeIndex() )
+            this.aisLabels.add(this.aisLabel);
+
 
         if (this.declaratorId.hasAssociativeIndex()){
             Id associativeId = this.declaratorId.getAssociativeIndex();
@@ -169,8 +172,17 @@ public class AISFactory implements Factory{
                 throw new FieldTypeNotMarchException(associativeIndex,
                         associativeId.getLine(), associativeId.getColumn());
 
-            this.aisLabel = this.aisLabel.getAssociative(associativeIndex);
+            Label tempLabel = this.aisLabel;
+            this.aisLabel = tempLabel.getAssociative(associativeIndex);
 
+
+            if (this.aisLabel == null){
+                System.out.println("++++++ NULLLLL"  ); ///TODO:: hehrherh
+                this.aisLabel = this.createLabel(associativeIndex,tempLabel);
+                tempLabel.putAssoc(associativeIndex,this.aisLabel);
+            }
+
+            this.aisLabels.add(this.aisLabel);
         }
 
         if (this.declaratorId.hasAisType()){
@@ -272,6 +284,35 @@ public class AISFactory implements Factory{
         }
     }
 
+    private Label createLabel(String associativeIndex, Label tempLabel) {
+
+        Label<Label> rtnLabel = null;
+        if ( tempLabel instanceof Parameter) {
+            rtnLabel = new Parameter();
+            PreDefinedAttribute.FieldAttribute(rtnLabel);
+        }
+        if (tempLabel instanceof Constant) {
+            rtnLabel = new Constant();
+            PreDefinedAttribute.FieldAttribute(rtnLabel);
+        }
+        if (tempLabel instanceof FailMode) {
+            rtnLabel = new FailMode();
+            PreDefinedAttribute.FMAttribute( rtnLabel );
+        }
+        if (tempLabel instanceof ChildComponent) {
+            rtnLabel = new ChildComponent();
+            rtnLabel.setValue(tempLabel.getValue());
+        }
+
+        System.out.print("..................");
+        rtnLabel.print();
+        assert rtnLabel != null;
+        rtnLabel.setName(associativeIndex);
+        rtnLabel.setType(tempLabel.getType());
+
+        return rtnLabel;
+    }
+
     private void assignInitializer() throws FieldTypeNotMarchException {
 
         for (Label label : this.aisLabels) {
@@ -280,21 +321,39 @@ public class AISFactory implements Factory{
                 Expression expInitializer = (Expression) this.initializer;
 
                 if (expInitializer.getType().equals(RIIF2Grammar.USER_DEFINED)) {
-                    Id primitiveId = ((DeclaratorId) expInitializer.getValue()).getPrimitiveId();
 
-                    Label userDefinedLabel = PreDefinedAttribute.getUserDefinedLabel(expInitializer,this.recorder);
-                    if (userDefinedLabel == null)
-                        throw new FieldTypeNotMarchException(primitiveId.getId(),
-                                primitiveId.getLine(), primitiveId.getColumn());
+                    if (!label.getName().equals(RIIF2Grammar.UNIT)) {
+                        Id primitiveId = ((DeclaratorId) expInitializer.getValue()).getPrimitiveId();
 
-                    label.setValue(userDefinedLabel.getValue());
-                }else if (expInitializer.getType().equals( label.getType()) ){
-                    label.setValue( expInitializer.getValue() );
+                        Label userDefinedLabel = PreDefinedAttribute.getUserDefinedLabel(expInitializer, this.recorder);
+                        if (userDefinedLabel == null)
+                            throw new FieldTypeNotMarchException(primitiveId.getId(),
+                                    primitiveId.getLine(), primitiveId.getColumn());
+
+                        label.setValue(userDefinedLabel.getValue());
+                    }else{
+
+                        String type =  ( (DeclaratorId)expInitializer.getValue() ).getPrimitiveId().getId();
+                        label.setValue(type);
+                    }
+
+                }else if (expInitializer.getType().equals( label.getType()) ) {
+                    label.setValue(expInitializer.getValue());
+                }else if (expInitializer.getType().equals( RIIF2Grammar.INTEGER)
+                        && label.getType().equals(RIIF2Grammar.DOUBLE) ){
+                    label.setValue((double) (int) expInitializer.getValue());
                 }else
-                    throw new FieldTypeNotMarchException(expInitializer.getType(),
+                    throw new FieldTypeNotMarchException(expInitializer.getType() +" , " + label.getType() + label.getName(),
                             expInitializer.getLine(),
                             expInitializer.getColumn());
             }
+
+            if (this.initializer instanceof ListInitializer){
+
+                ListInitializer listInitializer = (ListInitializer) this.initializer;
+                label.setValue(listInitializer.getInitializer());
+            }
+
 
             if (this.initializer instanceof ArrayInitializer){
 
@@ -326,7 +385,6 @@ public class AISFactory implements Factory{
             }
 
             if (this.initializer instanceof TableInitializer){
-
                 TableInitializer tableInitializer
                         = (TableInitializer) this.initializer;
 
@@ -388,6 +446,7 @@ public class AISFactory implements Factory{
                             }
                             items.add(item);
                         });
+
                 label.setValue(items);
             }
         }

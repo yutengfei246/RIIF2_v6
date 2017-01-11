@@ -1,64 +1,59 @@
-template testt;
-abstract parameter mtt : integer := 1 ;
-abstract parameter mtt1 : float := 10.0;
-abstract parameter mtt2 : float ;
+template SRAM_TEMPLATE;
+
+// All SRAMs nyst defube voltage, temperature and size
+abstract constant   NAME : string;
+abstract constant  MANUFACTURE : string;
+abstract parameter CORE_VOLTAGE : float;
+abstract parameter NUM_BITS : integer;
+
+// All SRAMs must have radiation induced failure modes
+abstract fail_mode RAD_FM[];
+// All SRAMs must have permanent failure modes
+abstract fail_mode PER_FM[];
+
+abstract fail_mode RAD_FM[SBU]'RATE;
+impose RAD_FM[SBU]'UNIT = FITS;
+abstract fail_mode RAD_FM[MBU]'RATE;
+impose RAD_FM[MBU]'UNIT = FITS;
+abstract fail_mode RAD_FM[SEFI]'RATE;
+impose RAD_FM[SEFI]'UNIT = FITS;
+abstract fail_mode RAD_FM[SEFI]'RATE;
+impose RAD_FM[SEFI]'UNIT = FITS;
+abstract fail_mode RAD_FM[SSAF]'RATE;
+impose RAD_FM[SSAF]'UNIT = FITS;
+
 endtemplate
 
-component tester;
-parameter mfloat: float := 10.0;
-parameter tmLine: integer := 100;
-fail_mode fm;
-endcomponent
+template SYNCSRAM_TEMPLATE extends SRAM_TEMPLATE;
 
-component testercc;
-child_component tester cc;
-child_component tester cc1;
+abstract parameter      CLK_Speed : integer;
+impose  CLK_Speed'unit = MHZ ;
 
-endcomponent
+endtemplate
 
-component tester1 extends tester, testercc implements testt;
+template FLIP_CHIP_TEMPLATE;
 
+//all flip chip packages must contain the following info
+abstract constant NAME:string;
+abstract parameter NUM_BUMPS :integer;
+abstract parameter PACKAGE_TEMP: float;
+impose PACKAGE_TEMP'UNIT = CELSIUS;
 
-parameter myString: string := "my tester1";
-assign myString'min = mfloat;
+//all flip-chip package have these failure mechanisms
+abstract fail_mode OPEN_BUMP;
+abstract fail_mode DIE_CRACK;
+endtemplate
 
-parameter myList := { this ,is ,a ,list } ;
-parameter myAssoc[] :float ;
-parameter myAssoc1[] : float := [ "assoc1", "assoc2" ] ;
-parameter myArray[1:6] : integer := [1,2,3,4,5,6];
-parameter my2Array[2:2] : integer := { [7,8],
-                                       [9,0] };
-parameter myAssoc[first] ;
-parameter myTable : table ;
-assign myTable'header = {header1, header2} ;
-assign myTable'items = {["header1","header2"], ["header11", {1,2,3,4}]};
-assign myTable'items = {["header1", "header2"],["header11", "header22"]};
-child_component tester cc1;
+component CY7C1263XC18 implements SYNCSRAM_TEMPLATE,FLIP_CHIP_TEMPLATE;
 
-fail_mode fm;
-
-assign cc1.tmLine = 100000;
-assign testercc.cc1.tmLine = 200000;
-assign mfloat = 100.0;
-assign tester.fm'rate = 10;
-assign tester.fm'description = "my first failmode tester ";
-assign cc.mfloat = 1000.0;
-set mtt2 = 10.0;
-
-endcomponent
-
-component FAST_CPU;
-
-// For simple model, MTTF is static constant
-
-  fail_mode CHIP_FAIL;
-  assign CHIP_FAIL'description = "Permanent hard chip failure. " ;
-  assign CHIP_FAIL'unit = MTTF;
-  assign CHIP_FAIL'rate = 1000000;
-
-  parameter VOLTAGE : float := 1.0;               // Voltage at transistor
-  assign VOLTAGE'unit = volts;
-  assign VOLTAGE'min = 0.8;
-  assign VOLTAGE'max = 1.2;
-
-endcomponent
+ set SYNCSRAM_TEMPLATE.NAME = "CY/C1263XC18";
+ set MANUFACTURE = "CYPRESS";
+ set CORE_VOLTAGE = 1.8;
+ set NUM_BITS = 37748736;
+ set CLK_Speed = 633;
+ set FLIP_CHIP_TEMPLATE.NAME = "165-LBGA";
+ set NUM_BUMPS = 165;
+ set PACKAGE_TEMP'MIN = 0 ;
+ set PACKAGE_TEMP'MAX = 70;
+ set RAD_FM[SBU]'RATE = 0;
+ endcomponent

@@ -33,7 +33,7 @@ public class ComponentParser extends DeclaratorParser {
         List<TerminalNode>  Identifiers = ctx.Identifier();
 
         if( Identifiers.size() != 0)
-            this.componentFactory.startImplEx();
+            this.componentFactory.startImplEx(RIIF2Grammar.COMPONENT);
 
         for (TerminalNode Identifier : Identifiers){
             String identifier = Identifier.getText();
@@ -51,7 +51,7 @@ public class ComponentParser extends DeclaratorParser {
         List<TerminalNode> Identifiers = ctx.Identifier();
 
         if( Identifiers.size() != 0)
-            this.componentFactory.startImplEx();
+            this.componentFactory.startImplEx(RIIF2Grammar.COMPONENT);
 
         for(TerminalNode Identifier : Identifiers){
             String identifier = Identifier.getText();

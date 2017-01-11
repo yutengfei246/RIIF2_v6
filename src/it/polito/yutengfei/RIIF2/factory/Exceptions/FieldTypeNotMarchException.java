@@ -12,5 +12,8 @@ public class FieldTypeNotMarchException extends Throwable {
         this.column = column;
     }
 
-    public void print(){};
+    public void print(){
+        System.err.println("<" + id + ">" + "can not be marched in the line:column" + line+":"+column);
+    }
+
 }

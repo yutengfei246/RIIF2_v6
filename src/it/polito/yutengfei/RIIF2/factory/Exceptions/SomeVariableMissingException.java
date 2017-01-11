@@ -13,5 +13,7 @@ public class SomeVariableMissingException extends Throwable {
         this.column = column;
     }
 
-    public void print(){}
+    public void print(){
+        System.out.println("<" + id + ">" + " can not be resolved in the line:column" + line + ":"+ column );
+    }
 }

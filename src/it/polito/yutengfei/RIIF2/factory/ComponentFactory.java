@@ -27,8 +27,8 @@ public class ComponentFactory {
         this.recorder.setIdentifier( identifier );
     }
 
-    public void startImplEx() {
-        this.factory = new ImplExFactory(this.recorder);
+    public void startImplEx(String key) {
+        this.factory = new ImplExFactory(key,this.recorder);
     }
 
     public void setCurrentComponentExtendsIdentifier(String identifier) {
@@ -87,9 +87,11 @@ public class ComponentFactory {
         } catch (FieldTypeNotMarchException e) {
             e.printStackTrace();
             e.print();
+        } finally {
+            this.factory = null;
+            this.fieldType = null;
         }
-        this.factory = null /*Reset the fieldFactory*/;
-        this.fieldType = null;
+
     }
 
     public void commit() {

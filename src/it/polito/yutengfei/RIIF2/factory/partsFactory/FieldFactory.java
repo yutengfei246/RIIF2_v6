@@ -198,7 +198,7 @@ public class FieldFactory implements Factory{
                 this.fieldLabel.setValue(expInitializer.getValue());
         }
 
-        if (initializer instanceof ListInitializer){
+       else if (initializer instanceof ListInitializer){
             ListInitializer listInitializer = (ListInitializer) initializer;
 
             if ( !this.fieldLabel.getType().equals(RIIF2Grammar.LIST) )
@@ -207,94 +207,94 @@ public class FieldFactory implements Factory{
 
             List<String> listListInitializer= listInitializer.getInitializer();
             this.fieldLabel.setValue( listListInitializer );
-        }
+        } else {
 
 
-        if ( !this.fieldLabel.isVector() && !this.fieldLabel.isAssociative())
-            throw new FieldTypeNotMarchException(RIIF2Grammar.ARRAY,
-                    this.initializer.getLine(),
-                    this.initializer.getColumn());
-
-        // Label should have the vector
-        if (initializer instanceof ArrayInitializer){
-            ArrayInitializer arrayInitializer
-                    = (ArrayInitializer) this.initializer;
-
-            if (arrayInitializer.size() != this.fieldLabel.getVectorLength() )
+            if (!this.fieldLabel.isVector() && !this.fieldLabel.isAssociative())
                 throw new FieldTypeNotMarchException(RIIF2Grammar.ARRAY,
                         this.initializer.getLine(),
                         this.initializer.getColumn());
 
-            final int[] i = {0};
-            arrayInitializer.getInitializer()
-                    .forEach(expression -> {
-                        if (!Objects.equals(expression.getType(), this.fieldLabel.getType()))
-                            throw new IllegalArgumentException();
+            // Label should have the vector
+            if (initializer instanceof ArrayInitializer) {
+                ArrayInitializer arrayInitializer
+                        = (ArrayInitializer) this.initializer;
 
-                        if (this.fieldLabel.isAssociative()) {
-                            Label usedLabel = null;
-                            if (this.fieldLabel instanceof Parameter)
-                                usedLabel = new Parameter();
-                            if (this.fieldLabel instanceof Constant)
-                                usedLabel = new Constant();
+                if (arrayInitializer.size() != this.fieldLabel.getVectorLength())
+                    throw new FieldTypeNotMarchException(RIIF2Grammar.ARRAY,
+                            this.initializer.getLine(),
+                            this.initializer.getColumn());
 
-                            assert usedLabel != null;
+                final int[] i = {0};
+                arrayInitializer.getInitializer()
+                        .forEach(expression -> {
+                            if (!Objects.equals(expression.getType(), this.fieldLabel.getType()))
+                                throw new IllegalArgumentException();
 
-                            usedLabel.setType(this.fieldType.getType());
-                            usedLabel.setName(expression.getValue().toString());
-                            this.fieldLabel.putAssoc(expression.getValue().toString(), usedLabel);
-                        }
+                            if (this.fieldLabel.isAssociative()) {
+                                Label usedLabel = null;
+                                if (this.fieldLabel instanceof Parameter)
+                                    usedLabel = new Parameter();
+                                if (this.fieldLabel instanceof Constant)
+                                    usedLabel = new Constant();
 
-                        if (this.fieldLabel.isVector()) {
-                            Label usedLabel= this.fieldLabel.getVector(i[0]);
-                            i[0]++;
+                                assert usedLabel != null;
 
-                            usedLabel.setValue(expression.getValue());
-                            usedLabel.setType( expression.getType() );
-                        }
+                                usedLabel.setType(this.fieldType.getType());
+                                usedLabel.setName(expression.getValue().toString());
+                                this.fieldLabel.putAssoc(expression.getValue().toString(), usedLabel);
+                            }
 
-                    });
-        }
+                            if (this.fieldLabel.isVector()) {
+                                Label usedLabel = this.fieldLabel.getVector(i[0]);
+                                i[0]++;
 
-        if (this.initializer instanceof ArrayWrapperInitializer){
-            ArrayWrapperInitializer arrayWrapperInitializer
-                    = (ArrayWrapperInitializer) this.initializer;
+                                usedLabel.setValue(expression.getValue());
+                                usedLabel.setType(expression.getType());
+                            }
 
-            int vectorLeft = this.fieldLabel.getVectorLeft();
-            int vectorRight = this.fieldLabel.getVectorRight();
+                        });
+            }
 
-            if (arrayWrapperInitializer.size() != vectorRight)
-                throw new FieldTypeNotMarchException(RIIF2Grammar.ARRAY,
-                        arrayWrapperInitializer.getLine(),
-                        arrayWrapperInitializer.getColumn());
+            if (this.initializer instanceof ArrayWrapperInitializer) {
+                ArrayWrapperInitializer arrayWrapperInitializer
+                        = (ArrayWrapperInitializer) this.initializer;
 
-            arrayWrapperInitializer.getInitializer()
-                    .forEach(arrayInitializer -> {
+                int vectorLeft = this.fieldLabel.getVectorLeft();
+                int vectorRight = this.fieldLabel.getVectorRight();
 
-                        if (arrayInitializer.size() != vectorLeft)
-                            throw new IllegalArgumentException();
+                if (arrayWrapperInitializer.size() != vectorRight)
+                    throw new FieldTypeNotMarchException(RIIF2Grammar.ARRAY,
+                            arrayWrapperInitializer.getLine(),
+                            arrayWrapperInitializer.getColumn());
 
-                        arrayInitializer.getInitializer()
-                                .forEach(expression -> {
-                                    if (!Objects.equals(expression.getType(), this.fieldLabel.getType()))
-                                        throw new IllegalArgumentException();
+                arrayWrapperInitializer.getInitializer()
+                        .forEach(arrayInitializer -> {
 
-                                    Label vectorItem = null ;
-                                    if (this.fieldLabel instanceof Parameter)
-                                        vectorItem = new Parameter();
-                                    if (this.fieldLabel instanceof Constant)
-                                        vectorItem = new Constant();
+                            if (arrayInitializer.size() != vectorLeft)
+                                throw new IllegalArgumentException();
 
-                                    assert vectorItem != null;
-                                    vectorItem.setName(null);
-                                    vectorItem.setValue(expression.getValue());
-                                    this.fieldLabel.addVectorItem(vectorItem);
-                                });
-                    });
+                            arrayInitializer.getInitializer()
+                                    .forEach(expression -> {
+                                        if (!Objects.equals(expression.getType(), this.fieldLabel.getType()))
+                                            throw new IllegalArgumentException();
+
+                                        Label vectorItem = null;
+                                        if (this.fieldLabel instanceof Parameter)
+                                            vectorItem = new Parameter();
+                                        if (this.fieldLabel instanceof Constant)
+                                            vectorItem = new Constant();
+
+                                        assert vectorItem != null;
+                                        vectorItem.setName(null);
+                                        vectorItem.setValue(expression.getValue());
+                                        this.fieldLabel.addVectorItem(vectorItem);
+                                    });
+                        });
+            }
         }
 
     }
-
 
     private void createFieldLabel(String name){
 

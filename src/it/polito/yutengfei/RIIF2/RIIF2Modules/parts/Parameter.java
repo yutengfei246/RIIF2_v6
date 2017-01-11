@@ -96,31 +96,38 @@ public class Parameter extends Label<Label> {
     }
 
     @Override
-    public void print(){
+    public void print() {
         System.out.print("Parameter " + this.getName());
         System.out.print(" : " + this.getType());
+
+        if (isAssociative()) {
+            System.out.print("[]");
+        }
 
         if (this.getValue() != null)
             System.out.print(" := "  + this.getValue().toString() );
         else
             System.out.print(" := null " );
+
         System.out.println(";");
 
-        if (this.attributeMap.size() != 0 ){
-            this.attributeMap.forEach((s, attribute) ->
-                attribute.print()
-            );
+        if (this.attributeMap.size() > 0) {
+            System.out.println(getName() + "@attribute ");
+
+            this.attributeMap.forEach((s, attribute) -> attribute.print());
+
+            System.out.println(getName() + "@endattribute");
         }
 
-        if (this.assocs != null && this.assocs.size() != 0){
-            System.out.println("--assoc--");
-            this.assocs.forEach((s, parameter) ->
-                parameter.print()
-            );
-            System.out.println("--assoc end--");
+        if (isAssociative()) {
+            this.assocs.forEach((s, label) -> {
+                System.out.println(getName() + "[" + s + "]");
+                label.print();
+            });
         }
 
-        if (this.vectorValue != null && this.vectorValue.size() != 0 ){
+
+        if (this.vectorValue != null && this.vectorValue.size() != 0) {
             System.out.println("--vector--");
             this.vectorValue.forEach(Label::print);
             System.out.println("--vector end ");

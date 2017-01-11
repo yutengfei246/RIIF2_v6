@@ -42,4 +42,6 @@ public class RIIF2Grammar {;
     public static final String MAX = "max";
     public static final String UNIT = "unit";
     public static final String SHARP = "#";
+    public static final String COMPONENT = "component";
+    public static final String TEMPLATE = "template";
 }

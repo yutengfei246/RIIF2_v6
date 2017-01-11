@@ -91,15 +91,28 @@ public class FailMode extends Label<Label> {
         return null;
     }
 
-
+    @Override
     public void print() {
         System.out.print("Fail_Mode " + getName());
-        System.out.println(" ; ");
 
-        if (this.attributeMap.size() != 0 ){
-            this.attributeMap.forEach((s, attribute) -> {
-                System.out.print("Fail_Mode:" + this.getName() + "@Attribute:");
-                attribute.print();
+        if ( isAssociative() ){
+            System.out.print("[]");
+        }
+
+        System.out.println(";");
+
+        if (this.attributeMap.size() > 0 ){
+            System.out.println(getName() + "@attribute ");
+
+            this.attributeMap.forEach((s, attribute) -> attribute.print());
+
+            System.out.println(getName() +"@endattribute");
+        }
+
+        if (isAssociative()){
+            this.assocs.forEach((s, label) -> {
+                System.out.println(getName() + "[" + s + "]");
+                label.print();
             });
         }
     }

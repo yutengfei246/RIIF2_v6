@@ -96,11 +96,11 @@ public class Attribute extends Label<Label> {
             System.out.println(stringBuffer);
         }
 
-        System.out.println(this.getName()
-                + " -Type : "
-                + this.getType()
-                + " -value :"
-                + this.getValue() );
+            System.out.println(this.getName()
+                    + " -Type : "
+                    + this.getType()
+                    + " -value :"
+                    + this.getValue());
     }
 
 }

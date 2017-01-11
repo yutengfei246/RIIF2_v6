@@ -214,12 +214,28 @@ public class RIIF2Recorder implements Recorder, Serializable {
 
     public Label getSetLabel(String labelName){
 
-        for (Map.Entry<String,RIIF2Recorder> entry : this.implRecorderMap.entrySet()){
-            if (entry.getValue().getLabel(labelName) != null)
-                return entry.getValue().getLabel(labelName);
+        if (this.isTemplate()){
 
-            if (entry.getValue().getSetLabel(labelName) != null)
-                return entry.getValue().getSetLabel(labelName);
+            for (Map.Entry<String, RIIF2Recorder > entry : this.exRecorderMap.entrySet() ){
+
+                if (entry.getValue().getLabel(labelName) != null)
+                    return entry.getValue().getLabel(labelName);
+
+                if (entry.getValue().getSetLabel(labelName) != null)
+                    return entry.getValue().getSetLabel(labelName);
+            }
+        }
+        if ( !this.isTemplate() ) {
+
+            for (Map.Entry<String, RIIF2Recorder> entry : this.implRecorderMap.entrySet()) {
+
+                if (entry.getValue().getLabel(labelName) != null)
+                    return entry.getValue().getLabel(labelName);
+
+
+                if (entry.getValue().getSetLabel(labelName) != null)
+                    return entry.getValue().getSetLabel(labelName);
+            }
         }
 
         return null;

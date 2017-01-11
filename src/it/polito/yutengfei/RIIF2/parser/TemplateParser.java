@@ -33,7 +33,7 @@ public class TemplateParser extends DeclaratorParser{
         List<TerminalNode> eXs =ctx.Identifier();
 
         if (eXs != null && eXs.size() != 0 )
-            this.componentFactory.startImplEx();
+            this.componentFactory.startImplEx(RIIF2Grammar.TEMPLATE);
 
         assert eXs != null; //?
 
