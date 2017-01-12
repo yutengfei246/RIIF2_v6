@@ -300,8 +300,15 @@ public class AISFactory implements Factory{
             if (this.initializer instanceof Expression) {
                 Expression expInitializer = (Expression) this.initializer;
                 expInitializer.setExpressionOperator( this.eo ) ;
+                if (label.isEnumType()){
+                    if ( !expInitializer.type().equals(RIIF2Grammar.USER_DEFINED)
+                            || !label.getEnumType().contains( ((DeclaratorId) expInitializer.value() ).getPrimitiveId().getId()  ))
+                        throw new FieldTypeNotMarchException((  (DeclaratorId)expInitializer.value()).getPrimitiveId().getId(),
+                                expInitializer.getLine(),expInitializer.getColumn());
 
-                if (label.getName().equals(RIIF2Grammar.UNIT) ){
+                    label.setValue ( ((DeclaratorId)expInitializer.value()).getPrimitiveId().getId() );
+
+                } else if (label.getName().equals(RIIF2Grammar.UNIT) ){
                     if ( !( expInitializer.value() instanceof DeclaratorId) )
                         throw new FieldTypeNotMarchException(expInitializer.value().toString(),
                                 expInitializer.getLine(), expInitializer.getColumn());
@@ -315,7 +322,7 @@ public class AISFactory implements Factory{
                         && label.getType().equals(RIIF2Grammar.DOUBLE) ){
                     label.setValue((double) (int) expInitializer.getValue());
                 }else
-                    throw new FieldTypeNotMarchException( label.getName() + ":" + label.getName() + " , " + expInitializer.getType(),
+                    throw new FieldTypeNotMarchException( label.getName() + ":" + label.getType() + " , " + expInitializer.getType(),
                             expInitializer.getLine(),
                             expInitializer.getColumn());
             }
@@ -331,10 +338,15 @@ public class AISFactory implements Factory{
 
             }
 
-            //TODO: has the possibility to be table initializer
             if (this.initializer instanceof ArrayWrapperInitializer){
                 ArrayWrapperInitializer arrayWrapperInitializer
                         = (ArrayWrapperInitializer) this.initializer;
+
+                if (!label.isVector()
+                        && !label.getName().equals(RIIF2Grammar.ITEMS))
+                    throw new FieldTypeNotMarchException(RIIF2Grammar.TABLE,
+                            arrayWrapperInitializer.getLine(), arrayWrapperInitializer.getColumn());
+
 
                 List<Item> items = new LinkedList<>();
                 List<ArrayInitializer> arrayInitializers = arrayWrapperInitializer.getInitializer();

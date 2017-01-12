@@ -29,7 +29,7 @@ abstract class TypeParser extends _RIIF2Parser{
     }
 
     @Override
-    public void enterPrimitiveType(RIIF2Parser.PrimitiveTypeContext ctx) {
+    public void exitPrimitiveType(RIIF2Parser.PrimitiveTypeContext ctx) {
 
         RIIF2Type type = null;
 
@@ -45,7 +45,7 @@ abstract class TypeParser extends _RIIF2Parser{
         if( ctx.TYPE_TIME() != null)
             type = RIIF2Type.primitiveTypeTime(ctx.start.getLine(), ctx.start.getCharPositionInLine());
         if( ctx.enumType() != null)
-            type = this.getRIIF2Type( ctx.enumType() );
+            type = this.getRIIF2Type(ctx.enumType());
         if( ctx.Identifier() != null) {
             TerminalNode Identifier = ctx.Identifier();
             String identifier = Identifier.getText();

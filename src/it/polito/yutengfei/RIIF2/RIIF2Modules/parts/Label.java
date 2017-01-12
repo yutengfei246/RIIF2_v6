@@ -1,7 +1,7 @@
 package it.polito.yutengfei.RIIF2.RIIF2Modules.parts;
 
-import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
+import it.polito.yutengfei.RIIF2.parser.typeUtility.EnumType;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 
@@ -19,6 +19,7 @@ public abstract class Label<T extends Label> implements Serializable {
     private int vectorLength = 0;
     private int vectorLeft = 0;
     private int vectorRight = 0;
+    private EnumType enumType = null;
 
 
     public Boolean isAssociative() {
@@ -91,6 +92,18 @@ public abstract class Label<T extends Label> implements Serializable {
 
     public void setValue(Object value){
         this.value = value;
+    }
+
+    public void setEnumType(EnumType enumType) {
+        this.enumType = enumType;
+    }
+
+    public EnumType getEnumType(){
+        return this.enumType;
+    }
+
+    public boolean isEnumType(){
+        return this.getEnumType() != null ;
     }
 
     /***********************************************************************************/

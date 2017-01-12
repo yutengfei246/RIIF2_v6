@@ -397,10 +397,17 @@ funcName
     | FUNC_AGG_SINGLE
     | FUNC_GT_N_FAIL
     ;
+/*
 funcArg
-    : (aisDeclaratorId) vector
+    : expression
+    ;
+*/
+
+funcArg
+    : aisDeclaratorId vector
     | expression
     ;
+
 
 /*Literal*/
 literal

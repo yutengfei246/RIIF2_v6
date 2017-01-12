@@ -5,6 +5,7 @@ import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
 import it.polito.yutengfei.RIIF2.initializer.Initializer;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 public class Expression implements Initializer {
@@ -43,6 +44,7 @@ public class Expression implements Initializer {
     private int line;
     private int column;
     private ExpressionOperator expressionOperator = null;
+    private LinkedList funcArguments = null ;
 
     public void setType(String type) {
         this.type = type;
@@ -197,4 +199,14 @@ public class Expression implements Initializer {
         return column;
     }
 
+    public void addFunctionArgument(Expression funcArgumentExp) {
+        if (this.funcArguments == null)
+            this.funcArguments = new LinkedList<>();
+
+        this.funcArguments.add( funcArgumentExp );
+    }
+
+    List<Expression> getFuncArguments() {
+        return this.funcArguments;
+    }
 }

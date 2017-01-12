@@ -17,15 +17,15 @@ import java.util.Objects;
 
 public class LabelRetriever {
 
-    public static Label Retriever(Expression expression, RIIF2Recorder recorder) throws FieldTypeNotMarchException {
+    public static List<Label> Retriever(Expression expression, RIIF2Recorder recorder) throws FieldTypeNotMarchException {
         List<Label> rtnLabels = new LinkedList<>();
         Label rtnLabel = null;
 
 
-        if (!expression.getType().equals(RIIF2Grammar.USER_DEFINED))
+        if (!expression.type().equals(RIIF2Grammar.USER_DEFINED))
             return null;
 
-        DeclaratorId declaratorId = (DeclaratorId) expression.getValue();
+        DeclaratorId declaratorId = (DeclaratorId) expression.value();
         Id primitiveId = declaratorId.getPrimitiveId();
         String id = primitiveId.getId();
 
@@ -77,51 +77,53 @@ public class LabelRetriever {
             rtnLabel = currRecorder.getLabel(id);
         }
 
-        RestOfAisDeclaratorId(rtnLabel, rtnLabels, declaratorId, recorder);
-        return rtnLabel;
+        return RestOfAisDeclaratorId(rtnLabel, rtnLabels, declaratorId, recorder);
+
+
     }
 
 
-    private static void RestOfAisDeclaratorId(Label rtnLabel, List<Label> rtnLabels, DeclaratorId declaratorId, RIIF2Recorder recorder) throws FieldTypeNotMarchException {
+    private static List<Label> RestOfAisDeclaratorId(Label rtnLabel, List<Label> rtnLabels, DeclaratorId declaratorId, RIIF2Recorder recorder) throws FieldTypeNotMarchException {
 
         if (rtnLabel == null)
-            return;
+            return rtnLabels;
 
         ExpressionOperator eo = new ExpressionOperator(recorder);
 
         if (!declaratorId.hasAisType()
-                && !declaratorId.hasAssociativeIndex()
-                && !declaratorId.hasAttributeIndex())
+                && !declaratorId.hasAssociativeIndex())
             rtnLabels.add(rtnLabel);
 
-        RIIF2Type aisType = declaratorId.getAisType();
-        String type = aisType.getType();
+        if (declaratorId.hasAisType()) {
+            RIIF2Type aisType = declaratorId.getAisType();
+            String type = aisType.getType();
 
-        if (type.equals(RIIF2Grammar.TYPE_ASSOCIATIVE)) {
-            //TODO:: skip
-        } else if (type.equals(RIIF2Grammar.TYPE_FLAT_VECTOR)) {
+            if (type.equals(RIIF2Grammar.TYPE_ASSOCIATIVE)) {
+                //TODO:: skip
+            } else if (type.equals(RIIF2Grammar.TYPE_FLAT_VECTOR)) {
 
-            Vector vector = aisType.getVector();
-            if (!rtnLabel.isVector()
-                    || rtnLabel.getVectorLength() < vector.getLength(eo))
-                throw new FieldTypeNotMarchException(rtnLabel.getName(),
-                        aisType.getLine(), aisType.getColumn());
+                Vector vector = aisType.getVector();
+                if (!rtnLabel.isVector()
+                        || rtnLabel.getVectorLength() < vector.getLength(eo))
+                    throw new FieldTypeNotMarchException(rtnLabel.getName(),
+                            aisType.getLine(), aisType.getColumn());
 
-            Expression expression = vector.getLeft();
-            expression.setExpressionOperator(eo);
+                Expression expression = vector.getLeft();
+                expression.setExpressionOperator(eo);
 
-            int i = (int) expression.getValue();
+                int i = (int) expression.getValue();
 
-            expression = vector.getRight();
-            expression.setExpressionOperator(eo);
-            int j = (int) expression.getValue();
+                expression = vector.getRight();
+                expression.setExpressionOperator(eo);
+                int j = (int) expression.getValue();
 
-            for (; i <= j; i++) {
-                Label label = rtnLabel.getVector(i);
-                rtnLabels.add(label);
-            }
-        } else
-            rtnLabels.add(rtnLabel);
+                for (; i <= j; i++) {
+                    Label label = rtnLabel.getVector(i);
+                    rtnLabels.add(label);
+                }
+            } else
+                rtnLabels.add(rtnLabel);
+        }
 
         if (declaratorId.hasAssociativeIndex()) {
             Id associativeId = declaratorId.getAssociativeIndex();
@@ -134,7 +136,7 @@ public class LabelRetriever {
             rtnLabel = rtnLabel.getAssociative(associativeIndex);
 
             if (rtnLabel == null)
-                return;
+                return rtnLabels;
 
             rtnLabels.add(rtnLabel);
 
@@ -148,9 +150,7 @@ public class LabelRetriever {
             for (Label label : rtnLabels) {
 
                 if (!(label instanceof ChildComponent)) {
-                    rtnLabel = null;
-                    rtnLabels = null;
-                    return;
+                    return null;
                 }
 
                 RIIF2Recorder ccRecorder
@@ -163,9 +163,7 @@ public class LabelRetriever {
                         : null;
 
                 if (label == null) {
-                    rtnLabel = null;
-                    rtnLabels = null;
-                    return;
+                    return null;
                 }
 
 
@@ -181,20 +179,22 @@ public class LabelRetriever {
             String attributeIndex = attributeId.getId();
 
             List<Label> aisLabels = new LinkedList<>();
-            for (Label label : aisLabels) {
+            for (Label label : rtnLabels) {
                 Label tempLabel;
                 tempLabel = label.getAttribute(attributeIndex);
+
                 if (tempLabel == null) {
-                    rtnLabel = null;
-                    rtnLabels = null;
-                    return;
+                    return null;
                 }
                 aisLabels.add(tempLabel);
             }
             rtnLabels = aisLabels;
         }
+
+        //TODO: table index
+
+        return rtnLabels;
     }
 
-    //TODO: table index
 }
 

@@ -73,10 +73,11 @@ public class Attribute extends Label<Label> {
 
     @Override
     public void print() {
-        if (Objects.equals(this.getName(), RIIF2Grammar.ITEMS)){
+        if (Objects.equals(this.getName(), RIIF2Grammar.ITEMS)
+                && this.getValue() != null ){
             StringBuilder stringBuffer = new StringBuilder();
 
-            stringBuffer.append("{");
+            stringBuffer.append(getName()+" {");
 
             List<Item> items = (List<Item>) this.getValue();
             items.forEach(item -> {
@@ -94,7 +95,7 @@ public class Attribute extends Label<Label> {
             stringBuffer.append("}");
 
             System.out.println(stringBuffer);
-        }
+        }else
 
             System.out.println(this.getName()
                     + " -Type : "

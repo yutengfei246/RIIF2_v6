@@ -185,7 +185,7 @@ public class RIIF2Recorder implements Recorder, Serializable {
                 ? this.getChildComponent(labelName)
                 : this.getFailMode(labelName) != null
                 ? this.getFailMode(labelName)
-                : null ;
+                : this.platform ;
     }
 
     /*only can find in this recorder or parent recorder */

@@ -8,7 +8,6 @@ import it.polito.yutengfei.RIIF2.factory.Exceptions.SomeVariableMissingException
 import it.polito.yutengfei.RIIF2.factory.Exceptions.VeriableAlreadyExistException;
 import it.polito.yutengfei.RIIF2.factory.Factory;
 import it.polito.yutengfei.RIIF2.id.DeclaratorId;
-import it.polito.yutengfei.RIIF2.id.Id;
 import it.polito.yutengfei.RIIF2.initializer.ArrayInitializer;
 import it.polito.yutengfei.RIIF2.initializer.ArrayWrapperInitializer;
 import it.polito.yutengfei.RIIF2.initializer.Initializer;
@@ -184,7 +183,16 @@ public class FieldFactory implements Factory{
             Expression expInitializer = (Expression) this.initializer;
             expInitializer.setExpressionOperator(eo);
 
-            if (this.fieldLabel.getName().equals(RIIF2Grammar.UNIT)) {
+            if (this.fieldLabel.isEnumType()){
+
+                if ( !expInitializer.type().equals(RIIF2Grammar.USER_DEFINED)
+                        || !this.fieldLabel.getEnumType().contains(((DeclaratorId)expInitializer.value()).getPrimitiveId().getId()))
+                    throw new FieldTypeNotMarchException(expInitializer.value().toString(),
+                            expInitializer.getLine(),expInitializer.getColumn());
+
+                this.fieldLabel.setValue(((DeclaratorId)expInitializer.value()).getPrimitiveId().getId());
+
+            } else if (this.fieldLabel.getName().equals(RIIF2Grammar.UNIT)) {
 
                 if  (! (expInitializer.value() instanceof DeclaratorId ) )
                     throw new FieldTypeNotMarchException(expInitializer.value().toString(),
@@ -319,6 +327,10 @@ public class FieldFactory implements Factory{
             String primitiveType
                     = primitiveFieldDeclarator.getPrimitiveType().getType();
             this.fieldLabel.setType(primitiveType);
+
+            if (primitiveType.equals(RIIF2Grammar.ENUM)){
+                this.fieldLabel.setEnumType(primitiveFieldDeclarator.getPrimitiveType().getEnumType());
+            }
 
             if ( !this.declaratorId.hasAttributeIndex()
                     && !this.declaratorId.hasAssociativeIndex()){

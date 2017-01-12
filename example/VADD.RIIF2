@@ -2,7 +2,7 @@ component VADD implements SW_COMPONENT;
     set NAME = "Vector ADD";
     set SIZE = 524;
     set SIZE'UNITS = instructions;
-    set PROTECTIONS = NODE;
+    set PROTECTION = NODE;
     constant NUMBER_OF_ITEMS :integer:= 10000;
     set READ_ACCESS = 76*NUMBER_OF_ITEMS / 10000;
     set WRITE_ACCESS = 75*NUMBER_OF_ITEMS / 10000;

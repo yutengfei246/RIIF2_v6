@@ -6,7 +6,7 @@ import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
-
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 
 //TODO: this class tag number must be changed because it has changed in the .TOKEN files .....
@@ -115,6 +115,48 @@ abstract class ExpressionParser extends DeclaratorIdParser {
     }
 
     @Override
+    public void exitFuncName(RIIF2Parser.FuncNameContext ctx) {
+        Expression expression = new Expression();
+        expression.setLine( ctx.start.getLine());
+        expression.setColumn(ctx.start.getCharPositionInLine());
+
+        if (ctx.FUNC_EXP() != null)
+            expression.setType(RIIF2Grammar.FUNC_EXP);
+        if (ctx.FUNC_LOG() != null)
+            expression.setType(RIIF2Grammar.FUNC_LOG);
+        if (ctx.FUNC_AGG_SINGLE() != null )
+            expression.setType(RIIF2Grammar.FUNC_AGG_SINGLE);
+        if (ctx.FUNC_GT_N_FAIL() != null )
+            expression.setType(RIIF2Grammar.FUNC_GT_N_FAIL);
+
+
+        this.putExpression(ctx,expression);
+    }
+
+    @Override
+    public void exitFuncArg(RIIF2Parser.FuncArgContext ctx) {
+        Expression expression = null;
+
+        if (ctx.expression() != null )
+            expression = this.getExpression(ctx.expression());
+        //TODO :: aisDeclaratorId vector
+
+        this.putExpression(ctx,expression);
+    }
+
+    @Override
+    public void exitFuncCall(RIIF2Parser.FuncCallContext ctx) {
+        Expression funcName = this.getExpression(ctx.funcName());
+
+        ctx.funcArg().forEach(funcArgContext -> {
+            Expression funcArgumentExp = this.getExpression(funcArgContext);
+            funcName.addFunctionArgument(funcArgumentExp);
+        });
+
+        this.putExpression(ctx,funcName);
+    }
+
+    @Override
     public void exitPrimaryFuncCall(RIIF2Parser.PrimaryFuncCallContext ctx) {
         //TODO: function call has to store in EXP-TREE
         Expression expression = this.getExpression(ctx.funcCall());
@@ -129,8 +171,8 @@ abstract class ExpressionParser extends DeclaratorIdParser {
         expression.setType(RIIF2Grammar.USER_DEFINED);
         expression.setValue(declaratorId);
 
-        expression.setLine( declaratorId.getLine() );
-        expression.setColumn( declaratorId.getColumn() );
+        expression.setLine( ctx.start.getLine() );
+        expression.setColumn( ctx.start.getCharPositionInLine() );
 
         this.putExpression(ctx,expression);
     }
@@ -152,13 +194,15 @@ abstract class ExpressionParser extends DeclaratorIdParser {
         Expression expression = this.getExpression(ctx.expression());
 
         Expression newExpression = null;
-        if (ctx.op.getType() == RIIF2Parser.T__15){
+
+        if ( ctx.op.getType() == RIIF2Parser.T__15){
+            newExpression = expression.operation(Expression.OP_POSITIVE);
+        }
+
+        if (ctx.op.getType() == RIIF2Parser.T__16){
             newExpression = expression.operation(Expression.OP_NEGATIVE);
         }
 
-        if ( ctx.op.getType() == RIIF2Parser.T__14){
-            newExpression = expression.operation(Expression.OP_POSITIVE);
-        }
 
         expression.setLine( ctx.start.getLine() );
         expression.setColumn( ctx.start.getCharPositionInLine() );

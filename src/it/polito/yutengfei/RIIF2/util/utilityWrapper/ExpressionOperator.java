@@ -3,14 +3,19 @@ package it.polito.yutengfei.RIIF2.util.utilityWrapper;
 
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Label;
 import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
-import it.polito.yutengfei.RIIF2.factory.partsFactory.PreDefinedAttribute;
+import it.polito.yutengfei.RIIF2.recoder.LabelRetriever;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
+
+import java.util.List;
+import java.util.Objects;
 
 import static it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression.*;
 
 //TODO: called retriever from the class retrivere
 public class ExpressionOperator {
+    private static final String EXP = "exp function";
+    private static final String LOG = "log function";
     private final RIIF2Recorder recorder;
 
     public ExpressionOperator(RIIF2Recorder recorder) {
@@ -56,6 +61,12 @@ public class ExpressionOperator {
         Operation currentOperation;
         while ( ( currentOperation = oprExpression.pop() )  != null ){
             Expression expression = currentOperation.getOprExpression();
+
+            if (expression != null) {
+                this.resolvedThis(expression);
+                expression.setExpressionOperator(this);
+            }
+
             switch (currentOperation.getOpr()){
                 case OP_PLUS:
                     this.oprPlus( expression );
@@ -64,10 +75,10 @@ public class ExpressionOperator {
                     this.oprMinus( expression );
                     break;
                 case OP_STAR:
-                    this.oprStar(oprExpression, expression );
+                    this.oprStarDiv(OP_STAR,oprExpression, expression );
                     break;
                 case OP_DIV:
-                    this.oprDiv( expression );
+                    this.oprStarDiv(OP_DIV, oprExpression, expression );
                     break;
                 case OP_MOD:
                     this.oprMod( expression );
@@ -103,7 +114,7 @@ public class ExpressionOperator {
                     this.oprNotEq( expression );
                     break;
                 case OP_NEGATIVE:
-                    this.oprNegative( expression );
+                    this.oprNegative( oprExpression);
                     break;
                 case OP_POSITIVE:
                     this.oprPositive( expression );
@@ -171,8 +182,18 @@ public class ExpressionOperator {
 
     }
 
-    private void oprNegative(Expression expression) {
+    private void oprNegative(Expression oprExpression) throws FieldTypeNotMarchException {
 
+        if ( !oprExpression.getType().equals(RIIF2Grammar.INTEGER)
+                && !oprExpression.getType().equals(RIIF2Grammar.DOUBLE) )
+            throw new FieldTypeNotMarchException(oprExpression.value().toString(),
+                    oprExpression.getLine(),oprExpression.getColumn());
+
+        if (oprExpression.getType().equals(RIIF2Grammar.INTEGER))
+            oprExpression.setValue(0 - (int) oprExpression.getValue() );
+
+        if (oprExpression.getType().equals(RIIF2Grammar.DOUBLE))
+            oprExpression.setValue( 0 - (double) oprExpression.getValue() );
     }
 
     private void oprPositive(Expression expression) {
@@ -203,28 +224,52 @@ public class ExpressionOperator {
 
     }
 
-    private void oprDiv(Expression expression) {
 
-    }
-
-    private void oprStar(Expression oprExpression, Expression expression) throws FieldTypeNotMarchException {
-
-        expression.setExpressionOperator(this);
+    private void oprStarDiv(int op, Expression oprExpression, Expression expression) throws FieldTypeNotMarchException {
 
         this.expressionRunTimeCheck(oprExpression,expression);
 
         if (oprExpression.type().equals(RIIF2Grammar.INTEGER)
                 && expression.getType().equals(RIIF2Grammar.INTEGER) ){
-            int res = (int)oprExpression.value() * (int)expression.getValue();
+
+            int res = 0 ;
+            switch (op){
+                case OP_STAR:
+                    res = (int)oprExpression.value() * (int)expression.getValue();
+                    break;
+                case OP_DIV:
+                    res = (int)oprExpression.value() / (int)expression.getValue();
+                    break;
+                default:
+                    break;
+            }
             oprExpression.setValue(res);
         }
 
         if (oprExpression.type().equals(RIIF2Grammar.DOUBLE)
-                && expression.getType().equals(RIIF2Grammar.DOUBLE) ){
-            double res = (double)oprExpression.value() * (int)expression.getValue();
+                && expression.getType().equals(RIIF2Grammar.DOUBLE) ) {
+
+            double res = 0.0 ;
+            switch (op) {
+                case OP_STAR:
+                    res = (double) oprExpression.value() * (double) expression.getValue();
+                    break;
+                case OP_DIV:
+                    res = (double) oprExpression.value() / (double) expression.getValue();
+                    break;
+                default:
+                    break;
+            }
             oprExpression.setValue(res);
         }
 
+    }
+
+    private void oprMinus(Expression oprExpression) {
+
+    }
+
+    private void oprPlus(Expression oprExpression) {
     }
 
     private void expressionRunTimeCheck(Expression oprExpression, Expression expression) throws FieldTypeNotMarchException {
@@ -244,32 +289,88 @@ public class ExpressionOperator {
             oprExpression.setType(RIIF2Grammar.DOUBLE);
         }
 
-        System.out.println(" 1 " + oprExpression.type() + "2 " + expression.getType());
         if ( !oprExpression.type().equals(expression.getType()))
             throw new FieldTypeNotMarchException(oprExpression.getValue().toString(),
                     oprExpression.getLine(),oprExpression.getColumn());
 
     }
 
-    private void oprMinus(Expression oprExpression) {
-
-    }
-
-    private void oprPlus(Expression oprExpression) {
-    }
-
     private void resolvedThis(Expression oprExpression) throws FieldTypeNotMarchException {
 
         if ( oprExpression.type().equals(RIIF2Grammar.USER_DEFINED)){
-            Label label = PreDefinedAttribute.getUserDefinedLabel( oprExpression,this.recorder );
-            if (label == null)
+            List<Label> labels = LabelRetriever.Retriever(oprExpression,this.recorder);
+
+            if (labels == null)
                 throw new FieldTypeNotMarchException(oprExpression.value().toString(),
                         oprExpression.getLine(), oprExpression.getColumn());
 
-            oprExpression.setValue(label.getValue());
-            oprExpression.setType(label.getType());
+            if (labels.size() == 1) {
+                Label label = labels.get(0);
+                oprExpression.setValue(label.getValue());
+                oprExpression.setType(label.getType());
+            }
+
+            if (labels.size() > 1){
+
+                //TODO:: which is an special case
+            }
 
         }
+
+        if (oprExpression.type().equals(RIIF2Grammar.FUNC_AGG_SINGLE)){
+            this.funcAggSignal(oprExpression);
+        }
+
+        if (oprExpression.type().equals(RIIF2Grammar.FUNC_GT_N_FAIL)){
+            this.funcGtNFail(oprExpression);
+        }
+
+        if (oprExpression.type().equals(RIIF2Grammar.FUNC_EXP)){
+            this.funcExpLog(oprExpression,EXP);
+        }
+
+        if (oprExpression.type().equals(RIIF2Grammar.FUNC_LOG))
+            this.funcExpLog(oprExpression,LOG);
+    }
+
+    private void funcExpLog(Expression oprExpression, String expLog) throws FieldTypeNotMarchException {
+
+        List<Expression> arguments= oprExpression.getFuncArguments();
+        if (arguments.size() != 1)
+            throw new FieldTypeNotMarchException(RIIF2Grammar.FUNC_EXP,
+                    oprExpression.getLine(),oprExpression.getColumn() );
+
+
+        Expression expression = arguments.get(0);
+        expression.setExpressionOperator(this);
+
+        if ( !expression.getType().equals(RIIF2Grammar.INTEGER)
+                && ! expression.getType().equals(RIIF2Grammar.DOUBLE) )
+            throw new IllegalArgumentException();
+
+        Double res = 0.0;
+
+        if (Objects.equals(expLog, EXP))
+            res = Math.exp((double)  expression.getValue());
+        if (Objects.equals(expLog, LOG))
+            res = Math.log((double) expression.getValue());
+
+        oprExpression.setValue(res);
+        oprExpression.setType(RIIF2Grammar.DOUBLE);
+    }
+
+    private void funcGtNFail(Expression oprExpression) {
+
+        //.........
+        oprExpression.setType(RIIF2Grammar.DOUBLE);
+        oprExpression.setValue(10.0);
+    }
+
+    private void funcAggSignal(Expression oprExpression) {
+
+        //....................
+        oprExpression.setType(RIIF2Grammar.DOUBLE);
+        oprExpression.setValue(10.0); // for now
     }
 
 }
