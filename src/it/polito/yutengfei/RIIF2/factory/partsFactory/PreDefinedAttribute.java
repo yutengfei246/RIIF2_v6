@@ -3,14 +3,12 @@ package it.polito.yutengfei.RIIF2.factory.partsFactory;
 
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.ChildComponent;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Label;
-import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
 import it.polito.yutengfei.RIIF2.id.DeclaratorId;
 import it.polito.yutengfei.RIIF2.id.Id;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
-import it.polito.yutengfei.RIIF2.util.utilityWrapper.ExpressionOperator;
 
 import java.util.List;
 import java.util.Objects;

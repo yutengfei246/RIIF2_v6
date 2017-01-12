@@ -9,6 +9,7 @@ import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 
 import static it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression.*;
 
+//TODO: called retriever from the class retrivere
 public class ExpressionOperator {
     private final RIIF2Recorder recorder;
 

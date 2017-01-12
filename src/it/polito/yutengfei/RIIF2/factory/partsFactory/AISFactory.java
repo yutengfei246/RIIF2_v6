@@ -160,7 +160,8 @@ public class AISFactory implements Factory{
     private void positionAisLabel1() throws FieldTypeNotMarchException, SomeVariableMissingException {
 
 
-        if ( !this.declaratorId.hasAisType() && !this.declaratorId.hasAssociativeIndex() )
+        if ( !this.declaratorId.hasAisType()
+                && !this.declaratorId.hasAssociativeIndex())
             this.aisLabels.add(this.aisLabel);
 
 
