@@ -36,15 +36,14 @@ public class Expression implements Initializer {
     private String type;
     private Object value;
 
-
     private boolean performed = false;
-
     private Queue<Operation> oprQueue = new LinkedList<>();
 
     private int line;
     private int column;
+    private LinkedList<Expression> funcArguments = null ;
+
     private ExpressionOperator expressionOperator = null;
-    private LinkedList funcArguments = null ;
 
     public void setType(String type) {
         this.type = type;
@@ -97,6 +96,17 @@ public class Expression implements Initializer {
         this.expressionOperator = expressionOperator;
     }
 
+    public boolean isBoolean() {
+        try {
+            return this.expressionOperator.isBoolean(this);
+        } catch (FieldTypeNotMarchException e) {
+            e.printStackTrace();
+            e.print();
+        }
+
+        return false;
+    }
+
     public boolean isInteger() {
         try {
             return this.expressionOperator.isInteger(this);
@@ -107,7 +117,7 @@ public class Expression implements Initializer {
         return false;
     }
 
-    boolean isArray() {
+    public boolean isArray() {
         try {
             return this.expressionOperator.isArray(this);
         } catch (FieldTypeNotMarchException e) {
@@ -131,6 +141,7 @@ public class Expression implements Initializer {
     }
 
     public Object getValue() {
+
         try {
             return this.expressionOperator.getValue(this);
         } catch (FieldTypeNotMarchException e) {

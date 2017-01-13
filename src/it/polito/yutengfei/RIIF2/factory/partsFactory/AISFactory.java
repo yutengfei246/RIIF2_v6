@@ -426,6 +426,10 @@ public class AISFactory implements Factory{
                                         = (Expression) row.getValue();
                                 expression.setExpressionOperator(eo);
 
+                                /*
+                                if (!expression.isArray())
+                                    throw new IllegalArgumentException();
+                                                                           */
                                 ArrayInitializer arrayInitializer
                                         = null;
                                 arrayInitializer = (ArrayInitializer) expression.getValue();

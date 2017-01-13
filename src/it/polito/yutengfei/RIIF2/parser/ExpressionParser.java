@@ -4,12 +4,11 @@ import it.polito.yutengfei.RIIF2.RIIF2Parser;
 import it.polito.yutengfei.RIIF2.id.DeclaratorId;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
-import org.antlr.v4.runtime.tree.TerminalNode;
 
 
-//TODO: this class tag number must be changed because it has changed in the .TOKEN files .....
 abstract class ExpressionParser extends DeclaratorIdParser {
 
     private ParseTreeProperty<Expression> expTree = new ParseTreeProperty<>();
@@ -23,18 +22,19 @@ abstract class ExpressionParser extends DeclaratorIdParser {
         this.expTree.put(node,expression);
     }
 
+    private void setPosition(ParserRuleContext ctx, Expression exp){
+        exp.setLine( ctx.start.getLine());
+        exp.setColumn(ctx.start.getCharPositionInLine());
+    }
+
     @Override
     public void exitLiteralString(RIIF2Parser.LiteralStringContext ctx) {
         Expression expression = new Expression();
-
-
+        this.setPosition(ctx,expression);
 
         String value = ctx.getText();
         expression.setType(RIIF2Grammar.STRING);
         expression.setValue(value);
-
-        expression.setLine( ctx.start.getLine() );
-        expression.setColumn( ctx.start.getCharPositionInLine() );
 
         this.putExpression(ctx,expression);
     }
@@ -42,13 +42,11 @@ abstract class ExpressionParser extends DeclaratorIdParser {
     @Override
     public void exitLiteralDecimal(RIIF2Parser.LiteralDecimalContext ctx) {
         Expression expression = new Expression();
+        this.setPosition(ctx,expression);
 
         int value = Integer.valueOf( ctx.getText() );
         expression.setType(RIIF2Grammar.INTEGER);
         expression.setValue(value);
-
-        expression.setLine( ctx.start.getLine() );
-        expression.setColumn( ctx.start.getCharPositionInLine() );
 
         this.putExpression(ctx,expression);
     }
@@ -56,13 +54,11 @@ abstract class ExpressionParser extends DeclaratorIdParser {
     @Override
     public void exitLiteralFloatingPoint(RIIF2Parser.LiteralFloatingPointContext ctx) {
         Expression expression = new Expression();
+        this.setPosition(ctx,expression);
 
         Double value = Double.valueOf( ctx.getText() );
         expression.setType(RIIF2Grammar.DOUBLE);
         expression.setValue(value);
-
-        expression.setLine( ctx.start.getLine() );
-        expression.setColumn( ctx.start.getCharPositionInLine() );
 
         this.putExpression(ctx,expression);
     }
@@ -82,11 +78,10 @@ abstract class ExpressionParser extends DeclaratorIdParser {
     @Override
     public void exitPrimaryFalse(RIIF2Parser.PrimaryFalseContext ctx) {
         Expression expression = new Expression();
-        expression.setValue(RIIF2Grammar.BOOLEAN);
-        expression.setValue(false);
+        this.setPosition(ctx,expression);
 
-        expression.setLine( ctx.start.getLine() );
-        expression.setColumn( ctx.start.getCharPositionInLine() );
+        expression.setType(RIIF2Grammar.BOOLEAN);
+        expression.setValue(false);
 
         this.putExpression(ctx,expression);
     }
@@ -94,11 +89,10 @@ abstract class ExpressionParser extends DeclaratorIdParser {
     @Override
     public void exitPrimaryTrue(RIIF2Parser.PrimaryTrueContext ctx) {
         Expression expression = new Expression();
+        this.setPosition(ctx,expression);
+
         expression.setType(RIIF2Grammar.BOOLEAN);
         expression.setValue(true);
-
-        expression.setLine( ctx.start.getLine() );
-        expression.setColumn( ctx.start.getCharPositionInLine() );
 
         this.putExpression(ctx,expression);
     }
@@ -106,10 +100,9 @@ abstract class ExpressionParser extends DeclaratorIdParser {
     @Override
     public void exitPrimarySelf(RIIF2Parser.PrimarySelfContext ctx) {
         Expression expression = new Expression();
-        expression.setType(RIIF2Grammar.SELF);
+        this.setPosition(ctx,expression);
 
-        expression.setLine( ctx.start.getLine() );
-        expression.setColumn( ctx.start.getCharPositionInLine() );
+        expression.setType(RIIF2Grammar.SELF);
 
         this.putExpression(ctx,expression);
     }
@@ -117,8 +110,7 @@ abstract class ExpressionParser extends DeclaratorIdParser {
     @Override
     public void exitFuncName(RIIF2Parser.FuncNameContext ctx) {
         Expression expression = new Expression();
-        expression.setLine( ctx.start.getLine());
-        expression.setColumn(ctx.start.getCharPositionInLine());
+        this.setPosition(ctx,expression);
 
         if (ctx.FUNC_EXP() != null)
             expression.setType(RIIF2Grammar.FUNC_EXP);
@@ -158,7 +150,6 @@ abstract class ExpressionParser extends DeclaratorIdParser {
 
     @Override
     public void exitPrimaryFuncCall(RIIF2Parser.PrimaryFuncCallContext ctx) {
-        //TODO: function call has to store in EXP-TREE
         Expression expression = this.getExpression(ctx.funcCall());
         this.putExpression(ctx,expression);
     }
@@ -166,13 +157,11 @@ abstract class ExpressionParser extends DeclaratorIdParser {
     @Override
     public void exitPrimaryAisDeclaratorId(RIIF2Parser.PrimaryAisDeclaratorIdContext ctx) {
         Expression expression = new Expression();
+        this.setPosition(ctx,expression);
 
         DeclaratorId declaratorId = super.getDeclaratorId(ctx.aisDeclaratorId());
         expression.setType(RIIF2Grammar.USER_DEFINED);
         expression.setValue(declaratorId);
-
-        expression.setLine( ctx.start.getLine() );
-        expression.setColumn( ctx.start.getCharPositionInLine() );
 
         this.putExpression(ctx,expression);
     }
@@ -203,10 +192,7 @@ abstract class ExpressionParser extends DeclaratorIdParser {
             newExpression = expression.operation(Expression.OP_NEGATIVE);
         }
 
-
-        expression.setLine( ctx.start.getLine() );
-        expression.setColumn( ctx.start.getCharPositionInLine() );
-
+        this.setPosition(ctx,newExpression);
 
         this.putExpression(ctx,newExpression);
     }
@@ -214,16 +200,15 @@ abstract class ExpressionParser extends DeclaratorIdParser {
     @Override
     public void exitExpWaveOrNot(RIIF2Parser.ExpWaveOrNotContext ctx) {
         Expression expression = this.getExpression(ctx.expression());
-        if (ctx.op.getType() == RIIF2Parser.T__16){
+        if (ctx.op.getType() == RIIF2Parser.T__17){
             expression.operation(Expression.OP_WAVE);
         }
 
-        if ( ctx.op.getType() == RIIF2Parser.T__17){
+        if ( ctx.op.getType() == RIIF2Parser.T__18){
             expression.operation(Expression.OP_NOT);
         }
 
-        expression.setLine( ctx.start.getLine() );
-        expression.setColumn( ctx.start.getCharPositionInLine() );
+        this.setPosition(ctx,expression);
 
         this.putExpression(ctx,expression);
     }
@@ -251,8 +236,7 @@ abstract class ExpressionParser extends DeclaratorIdParser {
         }finally {
 
             assert expression != null;
-            expression.setLine( ctx.start.getLine() );
-            expression.setColumn( ctx.start.getCharPositionInLine() );
+            this.setPosition(ctx,expression);
 
             this.putExpression(ctx,expression);
         }
@@ -270,14 +254,13 @@ abstract class ExpressionParser extends DeclaratorIdParser {
                 return;
             }
 
-            if (ctx.op.getType() == RIIF2Parser.T__14) {
+            if (ctx.op.getType() == RIIF2Parser.T__16) {
                 expression = leftExp.operation(Expression.OP_PLUS, rightExp);
             }
         }finally {
 
             assert expression != null;
-            expression.setLine( ctx.start.getLine() );
-            expression.setColumn( ctx.start.getCharPositionInLine() );
+            this.setPosition(ctx,expression);
 
             this.putExpression(ctx,expression);
         }
@@ -290,26 +273,24 @@ abstract class ExpressionParser extends DeclaratorIdParser {
 
         Expression expression = null;
         try {
-            if (ctx.op.getType() == RIIF2Parser.T__21) {
+            if (ctx.op.getType() == RIIF2Parser.T__22) {
                 expression = leftExp.operation(Expression.OP_SM_EQ, rightExp);
                 return;
             }
-            if (ctx.op.getType() == RIIF2Parser.T__22) {
+            if (ctx.op.getType() == RIIF2Parser.T__23) {
                 expression = leftExp.operation(Expression.OP_BG_EQ, rightExp);
                 return;
             }
-            if (ctx.op.getType() == RIIF2Parser.T__5) {
-                expression = leftExp.operation(Expression.OP_BG, rightExp);
-                return;
-            }
-            if (ctx.op.getType() == RIIF2Parser.T__4) {
+            if (ctx.op.getType() == RIIF2Parser.T__1) {
                 expression = leftExp.operation(Expression.OP_SM, rightExp);
+            }
+            if (ctx.op.getType() == RIIF2Parser.T__2) {
+                expression = leftExp.operation(Expression.OP_BG, rightExp);
             }
         }finally {
 
             assert expression != null;
-            expression.setLine( ctx.start.getLine() );
-            expression.setColumn( ctx.start.getCharPositionInLine() );
+            this.setPosition(ctx,expression);
 
             this.putExpression(ctx,expression);
         }
@@ -322,18 +303,17 @@ abstract class ExpressionParser extends DeclaratorIdParser {
 
         Expression expression = null;
         try {
-            if (ctx.op.getType() == RIIF2Parser.T__23) {
+            if (ctx.op.getType() == RIIF2Parser.T__24) {
                 expression = leftExp.operation(Expression.OP_EQ_EQ, rightExp);
                 return;
             }
-            if (ctx.op.getType() == RIIF2Parser.T__24) {
+            if (ctx.op.getType() == RIIF2Parser.T__25) {
                 expression = leftExp.operation(Expression.OP_NOT_EQ, rightExp);
             }
         }finally {
 
             assert expression != null;
-            expression.setLine( ctx.start.getLine() );
-            expression.setColumn( ctx.start.getCharPositionInLine() );
+            this.setPosition(ctx,expression);
 
             this.putExpression(ctx,expression);
         }
@@ -346,35 +326,13 @@ abstract class ExpressionParser extends DeclaratorIdParser {
 
         Expression expression = null;
         try {
-            if (ctx.op.getType() == RIIF2Parser.T__25) {
+            if (ctx.op.getType() == RIIF2Parser.T__26) {
                 expression = leftExp.operation(Expression.OP_SINGLE_AND, rightExp);
             }
         }finally {
 
             assert expression != null;
-            expression.setLine( ctx.start.getLine() );
-            expression.setColumn( ctx.start.getCharPositionInLine() );
-
-            this.putExpression(ctx,expression);
-        }
-    }
-
-    @Override
-    public void exitExpSingleOr(RIIF2Parser.ExpSingleOrContext ctx) {
-        Expression leftExp = this.getExpression(ctx.expression(0));
-        Expression rightExp = this.getExpression(ctx.expression(1));
-
-        Expression expression = null;
-        try {
-            if (ctx.op.getType() == RIIF2Parser.T__27) {
-                expression = leftExp.operation(Expression.OP_SINGLE_OR, rightExp);
-            }
-
-        }finally {
-
-            assert expression != null;
-            expression.setLine( ctx.start.getLine() );
-            expression.setColumn( ctx.start.getCharPositionInLine() );
+            this.setPosition(ctx,expression);
 
             this.putExpression(ctx,expression);
         }
@@ -387,15 +345,34 @@ abstract class ExpressionParser extends DeclaratorIdParser {
 
         Expression expression = null;
         try {
-            if (ctx.op.getType() == RIIF2Parser.T__26) {
+            if (ctx.op.getType() == RIIF2Parser.T__27) {
                 expression = leftExp.operation(Expression.OP_SINGLE_POWER, rightExp);
             }
 
         }finally {
 
             assert expression != null;
-            expression.setLine( ctx.start.getLine() );
-            expression.setColumn( ctx.start.getCharPositionInLine() );
+            this.setPosition(ctx,expression);
+
+            this.putExpression(ctx,expression);
+        }
+    }
+
+    @Override
+    public void exitExpSingleOr(RIIF2Parser.ExpSingleOrContext ctx) {
+        Expression leftExp = this.getExpression(ctx.expression(0));
+        Expression rightExp = this.getExpression(ctx.expression(1));
+
+        Expression expression = null;
+        try {
+            if (ctx.op.getType() == RIIF2Parser.T__28) {
+                expression = leftExp.operation(Expression.OP_SINGLE_OR, rightExp);
+            }
+
+        }finally {
+
+            assert expression != null;
+            this.setPosition(ctx,expression);
 
             this.putExpression(ctx,expression);
         }
@@ -408,15 +385,14 @@ abstract class ExpressionParser extends DeclaratorIdParser {
 
         Expression expression = null;
         try {
-            if (ctx.op.getType() == RIIF2Parser.T__28) {
+            if (ctx.op.getType() == RIIF2Parser.T__29) {
                 expression = leftExp.operation(Expression.OP_DOUBLE_AND, rightExp);
             }
 
         }finally {
 
             assert expression != null;
-            expression.setLine( ctx.start.getLine() );
-            expression.setColumn( ctx.start.getCharPositionInLine() );
+            this.setPosition(ctx,expression);
 
             this.putExpression(ctx,expression);
         }
@@ -429,15 +405,14 @@ abstract class ExpressionParser extends DeclaratorIdParser {
 
         Expression expression = null;
         try {
-            if (ctx.op.getType() == RIIF2Parser.T__29) {
+            if (ctx.op.getType() == RIIF2Parser.T__30) {
                 expression = leftExp.operation(Expression.OP_DOUBLE_OR, rightExp);
             }
 
         }finally {
 
             assert expression != null;
-            expression.setLine( ctx.start.getLine() );
-            expression.setColumn( ctx.start.getCharPositionInLine() );
+            this.setPosition(ctx,expression);
 
             this.putExpression(ctx,expression);
         }
@@ -449,9 +424,7 @@ abstract class ExpressionParser extends DeclaratorIdParser {
         Expression rightExp = this.getExpression(ctx.expression(1));
 
         leftExp.operation(Expression.OP_ASSIGN, rightExp);
-
-        leftExp.setLine( ctx.start.getLine() );
-        leftExp.setColumn( ctx.start.getCharPositionInLine() );
+        this.setPosition(ctx,leftExp);
 
         this.putExpression(ctx,leftExp);
     }
@@ -463,10 +436,9 @@ abstract class ExpressionParser extends DeclaratorIdParser {
         Expression rightExp = this.getExpression(ctx.expression(2));
 
         Expression expression;
-        expression = leftExp.operation(Expression.OP_IF_ELSE, middleExp,rightExp);
 
-        expression.setLine( ctx.start.getLine() );
-        expression.setColumn( ctx.start.getCharPositionInLine() );
+        expression = leftExp.operation(Expression.OP_IF_ELSE, middleExp,rightExp);
+        this.setPosition(ctx,expression);
 
         this.putExpression(ctx,expression);
 

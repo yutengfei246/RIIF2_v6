@@ -1,13 +1,5 @@
 package it.polito.yutengfei.RIIF2.util.utilityWrapper;
 
-import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
-
-/**
- *
- * On the other hand the inner value has to be Array or row array
- */
-
-
 public class Row {
 
 
@@ -30,14 +22,6 @@ public class Row {
     }
 
     public void setValue(Object value) {
-        if (this.type == EXPRESSION){
-            Expression expression = ( Expression )value;
-            if( !expression.isArray() ){
-                System.out.println("The expression is not array type ");
-                System.exit(1);
-            }
-        }
-
         this.value = value;
     }
 

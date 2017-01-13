@@ -135,8 +135,13 @@ abstract class InitializerParser extends ExpressionParser {
         ParserRuleContext parentContext = ctx.getParent();
         if(parentContext instanceof RIIF2Parser.PrimaryContext){
             Expression expression = new Expression();
+            expression.setLine(ctx.start.getLine());
+            expression.setColumn(ctx.start.getCharPositionInLine());
+
             expression.setType(RIIF2Grammar.ARRAY);
             expression.setValue(this.getArrayInitializer());
+
+
             putExpression(ctx,expression);
         }
 

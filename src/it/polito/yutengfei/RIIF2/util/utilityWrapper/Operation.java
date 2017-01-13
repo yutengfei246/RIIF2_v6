@@ -5,7 +5,6 @@ class Operation {
 
     private int opr;
     private Expression oprExpression = null;
-
     private Expression targetExpression = null;
 
 
@@ -22,6 +21,18 @@ class Operation {
 
     int getOpr() {
         return opr;
+    }
+
+    Boolean isOprWithSelf(){
+        return oprExpression == null && targetExpression == null;
+    }
+
+    Boolean isOprWithOneExpression(){
+        return oprExpression != null && targetExpression == null ;
+    }
+
+    Boolean isOprWithTwoExpression(){
+        return oprExpression != null && targetExpression != null;
     }
 
     Expression getOprExpression() {
