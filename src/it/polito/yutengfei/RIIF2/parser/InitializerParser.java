@@ -74,6 +74,8 @@ abstract class InitializerParser extends ExpressionParser {
                 = ctx.listItem();
 
         ListInitializer listInitializer = new ListInitializer();
+        listInitializer.setLine(ctx.start.getLine());
+        listInitializer.setColumn(ctx.start.getCharPositionInLine());
         for (RIIF2Parser.ListItemContext listItemContext : listItemContexts){
             String listItem = this.getListItemString(listItemContext);
             listInitializer.addItem( listItem );
@@ -119,6 +121,9 @@ abstract class InitializerParser extends ExpressionParser {
             = ctx.arrayItem();
 
         ArrayInitializer arrayInitializer = new ArrayInitializer();
+        arrayInitializer.setLine(ctx.start.getLine());
+        arrayInitializer.setColumn(ctx.start.getCharPositionInLine());
+
         for (RIIF2Parser.ArrayItemContext arrayItemContext : arrayItemContexts){
             Expression arrayItem = this.getArrayItem(arrayItemContext);
             arrayInitializer.addItem(arrayItem);
@@ -174,6 +179,9 @@ abstract class InitializerParser extends ExpressionParser {
 
         ArrayWrapperInitializer currentArrayWrapperInitializer
                 = new ArrayWrapperInitializer();
+
+        currentArrayWrapperInitializer.setLine(ctx.start.getLine());
+        currentArrayWrapperInitializer.setColumn(ctx.start.getCharPositionInLine());
 
         for (RIIF2Parser.ArrayInitializerContext
                 arrayInitializerContext : arrayInitializerContexts) {
@@ -286,6 +294,9 @@ abstract class InitializerParser extends ExpressionParser {
                 = ctx.row();
 
         TableInitializer currentTableInitializer = new TableInitializer();
+        currentTableInitializer.setLine(ctx.start.getLine());
+        currentTableInitializer.setColumn(ctx.start.getCharPositionInLine());
+
         for (RIIF2Parser.RowContext rowContext : rowContexts){
             Row row = this.getRowParseTree(rowContext);
             currentTableInitializer.addItem(row);

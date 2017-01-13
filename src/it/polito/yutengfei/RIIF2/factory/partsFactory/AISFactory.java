@@ -2,6 +2,7 @@ package it.polito.yutengfei.RIIF2.factory.partsFactory;
 
 
 import it.polito.yutengfei.RIIF2.Declarator.AisDeclarator;
+import it.polito.yutengfei.RIIF2.Declarator.Declarator;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.*;
 import it.polito.yutengfei.RIIF2.factory.ComponentFactory;
 import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
@@ -14,13 +15,16 @@ import it.polito.yutengfei.RIIF2.initializer.*;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.RIIF2Type;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
+import it.polito.yutengfei.RIIF2.recoder.LabelRetriever;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
+import it.polito.yutengfei.RIIF2.recoder.Repository;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.ExpressionOperator;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Row;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.RowItem;
 
+import java.lang.reflect.Field;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -293,28 +297,59 @@ public class AISFactory implements Factory{
         }
     }
 
-    private void assignInitializer() throws FieldTypeNotMarchException {
+    private void assignInitializer() throws FieldTypeNotMarchException, SomeVariableMissingException {
 
         for (Label label : this.aisLabels) {
 
+            this.eo.setCurrentLabel(label);
             if (this.initializer instanceof Expression) {
+
                 Expression expInitializer = (Expression) this.initializer;
                 expInitializer.setExpressionOperator( this.eo ) ;
+
                 if (label.isEnumType()){
                     if ( !expInitializer.type().equals(RIIF2Grammar.USER_DEFINED)
-                            || !label.getEnumType().contains( ((DeclaratorId) expInitializer.value() ).getPrimitiveId().getId()  ))
+                            && !expInitializer.type().equals(RIIF2Grammar.SELF) )
                         throw new FieldTypeNotMarchException((  (DeclaratorId)expInitializer.value()).getPrimitiveId().getId(),
                                 expInitializer.getLine(),expInitializer.getColumn());
 
-                    label.setValue ( ((DeclaratorId)expInitializer.value()).getPrimitiveId().getId() );
+                    if (expInitializer.type().equals(RIIF2Grammar.USER_DEFINED)){
+                        String refName = ((DeclaratorId) expInitializer.value() ).getPrimitiveId().getId();
 
-                } else if (label.getName().equals(RIIF2Grammar.UNIT) ){
-                    if ( !( expInitializer.value() instanceof DeclaratorId) )
+                        if(!label.getEnumType().contains(refName) )
+                            throw new SomeVariableMissingException(refName,
+                                    expInitializer.getLine(),expInitializer.getColumn());
+                        else label.setValue(refName);
+                    }
+                    if (expInitializer.type().equals(RIIF2Grammar.SELF)) {
+                        label.setValue( expInitializer.getValue());
+                    }
+
+                } else if (label.getName().equals(RIIF2Grammar.UNIT) ) {
+                    if (!(expInitializer.value() instanceof DeclaratorId))
                         throw new FieldTypeNotMarchException(expInitializer.value().toString(),
                                 expInitializer.getLine(), expInitializer.getColumn());
 
-                    String type =  ( (DeclaratorId)expInitializer.value() ).getPrimitiveId().getId();
+                    String type = ((DeclaratorId) expInitializer.value()).getPrimitiveId().getId();
                     label.setValue(type);
+
+                }else if (label.getType().equals(RIIF2Grammar.PLATFORM)){
+
+                    if ( !expInitializer.type().equals(RIIF2Grammar.USER_DEFINED) )
+                        throw new FieldTypeNotMarchException(RIIF2Grammar.ASSIGNMENT,
+                                expInitializer.getLine(),expInitializer.getColumn());
+
+                    String componentId
+                            =  ( (DeclaratorId)expInitializer.value()).getPrimitiveId().getId();
+                    //try to find the component recorder
+                    if (!Repository.containsComponent(componentId))
+                        throw new SomeVariableMissingException(componentId,expInitializer.getLine(),
+                                expInitializer.getColumn());
+
+                    RIIF2Recorder platformRecorder
+                            = (RIIF2Recorder) Repository.getDeepCopedRecorderFromComponentRepository(componentId);
+
+                    label.setPlatform(platformRecorder);
 
                 }else if (expInitializer.getType().equals( label.getType()) ) {
                     label.setValue(expInitializer.getValue());
@@ -372,8 +407,8 @@ public class AISFactory implements Factory{
                         = (TableInitializer) this.initializer;
 
                 if (!(label instanceof Attribute)
-                        || (label.getName().equals(RIIF2Grammar.HEADER)
-                            || label.getName().equals(RIIF2Grammar.ITEMS)
+                        || ( !label.getName().equals(RIIF2Grammar.HEADER)
+                             && !label.getName().equals(RIIF2Grammar.ITEMS)
                             )
                         ) {
                     throw new FieldTypeNotMarchException( RIIF2Grammar.ASSIGNMENT,
@@ -418,6 +453,7 @@ public class AISFactory implements Factory{
                                         Expression expression
                                                 = (Expression) rowItem.getValue();
                                         expression.setExpressionOperator(eo);
+
                                         unitItemType = expression.getType();
                                         unitItemValue = expression.getValue();
 

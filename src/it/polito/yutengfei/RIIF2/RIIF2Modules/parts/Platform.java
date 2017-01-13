@@ -8,7 +8,6 @@ import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 
 public class Platform extends Label<Label>{
 
-    private RIIF2Recorder value;
 
     @Override
     public void setAssociative(Boolean b) {
@@ -48,7 +47,6 @@ public class Platform extends Label<Label>{
 
     @Override
     public void setVector(Vector vector, RIIF2Recorder recorder) {
-
     }
 
     @Override
@@ -63,16 +61,23 @@ public class Platform extends Label<Label>{
 
     @Override
     public void setPlatform(RIIF2Recorder recorder) {
-        this.value = recorder;
+        super.setValue(recorder);
     }
 
     @Override
     public RIIF2Recorder getPlatform() {
-        return this.value;
+        return (RIIF2Recorder) super.getValue();
     }
 
     @Override
     public void print() {
+
+        System.out.print("Platform " + getName() );
+        if (getValue() != null ){
+            System.out.print(" Value-Component " + ((RIIF2Recorder)getValue()).getIdentifier() );
+        }
+
+        System.out.println();
 
     }
 }

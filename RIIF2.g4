@@ -391,6 +391,7 @@ primary
 funcCall
     : funcName '(' funcArg ( ',' funcArg ) ? ')'
     ;
+
 funcName
     : FUNC_LOG
     | FUNC_EXP

@@ -12,14 +12,23 @@ import java.util.Objects;
 
 import static it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression.*;
 
-//TODO: called retriever from the class retrivere
 public class ExpressionOperator {
     private static final String EXP = "exp function";
     private static final String LOG = "log function";
     private final RIIF2Recorder recorder;
+    private Label currentLabel = null;
 
     public ExpressionOperator(RIIF2Recorder recorder) {
+        this(recorder,null);
+    }
+
+    public ExpressionOperator(RIIF2Recorder recorder, Label currentLabel ){
         this.recorder = recorder;
+        this.currentLabel = currentLabel;
+    }
+
+    public void setCurrentLabel( Label currentLabel ){
+        this.currentLabel = currentLabel;
     }
 
     public String getType(Expression expression) throws FieldTypeNotMarchException {
@@ -68,81 +77,39 @@ public class ExpressionOperator {
             }
 
             switch (currentOperation.getOpr()){
-                case OP_PLUS:
-                    this.oprPlus( expression );
-                    break;
-                case OP_MINUS:
-                    this.oprMinus( expression );
-                    break;
-                case OP_STAR:
-                    this.oprStarDiv(OP_STAR,oprExpression, expression );
-                    break;
-                case OP_DIV:
-                    this.oprStarDiv(OP_DIV, oprExpression, expression );
-                    break;
-                case OP_MOD:
-                    this.oprMod( expression );
-                    break;
-                case OP_BG:
-                    this.oprBig( expression );
-                    break;
-                case OP_BG_EQ:
-                    this.oprBigEq( expression );
-                    break;
-                case OP_SM:
-                    this.oprSm( expression );
-                    break;
-                case OP_SM_EQ:
-                    this.oprSmEq( expression );
-                    break;
-                case OP_ASSIGN:
-                    this.oprAssign( expression );
-                    break;
-                case OP_EQ_EQ:
-                    this.oprEqEq( expression );
-                    break;
-                case OP_DOUBLE_AND:
-                    this.oprDoubleAnd( expression );
-                    break;
-                case OP_DOUBLE_OR:
-                    this.oprDoubleOr( expression );
-                    break;
-                case OP_NOT:
-                    this.oprNot( expression );
-                    break;
-                case OP_NOT_EQ:
-                    this.oprNotEq( expression );
-                    break;
-                case OP_NEGATIVE:
-                    this.oprNegative( oprExpression);
-                    break;
-                case OP_POSITIVE:
-                    this.oprPositive( expression );
-                    break;
-                case OP_SINGLE_AND:
-                    this.oprSingleAnd( expression );
-                    break;
-                case OP_SINGLE_OR:
-                    this.oprSingleOr( expression );
-                    break;
-                case OP_SINGLE_POWER:
-                    this.oprSinglePower( expression );
-                    break;
-                case OP_WAVE:
-                    this.oprWave( expression );
-                    break;
-                case OP_IF_ELSE:
-                    this.oprIfElse( expression , currentOperation.getOprTargetExpression() );
-                    break;
-                default:
-                    break;
+                case OP_PLUS: this.oprPlus( expression );break;
+                case OP_MINUS:this.oprMinus( expression );break;
+                case OP_STAR:this.oprStarDiv(OP_STAR,oprExpression, expression );break;
+                case OP_DIV:this.oprStarDiv(OP_DIV, oprExpression, expression );break;
+                case OP_MOD:this.oprMod( expression );break;
+                case OP_BG:this.oprBig( expression );break;
+                case OP_BG_EQ:this.oprBigEq( expression );break;
+                case OP_SM:this.oprSm( expression );break;
+                case OP_SM_EQ:this.oprSmEq( expression );break;
+                case OP_ASSIGN:this.oprAssign( expression );break;
+                case OP_EQ_EQ:this.oprEqEq( expression );break;
+                case OP_DOUBLE_AND:this.oprDoubleAnd( expression );break;
+                case OP_DOUBLE_OR:this.oprDoubleOr( expression );break;
+                case OP_NOT:this.oprNot( expression );break;
+                case OP_NOT_EQ:this.oprNotEq( expression );break;
+                case OP_NEGATIVE:this.oprNegative( oprExpression);break;
+                case OP_POSITIVE:this.oprPositive( expression );break;
+                case OP_SINGLE_AND:this.oprSingleAnd( expression );break;
+                case OP_SINGLE_OR:this.oprSingleOr( expression );break;
+                case OP_SINGLE_POWER:this.oprSinglePower( expression );break;
+                case OP_WAVE:this.oprWave( expression );break;
+                case OP_IF_ELSE:this.oprIfElse( oprExpression,expression , currentOperation.getOprTargetExpression() );break;
+                default:break;
             }
         }
 
         oprExpression.performed();
     }
 
-    private void oprIfElse(Expression expression , Expression targetExpression ){
+    private void oprIfElse(Expression oprExpression, Expression expression, Expression targetExpression){
+
+        //TODO:: from here
+
 
     }
 
@@ -300,7 +267,7 @@ public class ExpressionOperator {
         if ( oprExpression.type().equals(RIIF2Grammar.USER_DEFINED)){
             List<Label> labels = LabelRetriever.Retriever(oprExpression,this.recorder);
 
-            if (labels == null)
+            if (labels == null || labels.size() == 0)
                 throw new FieldTypeNotMarchException(oprExpression.value().toString(),
                         oprExpression.getLine(), oprExpression.getColumn());
 
@@ -315,6 +282,15 @@ public class ExpressionOperator {
                 //TODO:: which is an special case
             }
 
+        }
+
+        if ( oprExpression.type().equals(RIIF2Grammar.SELF) ){
+
+            if (this.currentLabel == null )
+                System.exit(1);
+
+            oprExpression.setValue( currentLabel.getValue() );
+            oprExpression.setType( currentLabel.getType() );
         }
 
         if (oprExpression.type().equals(RIIF2Grammar.FUNC_AGG_SINGLE)){

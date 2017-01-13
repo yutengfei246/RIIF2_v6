@@ -6,6 +6,7 @@ import it.polito.yutengfei.RIIF2.factory.Exceptions.SomeVariableMissingException
 import it.polito.yutengfei.RIIF2.factory.Exceptions.VeriableAlreadyExistException;
 import it.polito.yutengfei.RIIF2.factory.Factory;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
+import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 
 
 public class PlatformFactory implements Factory{
@@ -21,6 +22,7 @@ public class PlatformFactory implements Factory{
     private Platform createPlatform() {
         Platform platform = new Platform();
         platform.setName(this.identifier);
+        platform.setType(RIIF2Grammar.PLATFORM);
 
         return platform;
     }
@@ -31,6 +33,6 @@ public class PlatformFactory implements Factory{
         if (this.recorder.contains(identifier) )
             throw new VeriableAlreadyExistException(identifier);
 
-        this.recorder.setPlatform( this.createPlatform() );
+        this.recorder.addPlatform(this.createPlatform());
     }
 }

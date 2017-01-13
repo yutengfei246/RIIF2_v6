@@ -21,8 +21,7 @@ public class RIIF2Recorder implements Recorder, Serializable {
     private List<ChildComponent> childComponents = new LinkedList<>();
     private List<FailMode> failModes = new LinkedList<>();
 
-    private Platform platform = null;
-
+    private List<Platform> platforms = new LinkedList<>();
 
     /***********************************Setters and Getters************************************/
 
@@ -66,14 +65,9 @@ public class RIIF2Recorder implements Recorder, Serializable {
         return this.implRecorderMap;
     }
 
-    public void setPlatform(Platform platform) {
-        this.platform = platform;
+    public void addPlatform(Platform platform) {
+        this.platforms.add(platform);
     }
-
-    public Platform getPlatform(){
-        return this.platform;
-    }
-
     private void addParameter(Parameter fieldLabel) {
         this.parameters.add(fieldLabel);
     }
@@ -141,11 +135,20 @@ public class RIIF2Recorder implements Recorder, Serializable {
         return false;
     }
 
+    public boolean containsPlatform(String id){
+        for (Platform platform : this.platforms){
+            if (Objects.equals(platform.getName(), id))
+                return true;
+        }
+        return false;
+    }
+
     public boolean contains(String id) {
         return this.containsParameter(id)
                 || this.containsConstant(id)
                 || this.containsChildComponent(id)
-                || this.containsFailMode(id);
+                || this.containsFailMode(id)
+                || this.containsPlatform(id);
     }
 
     public Constant getConstant(String id) {
@@ -176,6 +179,13 @@ public class RIIF2Recorder implements Recorder, Serializable {
                 .orElse(null);
     }
 
+    public Platform getPlatform(String labelName) {
+        return this.platforms.stream()
+                .filter(platform -> platform.getName().equals(labelName))
+                .findFirst()
+                .orElse(null);
+    }
+
     public Label<Label> getLabel(String labelName ){
         return this.getParameter(labelName) != null
                 ? this.getParameter(labelName)
@@ -185,7 +195,9 @@ public class RIIF2Recorder implements Recorder, Serializable {
                 ? this.getChildComponent(labelName)
                 : this.getFailMode(labelName) != null
                 ? this.getFailMode(labelName)
-                : this.platform ;
+                : this.getPlatform(labelName) != null
+                ? this.getPlatform(labelName)
+                : null;
     }
 
     /*only can find in this recorder or parent recorder */
@@ -200,6 +212,7 @@ public class RIIF2Recorder implements Recorder, Serializable {
 
         return null;
     }
+
     public Label getImposeLabel(String labelName) {
         if (this.getLabel(labelName) != null )
             return this.getLabel(labelName);
@@ -214,6 +227,7 @@ public class RIIF2Recorder implements Recorder, Serializable {
 
     public Label getSetLabel(String labelName){
 
+        /* in template */
         if (this.isTemplate()){
 
             for (Map.Entry<String, RIIF2Recorder > entry : this.exRecorderMap.entrySet() ){
@@ -225,13 +239,17 @@ public class RIIF2Recorder implements Recorder, Serializable {
                     return entry.getValue().getSetLabel(labelName);
             }
         }
+
+        /* in component */
         if ( !this.isTemplate() ) {
 
-            for (Map.Entry<String, RIIF2Recorder> entry : this.implRecorderMap.entrySet()) {
+            for (Map.Entry<String,RIIF2Recorder> entry : this.exRecorderMap.entrySet())
+                if (entry.getValue().getSetLabel(labelName) != null )
+                    return entry.getValue().getSetLabel(labelName);
 
+            for (Map.Entry<String, RIIF2Recorder> entry : this.implRecorderMap.entrySet()) {
                 if (entry.getValue().getLabel(labelName) != null)
                     return entry.getValue().getLabel(labelName);
-
 
                 if (entry.getValue().getSetLabel(labelName) != null)
                     return entry.getValue().getSetLabel(labelName);
@@ -268,5 +286,6 @@ public class RIIF2Recorder implements Recorder, Serializable {
         this.constants.forEach(Constant::print);
         this.failModes.forEach(FailMode::print);
         this.childComponents.forEach(ChildComponent::print);
+        this.platforms.forEach(Platform::print);
     }
 }

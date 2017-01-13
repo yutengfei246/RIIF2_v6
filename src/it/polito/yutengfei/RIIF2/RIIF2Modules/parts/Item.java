@@ -1,9 +1,10 @@
 package it.polito.yutengfei.RIIF2.RIIF2Modules.parts;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Item {
+public class Item implements Serializable{
 
     private List<UnitItem> unitItems = new LinkedList<>();
 
@@ -24,7 +25,7 @@ public class Item {
     }
 
 
-    public class UnitItem{
+    public class UnitItem implements Serializable{
 
         private String type;
         private Object value;
