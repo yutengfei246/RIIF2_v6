@@ -1,6 +1,5 @@
 package it.polito.yutengfei.RIIF2.RIIF2Modules.parts;
 
-import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.EnumType;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
@@ -37,6 +36,10 @@ public abstract class Label<T extends Label> implements Serializable {
     public void resetSelf(){
         this._self1 = -1;
         this._self2 = -1;
+    }
+
+    public void printSelf(){
+        System.out.println( this._self1  +" " + this._self2);
     }
 
     public Object getSelfValue(){

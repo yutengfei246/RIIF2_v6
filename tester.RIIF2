@@ -74,8 +74,13 @@ component VADD implements SW_COMPONENT;
         set NAME = "vector ADD_with_Variable_Duplication";
         set PROTECTION = VAR_DUP;
         set TIMING_CONSTRAINTS'ITEMS = {
-            ["TEST_BENCH1",self,self,self],
-            ["TEST_BENCH2",self+0.001,self+0.2,self+0.0015]
+        (PROTECTION != VAR_DUP)?
+        ["TEST_BENCH1",self+0.001,self+0.9,self+0.0015]:
+        ["TEST_BENCH1",self,self,self ],
+
+        (PROTECTION != VAR_DUP)?
+        ["TEST_BENCH3",self+0.001,self+0.2,self+100]:
+        ["TEST_BENCH3",self,self,self+10000 ]
         };
 
     endcomponent

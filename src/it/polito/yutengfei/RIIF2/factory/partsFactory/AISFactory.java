@@ -302,6 +302,7 @@ public class AISFactory implements Factory{
         for (Label label : this.aisLabels) {
 
             this.eo.setCurrentLabel(label);
+
             if (this.initializer instanceof Expression) {
 
                 Expression expInitializer = (Expression) this.initializer;
@@ -400,7 +401,6 @@ public class AISFactory implements Factory{
                             j[0]++;
                             expression.setExpressionOperator(this.eo);
                             label.set_self2(j[0]);
-                            System.out.println("getValue " + expression.getValue());
                             Item.UnitItem unitItem = null;
                             unitItem = item.createUnitItem(expression.getType(), expression.getValue());
                             item.addUnitItem(unitItem);
@@ -409,10 +409,12 @@ public class AISFactory implements Factory{
                         items.add(item);
                     });
                     label.setValue(items);
+                    label.resetSelf();
                 }
             }
 
             if (this.initializer instanceof TableInitializer){
+
                 TableInitializer tableInitializer
                         = (TableInitializer) this.initializer;
 
@@ -427,8 +429,11 @@ public class AISFactory implements Factory{
                 }
 
                 List<Item> items = new LinkedList<>();
+                final int[] i = {-1};
                 tableInitializer.getInitializer()
                         .forEach(row -> {
+                            i[0]++;
+                            label.set_self1(i[0]);
 
                             Item item = new Item();
                             if (row.getType() == Row.EXPRESSION) {
@@ -487,6 +492,7 @@ public class AISFactory implements Factory{
                             items.add(item);
                         });
 
+                label.resetSelf();
                 label.setValue(items);
             }
         }

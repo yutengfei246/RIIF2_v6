@@ -1,6 +1,7 @@
 package it.polito.yutengfei.RIIF2.util.utilityWrapper;
 
 
+import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Label;
 import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
 import it.polito.yutengfei.RIIF2.initializer.Initializer;
 
@@ -44,6 +45,7 @@ public class Expression implements Initializer {
     private LinkedList<Expression> funcArguments = null ;
 
     private ExpressionOperator expressionOperator = null;
+    private Label enumLabel = null;
 
     public void setType(String type) {
         this.type = type;
@@ -219,5 +221,13 @@ public class Expression implements Initializer {
 
     List<Expression> getFuncArguments() {
         return this.funcArguments;
+    }
+
+    public void setEnumLabel(Label enumLabel) {
+        this.enumLabel = enumLabel;
+    }
+
+    public Label getEnumLabel() {
+        return enumLabel;
     }
 }
