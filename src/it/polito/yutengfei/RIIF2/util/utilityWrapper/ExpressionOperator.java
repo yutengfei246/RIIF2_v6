@@ -8,7 +8,6 @@ import it.polito.yutengfei.RIIF2.initializer.ArrayInitializer;
 import it.polito.yutengfei.RIIF2.recoder.LabelRetriever;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
-import jdk.nashorn.internal.ir.IfNode;
 
 import java.util.List;
 import java.util.Objects;
