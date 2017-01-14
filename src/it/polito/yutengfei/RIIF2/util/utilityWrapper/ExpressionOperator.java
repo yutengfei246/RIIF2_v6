@@ -3,10 +3,12 @@ package it.polito.yutengfei.RIIF2.util.utilityWrapper;
 
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Label;
 import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
+import it.polito.yutengfei.RIIF2.initializer.ArrayInitializer;
 import it.polito.yutengfei.RIIF2.recoder.LabelRetriever;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -356,12 +358,36 @@ public class ExpressionOperator {
             srcExpression.setType(RIIF2Grammar.DOUBLE);
         }
 
+        if (srcExpression.type().equals(RIIF2Grammar.SELF)){
+
+        }
+
         if ( !srcExpression.type().equals(oprExpression.getType()))
             throw new FieldTypeNotMarchException(srcExpression.getValue().toString(),
                     srcExpression.getLine(),srcExpression.getColumn());
     }
 
     private void resolvedThis(Expression srcExpression) throws FieldTypeNotMarchException {
+
+        if (srcExpression.type().equals(RIIF2Grammar.ARRAY)){
+            // retrieve the array and go inside to resolve all of the elements
+
+            List<Expression> items = (List<Expression>) srcExpression.value();
+
+            final int[] i = {-1};
+            items.forEach(expression -> {
+                i[0]++;
+                this.currentLabel.set_self2(i[0]);
+                try {
+                    this.resolvedThis(expression);
+                } catch (FieldTypeNotMarchException e) {
+                    e.printStackTrace();
+                    System.exit(1);
+                }
+            });
+
+
+        }
 
         if ( srcExpression.type().equals(RIIF2Grammar.USER_DEFINED)){
             List<Label> labels = LabelRetriever.Retriever(srcExpression,this.recorder);
@@ -388,8 +414,23 @@ public class ExpressionOperator {
             if (this.currentLabel == null )
                 System.exit(1);
 
-            srcExpression.setValue( currentLabel.getValue() );
-            srcExpression.setType( currentLabel.getType() );
+
+            srcExpression.setValue(this.currentLabel.getSelfValue());
+            srcExpression.setType(this.currentLabel.getSelfValueType());
+
+
+
+                    /*
+            if (currentLabel.getValue() instanceof List) {
+
+                srcExpression.setValue(currentLabel.getSelfValue());
+                srcExpression.setType(currentLabel.getType());
+            }
+
+            else
+                System.out.println("the label value is alist");
+
+                */
         }
 
         if (srcExpression.type().equals(RIIF2Grammar.FUNC_AGG_SINGLE)){

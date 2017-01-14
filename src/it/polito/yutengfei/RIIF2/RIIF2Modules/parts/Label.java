@@ -1,11 +1,13 @@
 package it.polito.yutengfei.RIIF2.RIIF2Modules.parts;
 
+import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.EnumType;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 
 import java.io.Serializable;
+import java.util.List;
 
 public abstract class Label<T extends Label> implements Serializable {
 
@@ -21,6 +23,55 @@ public abstract class Label<T extends Label> implements Serializable {
     private int vectorRight = 0;
     private EnumType enumType = null;
 
+    private int _self1 = -1;
+    private int _self2 = -1;
+
+    public void set_self1(int i){
+        this._self1 = i;
+    }
+
+    public void set_self2(int i){
+        this._self2  = i;
+    }
+
+    public void resetSelf(){
+        this._self1 = -1;
+        this._self2 = -1;
+    }
+
+    public Object getSelfValue(){
+        if ( this._self1 == -1 && this._self2 == -1 )
+            return this.value;
+
+        if (!(this.getValue() instanceof List))
+            return null;
+
+        List lst = (List) this.getValue();
+        if (this._self1 != -1 && this._self2 == -1)
+            return lst.get(this._self1);
+
+        if (this._self1 != -1 && this._self2 != -1 )
+            return ((Item)lst.get(this._self1)).getUnitItem(this._self2).getValue();
+
+        return null;
+    }
+
+    public String getSelfValueType(){
+
+        if (this._self1 == -1 && this._self2 == -1)
+            return this.type;
+
+        if (this._self1 != -1  && this._self2 == -1){
+            //TODO:: reserved
+
+        }
+
+        if (this._self1 != -1 && this._self2 != -1 ){
+            return ((Item)((List) this.getValue()).get(this._self1)).getUnitItem(this._self2).getType();
+        }
+
+        return null;
+    }
 
     public Boolean isAssociative() {
         return associative;

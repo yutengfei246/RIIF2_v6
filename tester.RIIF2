@@ -34,6 +34,9 @@ template SW_COMPONENT;
     abstract parameter TIMING_CONSTRAINTS : table;
     impose TIMING_CONSTRAINTS'HEADERS = {SFM_TYPE,SFM,
                                     OCCURRING_SFB,OCCURRING_SFN_RATE};
+
+    abstract parameter SFB : table;
+    impose SFB'HEADERs = {SFM_TYPE,SFM,OCCURING_SFB,OCCURRING_SFB_RATE};
 endtemplate
 
 component cpu;
@@ -53,24 +56,27 @@ component VADD implements SW_COMPONENT;
 
 
     set TIMING_CONSTRAINTS'ITEMS = {
+        ["TEST_BENCH1",0.0000001,2, 0.000001],
+        ["TEST_BENCH2",0.0000003,2.1, 0.0000004] };
+
+    set SFB'ITEMS = {
         [ "permanent", "WRONG_DATA", SFB_ITEMS, {0.893, 0.107, 0, 0, 0.891, 0.042, 0.067, 0.413, 0.109,0.052,0.426 } ],
         [ "permanent", "WRONG_DATA", SFB_ITEMS, {0.893, 0.107, 0, 0, 0.891, 0.042, 0.067, 0.413, 0.109,0.052,0.426 } ],
         [ "permanent", "WRONG_DATA", SFB_ITEMS, {0.893, 0.107, 0, 0, 0.891, 0.042, 0.067, 0.413, 0.109,0.052,0.426 } ],
         [ "permanent", "WRONG_DATA", SFB_ITEMS, {0.893, 0.107, 0, 0, 0.891, 0.042, 0.067, 0.413, 0.109,0.052,0.426 } ]
 
     };
-endcomponent
 
-component VADD_VARIABLE_DUPLICATION_VER1 extends VADD;
-    set NAME = "vector ADD_with_Variable_Duplication";
-    set PROTECTION = VAR_DUP;
+    endcomponent
 
-    set TIMING_CONSTRAINTS'ITEMS = {
-        (PROTECTION == VAR_DUP)?
-        ["TEST_BENCH1",self+0.001,self+0.2,self+0.0015]:
-        ["TEST_BENCH1",self,self,self ],
-        (PROTECTION == VAR_DUP)?
-        ["TEST_BENCH1",self+0.001,self+0.2,self+0.0015]:
-        ["TEST_BENCH1",self,self,self ]
-    };
-endcomponent
+    component VADD_VARIABLE_DUPLICATION_VER1 extends VADD;
+
+        set NAME = "vector ADD_with_Variable_Duplication";
+        set PROTECTION = VAR_DUP;
+        set TIMING_CONSTRAINTS'ITEMS = {
+            ["TEST_BENCH1",self,self,self],
+            ["TEST_BENCH2",self+0.001,self+0.2,self+0.0015]
+        };
+
+    endcomponent
+

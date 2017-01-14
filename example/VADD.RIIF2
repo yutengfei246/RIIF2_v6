@@ -10,7 +10,11 @@ component VADD implements SW_COMPONENT;
     set executed_on = VECTORCALC_CORE;
     child_component cpu VPRINT ;
 
-    assign TIMING_CONSTRAINTS'ITEMS = {
+    set TIMING_CONSTRAINTS'ITEMS = {
+    ["TEST_BENCH1",0.0000001,2,0.000001],
+    ["TEST_BENCH2",0.0000003,2.1, 0.0000004] }
+
+    set SFB'ITEMS = {
         [ "permanent", "WRONG_DATA", SFB_ITEMS, {0.893, 0.107, 0, 0, 0.891, 0.042, 0.067, 0.413, 0.109,0.052,0.426 } ],
         [ "permanent", "WRONG_DATA", SFB_ITEMS, {0.893, 0.107, 0, 0, 0.891, 0.042, 0.067, 0.413, 0.109,0.052,0.426 } ],
         [ "permanent", "WRONG_DATA", SFB_ITEMS, {0.893, 0.107, 0, 0, 0.891, 0.042, 0.067, 0.413, 0.109,0.052,0.426 } ],

@@ -382,24 +382,34 @@ public class AISFactory implements Factory{
                     throw new FieldTypeNotMarchException(RIIF2Grammar.TABLE,
                             arrayWrapperInitializer.getLine(), arrayWrapperInitializer.getColumn());
 
+                if (label.getName().equals(RIIF2Grammar.ITEMS)) {
 
-                List<Item> items = new LinkedList<>();
-                List<ArrayInitializer> arrayInitializers = arrayWrapperInitializer.getInitializer();
+                    List<Item> items = new LinkedList<>();
+                    List<ArrayInitializer> arrayInitializers = arrayWrapperInitializer.getInitializer();
 
-                arrayInitializers.forEach(arrayInitializer -> {
+                    final int[] i = {-1};
+                    arrayInitializers.forEach(arrayInitializer -> {
+                        i[0]++;
+                        label.set_self1(i[0]);
 
-                    Item item = new Item();
-                    List<Expression> expressions = arrayInitializer.getInitializer();
-                    expressions.forEach(expression -> {
-                        expression.setExpressionOperator(this.eo);
-                        Item.UnitItem unitItem = null;
-                        unitItem = item.createUnitItem(expression.getType(), expression.getValue());
-                        item.addUnitItem(unitItem);
+                        Item item = new Item();
+
+                        List<Expression> expressions = arrayInitializer.getInitializer();
+                        final int[] j = {-1};
+                        expressions.forEach(expression -> {
+                            j[0]++;
+                            expression.setExpressionOperator(this.eo);
+                            label.set_self2(j[0]);
+                            System.out.println("getValue " + expression.getValue());
+                            Item.UnitItem unitItem = null;
+                            unitItem = item.createUnitItem(expression.getType(), expression.getValue());
+                            item.addUnitItem(unitItem);
+                        });
+
+                        items.add(item);
                     });
-
-                    items.add(item);
-                });
-                label.setValue(items);
+                    label.setValue(items);
+                }
             }
 
             if (this.initializer instanceof TableInitializer){
@@ -426,13 +436,13 @@ public class AISFactory implements Factory{
                                         = (Expression) row.getValue();
                                 expression.setExpressionOperator(eo);
 
-                                /*
                                 if (!expression.isArray())
                                     throw new IllegalArgumentException();
-                                                                           */
+
                                 ArrayInitializer arrayInitializer
                                         = null;
-                                arrayInitializer = (ArrayInitializer) expression.getValue();
+                                // in this case we do not need to manage the operations between arrays
+                                arrayInitializer = (ArrayInitializer) expression.value();
                                 List<Expression> initializer
                                         = arrayInitializer.getInitializer();
 

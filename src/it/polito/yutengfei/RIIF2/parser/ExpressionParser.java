@@ -250,13 +250,13 @@ abstract class ExpressionParser extends DeclaratorIdParser {
         Expression expression = null;
         try {
             if (ctx.op.getType() == RIIF2Parser.T__15) {
+                expression = leftExp.operation(Expression.OP_PLUS, rightExp);
+            }
+            if (ctx.op.getType() == RIIF2Parser.T__16) {
                 expression = leftExp.operation(Expression.OP_MINUS, rightExp);
                 return;
             }
 
-            if (ctx.op.getType() == RIIF2Parser.T__16) {
-                expression = leftExp.operation(Expression.OP_PLUS, rightExp);
-            }
         }finally {
 
             assert expression != null;

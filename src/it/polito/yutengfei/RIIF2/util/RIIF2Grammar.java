@@ -8,7 +8,6 @@ public class RIIF2Grammar {;
     public static final String INTEGER = "Integer";
     public static final String STRING = "String";
     public static final String TIME = "Time";
-
     public static final String DOUBLE = "Double";
     public static final String ARRAY = "array";
     public static final String SELF = "self";
