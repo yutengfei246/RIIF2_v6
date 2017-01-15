@@ -48,17 +48,6 @@ public class Tester {
         } catch (IOException e) {
         }
 
-        LinkedList<String> te = new LinkedList<String>(){{
-            push("first");
-            push("second");
-            push("third");
-        }};
-
-        String tem = te.get(1);
-        tem = "firth";
-
-        te.forEach(System.out::print);
-
         RIIF2Lexer riif2Lexer = new RIIF2Lexer(antlrInputStream);
         CommonTokenStream commonTokenStream = new CommonTokenStream(riif2Lexer);
         RIIF2Parser parser = new RIIF2Parser(commonTokenStream);

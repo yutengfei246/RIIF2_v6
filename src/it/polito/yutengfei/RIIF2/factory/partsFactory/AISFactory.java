@@ -335,12 +335,9 @@ public class AISFactory implements Factory{
                         for (int i=0; i < rowNumber ; i ++){
                             label.set_self1(i);
                             label.set_self2(headerNamePosition );
-                            System.out.println("the value before "+ label.getSelfValue().toString() +  "the value " + expInitializer.getValue());
                             label.setSelfValue(expInitializer.getValue());
                         }
                         label.resetSelf();
-
-
                     }
 
                 }else if (label.getType().equals(RIIF2Grammar.PLATFORM)){

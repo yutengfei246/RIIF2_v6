@@ -63,8 +63,6 @@ public abstract class Label<T extends Label> implements Serializable {
         if (this._self1 != -1 && this._self2 != -1){
             Item item = (Item) lst.get(this._self1);
             item.getUnitItem(this._self2).setValue(selfValue);
-
-            System.out.print("from label " + item.getUnitItem(this._self2).getValue() );
         }
 
     }
