@@ -6,6 +6,7 @@ import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 
 public abstract class Label<T extends Label> implements Serializable {
@@ -40,6 +41,32 @@ public abstract class Label<T extends Label> implements Serializable {
 
     public void printSelf(){
         System.out.println( this._self1  +" " + this._self2);
+    }
+
+    public void setSelfValue(Object selfValue){
+        if ( this._self1 == -1 && this._self2 == -1 )
+            this.value = selfValue;
+
+        LinkedList<Object> lst = (LinkedList<Object>) this.value;
+        if (this._self1 != -1 && this._self2 == -1){
+            LinkedList<Object> newLst = new LinkedList<>();
+
+            for (int i = 0 ; i < this._self1 ; i++)
+                newLst.add(lst.get(i));
+            newLst.add(selfValue);
+            for (int i = this._self1; i <  lst.size() ; i++)
+                newLst.add(lst.get(i));
+
+            this.value = newLst;
+        }
+
+        if (this._self1 != -1 && this._self2 != -1){
+            Item item = (Item) lst.get(this._self1);
+            item.getUnitItem(this._self2).setValue(selfValue);
+
+            System.out.print("from label " + item.getUnitItem(this._self2).getValue() );
+        }
+
     }
 
     public Object getSelfValue(){
@@ -187,4 +214,5 @@ public abstract class Label<T extends Label> implements Serializable {
     public abstract RIIF2Recorder getPlatform();
 
     public abstract void print();
+
 }

@@ -267,31 +267,6 @@ public class AISFactory implements Factory{
             }
             this.aisLabels = aisLabels;
         }
-
-        //TODO:: how to decide when to use the table index?
-        // set table'Items[#][column] =  arrayWrapperInitializer
-        if (this.declaratorId.hasTableIndex()){
-
-            Id tableId = this.declaratorId.getTableId();
-            String tableIndex1 = tableId.getXX();
-            String tableIndex2 = tableId.getYY();
-
-            if (!this.aisLabel.getType().equals(RIIF2Grammar.ITEMS)
-                    || !(this.aisLabel instanceof Attribute) )
-                throw new FieldTypeNotMarchException(tableIndex1,
-                        tableId.getLine(),tableId.getColumn() );
-
-            Attribute itemAttribute = (Attribute) this.aisLabel;
-            //TODO: start from here
-            if (tableIndex1.equals(RIIF2Grammar.SHARP)){
-
-
-            } else{
-
-
-            }
-
-        }
     }
 
     private void assignInitializer() throws FieldTypeNotMarchException, SomeVariableMissingException {
@@ -330,6 +305,43 @@ public class AISFactory implements Factory{
 
                     String type = ((DeclaratorId) expInitializer.value()).getPrimitiveId().getId();
                     label.setValue(type);
+
+                }else if ((label instanceof Attribute) &&
+                        label.getName().equals(RIIF2Grammar.ITEMS) && this.declaratorId.hasTableIndex()){
+                    Attribute itemsAttribute = (Attribute) label;
+
+                    Id tableId = this.declaratorId.getTableIndex();
+                    String tableIndex1 = tableId.getXX();
+                    String tableIndex2 = tableId.getYY();
+
+                    if ( tableIndex1.equals(RIIF2Grammar.SHARP) ){
+
+                        //try to find the row number
+                        LinkedList<Item> rows = (LinkedList<Item>) label.getValue();
+                        int rowNumber = rows.size();
+
+                        //try to find tableIndex2 location start from 0
+                        Label<Label> tableLabel = itemsAttribute.getTable();
+                        Attribute headerAttribute = tableLabel.getAttribute(RIIF2Grammar.HEADER);
+                        LinkedList<String> headerNames = (LinkedList<String>) headerAttribute.getValue();
+
+                        if ( !headerNames.contains(tableIndex2)){
+                            throw new SomeVariableMissingException(tableIndex2,tableId.getLine(),tableId.getColumn());
+                        }
+
+                        int headerNamePosition = headerNames.indexOf(tableIndex2);
+
+                        //iterative access
+                        for (int i=0; i < rowNumber ; i ++){
+                            label.set_self1(i);
+                            label.set_self2(headerNamePosition );
+                            System.out.println("the value before "+ label.getSelfValue().toString() +  "the value " + expInitializer.getValue());
+                            label.setSelfValue(expInitializer.getValue());
+                        }
+                        label.resetSelf();
+
+
+                    }
 
                 }else if (label.getType().equals(RIIF2Grammar.PLATFORM)){
 

@@ -10,7 +10,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import java.util.List;
 
 
-abstract class IdParser extends TypeParser {
+abstract class  IdParser extends TypeParser {
 
     private ParseTreeProperty<Id> idParseTreeProperty = new ParseTreeProperty<>();
 

@@ -30,6 +30,9 @@ public class PreDefinedAttribute {
         Attribute header = createAttribute(RIIF2Grammar.HEADER,RIIF2Grammar.LIST,null);
         Attribute items = createAttribute(RIIF2Grammar.ITEMS, RIIF2Grammar.JSON, null);
 
+        header.setTable(fieldLabel);
+        items.setTable(fieldLabel);
+
         fieldLabel.putAttribute(RIIF2Grammar.HEADER, header);
         fieldLabel.putAttribute(RIIF2Grammar.ITEMS, items);
     }

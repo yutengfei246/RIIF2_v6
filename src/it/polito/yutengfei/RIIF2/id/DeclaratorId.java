@@ -4,7 +4,7 @@ import it.polito.yutengfei.RIIF2.parser.typeUtility.RIIF2Type;
 
 public class DeclaratorId{
 
-    int line , column;
+    private int line , column;
 
     private String id;
 
@@ -15,7 +15,6 @@ public class DeclaratorId{
 
     private Id attributeIndex = null;
     private Id associativeIndex = null;
-    private Id tableId = null;
     private Id hierPostfix= null;
     private Id tableIndex;
 
@@ -46,10 +45,6 @@ public class DeclaratorId{
         this.associativeIndex = associativeIndex;
     }
 
-    public void setTableId(Id tableId) {
-        this.tableId = tableId;
-    }
-
     public void setHierPostfix(Id id) {
         this.hierPostfix = id ;
     }
@@ -63,15 +58,15 @@ public class DeclaratorId{
     }
 
     public boolean hasAttributeIndex() {
-        return this.attributeIndex == null ? false :true;
+        return this.attributeIndex != null;
     }
 
     public boolean hasTypeType() {
-        return this.typeType == null ? false : true ;
+        return this.typeType != null;
     }
 
     public boolean hasAssociativeIndex() {
-        return this.associativeIndex == null ? false: true ;
+        return this.associativeIndex != null;
     }
 
     public Id getAssociativeIndex() {
@@ -80,10 +75,6 @@ public class DeclaratorId{
 
     public Id getAttributeIndex() {
         return attributeIndex;
-    }
-
-    public Id getTableId() {
-        return tableId;
     }
 
     public Id getPrimitiveId() {
@@ -99,11 +90,11 @@ public class DeclaratorId{
     }
 
     public boolean hasAisType() {
-        return this.aisType == null ? false : true;
+        return this.aisType != null;
     }
 
     public Boolean hasHierPostfix(){
-        return this.hierPostfix == null ? false : true;
+        return this.hierPostfix != null;
     }
 
     public void setTableIndex(Id tableIndex) {
@@ -115,7 +106,7 @@ public class DeclaratorId{
     }
 
     public boolean hasTableIndex() {
-        return this.tableIndex == null ? false : true ;
+        return this.tableIndex != null;
     }
 
     public int getLine() {

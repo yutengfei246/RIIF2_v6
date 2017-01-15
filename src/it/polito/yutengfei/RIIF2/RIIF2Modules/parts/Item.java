@@ -43,5 +43,13 @@ public class Item implements Serializable{
         public Object getValue(){
             return this.value;
         }
+
+        public void setType(String type ) {
+            this.type = type;
+        }
+
+        public void setValue(Object value){
+            this.value = value;
+        }
     }
 }

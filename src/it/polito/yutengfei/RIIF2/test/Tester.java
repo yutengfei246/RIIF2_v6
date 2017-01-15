@@ -13,6 +13,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedList;
 
 public class Tester {
 
@@ -46,6 +47,18 @@ public class Tester {
             antlrInputStream = new ANTLRInputStream(this.in);
         } catch (IOException e) {
         }
+
+        LinkedList<String> te = new LinkedList<String>(){{
+            push("first");
+            push("second");
+            push("third");
+        }};
+
+        String tem = te.get(1);
+        tem = "firth";
+
+        te.forEach(System.out::print);
+
         RIIF2Lexer riif2Lexer = new RIIF2Lexer(antlrInputStream);
         CommonTokenStream commonTokenStream = new CommonTokenStream(riif2Lexer);
         RIIF2Parser parser = new RIIF2Parser(commonTokenStream);

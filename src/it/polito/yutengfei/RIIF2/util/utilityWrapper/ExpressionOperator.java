@@ -234,7 +234,6 @@ public class ExpressionOperator {
                     break;
             }
 
-            System.out.println(" find the EQ EQ = " + srcExpression.value() + " " + oprExpression.getValue() + " " + res);
             srcExpression.setType(RIIF2Grammar.BOOLEAN);
             srcExpression.setValue(res);
         }

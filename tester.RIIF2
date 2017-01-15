@@ -32,8 +32,7 @@ template SW_COMPONENT;
 
     // Timing constraints depending on the workload
     abstract parameter TIMING_CONSTRAINTS : table;
-    impose TIMING_CONSTRAINTS'HEADERS = {SFM_TYPE,SFM,
-                                    OCCURRING_SFB,OCCURRING_SFN_RATE};
+    impose TIMING_CONSTRAINTS'HEADERS = {WORKLOAD,EXEC_TIME,MAX_TIME,AVG_TIME};
 
     abstract parameter SFB : table;
     impose SFB'HEADERs = {SFM_TYPE,SFM,OCCURING_SFB,OCCURRING_SFB_RATE};
@@ -85,3 +84,12 @@ component VADD implements SW_COMPONENT;
 
     endcomponent
 
+    component VADD_VARIABLE_DUPLICATION_VER2 extends VADD_VARIABLE_DUPLICATION_VER1;
+
+    set TIMING_CONSTRAINTS'ITEMS[#][EXEC_TIME]=
+        (PROTECTION == VAR_DUP)? self + 10 :self +1000 ;
+    set TIMING_CONSTRAINTS'ITEMS[#][MAX_TIME]=
+        (PROTECTION == VAR_DUP)? self+ 10 : self;
+    set TIMING_CONSTRAINTS'ITEMS[#][AVG_TIME]=
+        (PROTECTION == VAR_DUP)? self +10 : self ;
+    endcomponent

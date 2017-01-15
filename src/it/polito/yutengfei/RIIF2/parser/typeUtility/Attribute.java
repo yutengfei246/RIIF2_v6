@@ -11,6 +11,15 @@ import java.util.Objects;
 
 public class Attribute extends Label<Label> {
 
+    private Label<Label> table;
+
+    public Label<Label> getTable(){
+        return table;
+    }
+
+    public  void setTable(Label table){
+        this.table = table;
+    }
 
     @Override
     public void setAssociative(Boolean b) {
