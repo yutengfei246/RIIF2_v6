@@ -20,7 +20,7 @@ public class PreDefinedAttribute {
 
 
     static void TableAttribute(Label<Label> fieldLabel,RIIF2Recorder recorder) throws FieldTypeNotMarchException {
-        Attribute header = createAttribute(RIIF2Grammar.HEADER,RIIF2Grammar.LIST,null,recorder);
+        Attribute header = createAttribute(RIIF2Grammar.HEADER,RIIF2Grammar.LIST_STRING,null,recorder);
         Attribute items = createAttribute(RIIF2Grammar.ITEMS, RIIF2Grammar.JSON, null,recorder);
 
         header.setTable(fieldLabel);

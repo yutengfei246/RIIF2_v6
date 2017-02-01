@@ -5,6 +5,7 @@ import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Item;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Label;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
+import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 
 import java.util.List;
 import java.util.Objects;
@@ -61,12 +62,23 @@ public class Attribute extends Label<Label> {
             stringBuffer.append("}");
 
             System.out.println(stringBuffer);
-        }else
+        }else {
 
-            System.out.println(this.getName()
+            System.out.print (this.getName()
                     + " -Type- : "
                     + this.getType()
-                    + " -value- :"
-                    + this.getValue());
+                    + " -value- :");
+
+            Object value = super.getValue();
+            if (value != null){
+                if (value instanceof Expression){
+                    Expression expression = (Expression) value;
+                    expression.print();
+                }
+            }else {
+                System.out.print(" with null \n");
+            }
+
+        }
     }
 }
