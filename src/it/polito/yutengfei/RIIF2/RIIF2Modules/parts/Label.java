@@ -137,10 +137,12 @@ public abstract class Label<T extends Label> implements Serializable {
 
             if (expValue.getType().equals(this.getType()))
                 this.valueStack.push(expValue);
+
+            else if (expValue.getType().equals(RIIF2Grammar.INTEGER) && this.getType().equals(RIIF2Grammar.DOUBLE))
+                this.valueStack.push(expValue);
             else
                 throw new FieldTypeNotMarchException(this.getName(), expValue.getLine(), expValue.getColumn());
         }
-
 
         if (value instanceof ListInitializer ){
             ListInitializer listValue = (ListInitializer) value;
@@ -253,6 +255,9 @@ public abstract class Label<T extends Label> implements Serializable {
             Expression expValue = (Expression) value;
 
             if ( expValue.getType().equals(this.getType()) )
+                this.value = value;
+
+            else if (expValue.getType().equals(RIIF2Grammar.INTEGER) && this.getType().equals(RIIF2Grammar.DOUBLE))
                 this.value = value;
             else
                 throw new FieldTypeNotMarchException(this.getName(),expValue.getLine(),expValue.getColumn());

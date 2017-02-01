@@ -2,6 +2,7 @@ package it.polito.yutengfei.RIIF2.factory.partsFactory;
 
 
 import it.polito.yutengfei.RIIF2.Declarator.AisDeclarator;
+import it.polito.yutengfei.RIIF2.Declarator.Declarator;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.*;
 import it.polito.yutengfei.RIIF2.factory.ComponentFactory;
 import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
@@ -161,8 +162,7 @@ public class AISFactory implements Factory{
         /*
         if ( !this.declaratorId.hasAisType()
                 && !this.declaratorId.hasAssociativeIndex())
-            this.aisLabels.add(this.aisLabel);
-*/
+            this.aisLabels.add(this.aisLabel); */
 
         // if it is associativeIndex, then get the label, or create a new label put the new label into the associativeLabel and get back.
         if (this.declaratorId.hasAssociativeIndex()) {
@@ -251,8 +251,8 @@ public class AISFactory implements Factory{
             if (tempLabel == null){
                 tempLabel = PreDefinedAttribute.createAttribute(attributeIndex,RIIF2Grammar.STRING,null,this.recorder);
                 this.aisLabel.putAttribute(attributeIndex, (Attribute) tempLabel);
-                this.aisLabel = tempLabel;
             }
+            this.aisLabel = tempLabel;
         }
     }
 
@@ -297,11 +297,16 @@ public class AISFactory implements Factory{
                     //if it is the attribute unit
                 } else if (this.aisLabel instanceof Attribute &&
                         this.aisLabel.getName().equals(RIIF2Grammar.UNIT) ) {
+                  //  System.out.println("current label is an attribute with name " );
+
                     if (!(expInitializer.value() instanceof DeclaratorId))
                         throw new FieldTypeNotMarchException(expInitializer.value().toString(),
                                 expInitializer.getLine(), expInitializer.getColumn());
 
-                    this.aisLabel.putValue(expInitializer);
+                    DeclaratorId declaratorId = (DeclaratorId) expInitializer.value();
+                    String id = declaratorId.getPrimitiveId().getId();
+
+                    this.aisLabel.putValue(id);
 
                     //..tableId  = 'Item[][]
                     // should be more tracky to solve

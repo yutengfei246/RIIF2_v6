@@ -120,6 +120,7 @@ public class FMFactory implements Factory {
         label.setType(string);
         label.setValue(o);
 
+        label.setAttribute(true);
         PreDefinedAttribute.FMAttribute(label,this.recorder);
 
         return label;

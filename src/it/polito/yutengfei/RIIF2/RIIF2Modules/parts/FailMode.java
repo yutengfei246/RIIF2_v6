@@ -21,6 +21,14 @@ public class FailMode extends Label<Label> {
 
     @Override
     public void print() {
+        System.out.print("Fail_Mode ");
 
+        System.out.println("<----Start Attribute--->");
+        super.printAttribute();
+        System.out.println("<-----End Attribute --->");
+
+        System.out.println("<----Start Associative --->");
+        super.printAssociative();
+        System.out.println("<-----End Associative --->");
     }
 }

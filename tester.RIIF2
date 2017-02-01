@@ -1,34 +1,9 @@
-template mTempl;
-abstract parameter aPar : float ;
-impose aPar  = 10.0 ;
-endtemplate
+component myCom;
 
+// All SRAMs must have radiation induced failure modes
+abstract fail_mode RAD_FM[];
 
-component mCo implements mTempl;
-
-parameter m1 : integer := 50;
-
-endcomponent
-
-component myCom extends mCo;
-
-
-parameter mm : integer := 1000;
-parameter myP : integer := 100;
-parameter myPar : integer := 10 * myP * mm * m1;
-
-parameter assoc[] : integer ;
-parameter assoc[Instance] := 100;
-
-assign assoc[Instance] = 10 ;
-set aPar = 80.0;
-
-assign m1 = mm;
-assign mm = 20;
-assign mm = myP;
-assign myPar = 10;
-assign myPar = myP;
-assign m1 = myPar;
-assign myP = myPar;
+abstract fail_mode RAD_FM[SBU]'RATE;
+impose RAD_FM[SBU]'UNIT = FITS;
 
 endcomponent
