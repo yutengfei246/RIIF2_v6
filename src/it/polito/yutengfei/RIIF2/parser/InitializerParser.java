@@ -23,13 +23,13 @@ abstract class InitializerParser extends ExpressionParser {
 
     // list initializer parser expressed by ListInitializer
 
-    private ParseTreeProperty<String> listItemTree = new ParseTreeProperty<>();
+    private ParseTreeProperty<Object> listItemTree = new ParseTreeProperty<>();
     private ListInitializer listInitializer = null;
 
-    private void putListItemString(ParseTree node, String value ){
+    private void putListItemString(ParseTree node, Object value ){
         this.listItemTree.put(node,value);
     }
-    private String getListItemString(ParseTree node){
+    private Object getListItemString(ParseTree node){
         return this.listItemTree.get(node);
     }
 
@@ -47,7 +47,7 @@ abstract class InitializerParser extends ExpressionParser {
     @Override
     public void exitListItemDecimalLiteral(RIIF2Parser.ListItemDecimalLiteralContext ctx) {
         TerminalNode DecimalToken = ctx.DecimalLiteral();
-        String decimalToken = DecimalToken.getText();
+        Integer decimalToken = Integer.parseInt(DecimalToken.getText());
 
         this.putListItemString(ctx,decimalToken);
     }
@@ -55,7 +55,7 @@ abstract class InitializerParser extends ExpressionParser {
     @Override
     public void exitListItemFloatingPointLiteral(RIIF2Parser.ListItemFloatingPointLiteralContext ctx) {
         TerminalNode FloatingPointToken = ctx.FloatingPointLiteral();
-        String floatingPointToken = FloatingPointToken.getText();
+        Double floatingPointToken = Double.parseDouble(FloatingPointToken.getText());
 
         this.putListItemString(ctx,floatingPointToken);
     }
@@ -76,8 +76,9 @@ abstract class InitializerParser extends ExpressionParser {
         ListInitializer listInitializer = new ListInitializer();
         listInitializer.setLine(ctx.start.getLine());
         listInitializer.setColumn(ctx.start.getCharPositionInLine());
+
         for (RIIF2Parser.ListItemContext listItemContext : listItemContexts){
-            String listItem = this.getListItemString(listItemContext);
+            Object listItem = this.getListItemString(listItemContext);
             listInitializer.addItem( listItem );
         }
         this.listInitializer = listInitializer;

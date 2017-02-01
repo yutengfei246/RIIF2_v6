@@ -50,4 +50,8 @@ public class RIIF2Grammar {;
     public static final String FUNC_AGG_SINGLE = "function-agg-single";
     public static final String FUNC_GT_N_FAIL = "function-gt-n-fail";
     public static final String PLATFORM = "platform";
+    public static final String OBJECT = "Object";
+    public static final String LIST_STRING = "list-string";
+    public static final String LIST_INTEGER = "list-integer";
+    public static final String LIST_DOUBLE = "list-double";
 }

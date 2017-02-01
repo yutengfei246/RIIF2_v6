@@ -200,6 +200,25 @@ public class RIIF2Recorder implements Recorder, Serializable {
                 : null;
     }
 
+    // for this the extends has highest priority.
+    public Label<Label> getAISLabel(String labelName){
+
+        if (this.getLabel(labelName) != null )
+            return this.getLabel(labelName);
+
+        for (Map.Entry<String,RIIF2Recorder> entry : this.exRecorderMap.entrySet()) {
+            if (entry.getValue().getAISLabel(labelName)  != null )
+                return entry.getValue().getAISLabel(labelName);
+        }
+
+        for (Map.Entry<String,RIIF2Recorder> entry : this.implRecorderMap.entrySet()) {
+            if (entry.getValue().getAISLabel(labelName) != null )
+                return entry.getValue().getAISLabel(labelName);
+        }
+
+        return null;
+    }
+
     /*only can find in this recorder or parent recorder */
     public Label getAssignmentLabel(String labelName) {
         if (this.getLabel(labelName) != null )
@@ -229,9 +248,7 @@ public class RIIF2Recorder implements Recorder, Serializable {
 
         /* in template */
         if (this.isTemplate()){
-
             for (Map.Entry<String, RIIF2Recorder > entry : this.exRecorderMap.entrySet() ){
-
                 if (entry.getValue().getLabel(labelName) != null)
                     return entry.getValue().getLabel(labelName);
 
@@ -242,7 +259,6 @@ public class RIIF2Recorder implements Recorder, Serializable {
 
         /* in component */
         if ( !this.isTemplate() ) {
-
             for (Map.Entry<String,RIIF2Recorder> entry : this.exRecorderMap.entrySet())
                 if (entry.getValue().getSetLabel(labelName) != null )
                     return entry.getValue().getSetLabel(labelName);
@@ -255,10 +271,8 @@ public class RIIF2Recorder implements Recorder, Serializable {
                     return entry.getValue().getSetLabel(labelName);
             }
         }
-
         return null;
     }
-
 
     @Override
     public RIIF2Recorder getRIIF2Recorder() {

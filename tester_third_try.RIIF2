@@ -5,14 +5,21 @@ component VECTORCALC_CORE;
 fail_mode SBU;
 assign SBU'RATE = 10; //obtained from radiation tests
 
-parameter myPr : integer := 10*SBU'RATE;
-parameter myPr'attribute : integer := 1000;
-
 parameter SW_FM: table;
 assign SW_FM'HEADERS = {FAILMODE,SFM,RATE};
 assign SW_FM'ITEMS = { //obtained from fault injection
     ["SUB", "WRONG_DATA", 0.3*SBU'RATE],
-    ["SBU", "WRONG_INSTRUCTION",0.2*myPr'attribute ]
+    ["SBU", "WRONG_INSTRUCTION",0.2*SBU'RATE]
     } ;
+
+endcomponent
+
+
+component myConponent extends  VECTORCALC_CORE;
+
+assign SBU'RATE = 100;
+endcomponent
+
+component myComponent2 extends VECTORCALC_CORE;
 
 endcomponent

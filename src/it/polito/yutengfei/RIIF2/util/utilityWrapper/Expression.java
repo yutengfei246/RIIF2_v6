@@ -3,13 +3,17 @@ package it.polito.yutengfei.RIIF2.util.utilityWrapper;
 
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Label;
 import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
+import it.polito.yutengfei.RIIF2.id.DeclaratorId;
 import it.polito.yutengfei.RIIF2.initializer.Initializer;
+import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 
+import java.io.Serializable;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-public class Expression implements Initializer {
+public class Expression implements Initializer, Serializable {
 
     public static final int OP_NEGATIVE = 11;
     public static final int OP_POSITIVE = 12;
@@ -34,18 +38,28 @@ public class Expression implements Initializer {
     public static final int OP_ASSIGN = 31;
     public static final int OP_IF_ELSE = 32;
 
+    // properties for the expression type and value
     private String type;
     private Object value;
 
+    // specify the operation has performed or not
     private boolean performed = false;
+    // specify the operation queue
     private Queue<Operation> oprQueue = new LinkedList<>();
 
+    // recorder the line and column
     private int line;
     private int column;
+    // function arguments (They are expression either )
     private LinkedList<Expression> funcArguments = null ;
 
-    private ExpressionOperator expressionOperator = null;
+    // in this way, we can design the expression Operator out of the framework.
+    private ExpressionOperator expressionOperator = new ExpressionOperator();
     private Label enumLabel = null;
+
+    // RIIF2Recorder .
+    private RIIF2Recorder recorder;
+    private Label<Label> currentLabel;
 
     public void setType(String type) {
         this.type = type;
@@ -59,8 +73,12 @@ public class Expression implements Initializer {
         return this.type;
     }
 
-    public Object value(){
+    public Object value() {
         return this.value;
+    }
+
+    public void setExpressionOperator(ExpressionOperator expressionOperator) {
+        this.expressionOperator = expressionOperator;
     }
 
     public Expression operation(int opr) {
@@ -79,7 +97,6 @@ public class Expression implements Initializer {
         operation.setOprExpression(rightExp);
         this.push(operation);
 
-
         return this;
     }
 
@@ -92,10 +109,6 @@ public class Expression implements Initializer {
         this.push(operation);
 
         return this;
-    }
-
-    public void setExpressionOperator(ExpressionOperator expressionOperator) {
-        this.expressionOperator = expressionOperator;
     }
 
     public boolean isBoolean() {
@@ -130,6 +143,7 @@ public class Expression implements Initializer {
         return false;
     }
 
+    // this method pop everything and do not keep the operations in the Queue
     public String getType() {
 
         try {
@@ -163,19 +177,49 @@ public class Expression implements Initializer {
         return this.oprQueue.poll();
     }
 
+    public Iterator<Operation> getIterator() {
+        return this.oprQueue.iterator();
+    }
+
     boolean performed() {
         return this.performed = true;
     }
-
 
     boolean isPerformed() {
         return performed;
     }
 
+    public void addFunctionArgument(Expression funcArgumentExp) {
+        if (this.funcArguments == null)
+            this.funcArguments = new LinkedList<>();
+
+        this.funcArguments.add( funcArgumentExp );
+    }
+
+    List<Expression> getFuncArguments() {
+        return this.funcArguments;
+    }
+
+    public void setEnumLabel(Label enumLabel) {
+        this.enumLabel = enumLabel;
+    }
+
+    public Label getEnumLabel() {
+        return enumLabel;
+    }
+
+    public void setRecorder(RIIF2Recorder recorder) {
+        this.recorder = recorder;
+        this.expressionOperator.setRecorder(this.recorder);
+    }
+
+    public void setCurrentLabel(Label currentLabel) {
+        this.currentLabel = currentLabel;
+        this.expressionOperator.setCurrentLabel(this.currentLabel);
+    }
 
     @Override
-    public void addItem(Object item) {
-    }
+    public void addItem(Object item) { }
 
     @Override
     public Object getItem(int index) {
@@ -212,22 +256,41 @@ public class Expression implements Initializer {
         return column;
     }
 
-    public void addFunctionArgument(Expression funcArgumentExp) {
-        if (this.funcArguments == null)
-            this.funcArguments = new LinkedList<>();
+    // use for debug , print the expression,recursive
+    public void print() {
+        // for each of the operation, print
+        if (this.value() instanceof DeclaratorId){
+            DeclaratorId declaratorId = (DeclaratorId) this.value();
+            String id = declaratorId.getPrimitiveId().getId();
 
-        this.funcArguments.add( funcArgumentExp );
-    }
+            System.out.print(" " + id + " " );
+        } else
+            System.out.print( " " + this.value().toString() + " ");
 
-    List<Expression> getFuncArguments() {
-        return this.funcArguments;
-    }
+        Iterator<Operation> iterator = this.getIterator();
 
-    public void setEnumLabel(Label enumLabel) {
-        this.enumLabel = enumLabel;
-    }
+        while (iterator.hasNext()) {
+            Operation operation = iterator.next();
 
-    public Label getEnumLabel() {
-        return enumLabel;
+            if (operation.getOpr() == 15 )
+                System.out.print(" * " );
+
+            Expression oprExpression = operation.getOprExpression();
+            Expression targetExpression = operation.getOprTargetExpression();
+
+            if (oprExpression != null ) {
+                oprExpression.setRecorder(this.recorder);
+                oprExpression.setCurrentLabel(this.currentLabel);
+                oprExpression.print();
+            }
+
+            if (targetExpression != null ) {
+                targetExpression.setRecorder(this.recorder);
+                targetExpression.setCurrentLabel(this.currentLabel);
+                targetExpression.print();
+            }
+
+
+        }
     }
 }

@@ -78,7 +78,7 @@ public class RIIF2Parser extends Parser {
 
 	private static final String[] _LITERAL_NAMES = {
 		null, "';'", "'<'", "'>'", "':'", "':='", "'='", "'{'", "','", "'}'", 
-		"'['", "']'", "'''", "'#'", "'.'", "' .. '", "'+'", "'-'", "'~'", "'!'", 
+		"'['", "']'", "'''", "'#'", "'.'", "'..'", "'+'", "'-'", "'~'", "'!'", 
 		"'*'", "'/'", "'%'", "'<='", "'>='", "'=='", "'!='", "'&'", "'^'", "'|'", 
 		"'&&'", "'||'", "'?'", "'('", "')'", "'component'", "'endcomponent'", 
 		"'environment'", "'endenvironment'", "'requirement'", "'endrequirement'", 
@@ -5632,11 +5632,11 @@ public class RIIF2Parser extends Parser {
 	}
 
 	public static class FuncArgContext extends ParserRuleContext {
-		public VectorContext vector() {
-			return getRuleContext(VectorContext.class,0);
-		}
 		public AisDeclaratorIdContext aisDeclaratorId() {
 			return getRuleContext(AisDeclaratorIdContext.class,0);
+		}
+		public VectorContext vector() {
+			return getRuleContext(VectorContext.class,0);
 		}
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
@@ -5670,10 +5670,8 @@ public class RIIF2Parser extends Parser {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				{
 				setState(660);
 				aisDeclaratorId();
-				}
 				setState(661);
 				vector();
 				}

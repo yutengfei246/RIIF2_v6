@@ -343,7 +343,7 @@ vector
     ;
 
 flatVector
-    : '[' expression ' .. ' expression ']'
+    : '[' expression '..' expression ']'
     ;
 
 fieldType
@@ -409,7 +409,6 @@ funcArg
     | expression
     ;
 
-
 /*Literal*/
 literal
     : StringLiteral #literalString
@@ -468,8 +467,9 @@ StringLiteral
     : '"' ( ~('\\' | '"') )* '"'
     ;
 
+//TODO: chang the digit*
 FloatingPointLiteral
-    : DIGIT+ '.' DIGIT* Exponent? FloatTypeSuffix?
+    : DIGIT+ '.' DIGIT+ Exponent? FloatTypeSuffix?
     | '.' DIGIT+ Exponent? FloatTypeSuffix?
     | DIGIT+ Exponent FloatTypeSuffix?
     ;

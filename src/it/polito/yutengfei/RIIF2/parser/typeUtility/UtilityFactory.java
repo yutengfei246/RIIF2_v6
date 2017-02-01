@@ -8,11 +8,7 @@ public class UtilityFactory {
     /*Handle not march exception*/
     public static Vector vector(Expression expLeft, Expression expRight) {
         try {
-            try {
-                return new Vector(expLeft,expRight);
-            } catch (FieldTypeNotMarchException e) {
-                e.printStackTrace();
-            }
+            return new Vector(expLeft,expRight);
         } catch (ExpressionTypeNotMarchException e) {
             e.printStackTrace();
         }

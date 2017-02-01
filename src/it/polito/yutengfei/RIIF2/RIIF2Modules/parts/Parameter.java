@@ -1,100 +1,18 @@
 package it.polito.yutengfei.RIIF2.RIIF2Modules.parts;
 
-import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
-import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
-import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
-import it.polito.yutengfei.RIIF2.util.utilityWrapper.ExpressionOperator;
 
-import java.util.*;
+import java.util.Iterator;
 
 public class Parameter extends Label<Label> {
 
-    private LinkedList<Label> vectorValue = null ;
-
-    private Map<String,Label> assocs = null;
-    private Map<String,Attribute> attributeMap = new HashMap<>();
-
-
-    @Override
-    public void setAssociative(Boolean b) {
-        if (b){
-            super.associativeTrue();
-            this.assocs = new HashMap<>();
-        }
-        else
-            super.associativeFalse();
-    }
-
-    @Override
-    public void putAttribute(String key ,Attribute attribute) {
-        this.attributeMap.put(key,attribute);
-    }
-
-    @Override
-    public void putAssoc(String name, Label assocIndex) {
-        this.assocs.put(name,assocIndex);
-    }
-
-    @Override
-    public void setVector(Vector vector, RIIF2Recorder recorder) {
-        super.vectorTrue();
-
-        ExpressionOperator eo = new ExpressionOperator(recorder);
-
-        Expression exp = vector.getLeft();
-        exp.setExpressionOperator(eo);
-        int left = (int) exp.getValue();
-
-        exp = vector.getRight();
-        exp.setExpressionOperator(eo);
-        int right = (int) exp.getValue();
-
-        super.setVectorLeft(left);
-        super.setVectorRight(right);
-        super.setVectorLength( left * right);
-
-        this.vectorValue = new LinkedList<>();
-
-        for (int i= 0; i < left*right ; i++  )
-            this.vectorValue.add(new Parameter());
-
-    }
-
-    @Override
-    public boolean containsAssociativeIndex(String index) {
-        return this.assocs.containsKey( index );
-    }
-
-    @Override
-    public Label getAssociative(String index) {
-        return this.assocs.get(index);
-    }
-
-    @Override
-    public boolean containsAttributeIndex(String index) {
-        return this.attributeMap.containsKey(index);
-    }
-
-    @Override
-    public Attribute getAttribute(String index) {
-        return this.attributeMap.get(index);
-    }
-
-    @Override
-    public void addVectorItem(Label value) {
-        this.vectorValue.add(value);
-    }
-
-    @Override
-    public Label getVector(int index) {
-        return this.vectorValue.get(index);
+    public Parameter(RIIF2Recorder recorder){
+        super(recorder);
     }
 
     @Override
     public void setPlatform(RIIF2Recorder recorder) {
-
     }
 
     @Override
@@ -104,41 +22,42 @@ public class Parameter extends Label<Label> {
 
     @Override
     public void print() {
-        System.out.print("Parameter " + this.getName());
-        System.out.print(" : " + this.getType());
 
-        if (isAssociative()) {
-            System.out.print("[]");
+        // print field
+        System.out.print("Parameter " + super.getName() + ":" + super.getType() );
+        System.out.print(" := " );
+
+        Object initialValue = super.getValue();
+
+        if (initialValue != null ) {
+            if (initialValue instanceof Expression) {
+                Expression value = (Expression) super.getValue();
+                value.print();
+            }
         }
-
-        if (this.getValue() != null)
-            System.out.print(" := "  + this.getValue().toString() );
-        else
-            System.out.print(" := null " );
-
         System.out.println(";");
 
-        if (this.attributeMap.size() > 0) {
-            System.out.println(getName() + "@attribute ");
 
-            this.attributeMap.forEach((s, attribute) -> attribute.print());
+        System.out.println("Stack value ---");
 
-            System.out.println(getName() + "@endattribute");
+        Iterator<Object> iterator = super.getStackValueIterator();
+        while (iterator.hasNext()){
+            System.out.print(" ");
+            Object o = iterator.next();
+                if (o instanceof Expression){
+                    Expression e = (Expression) o;
+                    ((Expression) o).print();
+                }else
+                    System.out.print(" " + o.toString() + " ");
+
         }
 
-        if (isAssociative()) {
-            this.assocs.forEach((s, label) -> {
-                System.out.println(getName() + "[" + s + "]");
-                label.print();
-            });
-        }
+        System.out.println("\n------Stack value " );
 
 
-        if (this.vectorValue != null && this.vectorValue.size() != 0) {
-            System.out.println("--vector--");
-            this.vectorValue.forEach(Label::print);
-            System.out.println("--vector end ");
-        }
+        super.printAttribute();
+        super.printAssociative();
     }
+
 
 }

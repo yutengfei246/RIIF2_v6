@@ -5,24 +5,45 @@ import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Label;
 import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
 import it.polito.yutengfei.RIIF2.id.DeclaratorId;
 import it.polito.yutengfei.RIIF2.initializer.ArrayInitializer;
-import it.polito.yutengfei.RIIF2.recoder.LabelRetriever;
+import it.polito.yutengfei.RIIF2.parser.typeUtility.EnumType;
+import it.polito.yutengfei.RIIF2.recoder.LabelExtractor;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 
-import java.util.List;
-import java.util.Objects;
+import java.io.Serializable;
+import java.util.*;
 
 import static it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression.*;
 
-public class ExpressionOperator {
+public class ExpressionOperator implements Serializable{
     private static final String EXP = "exp function";
     private static final String LOG = "log function";
-    private final RIIF2Recorder recorder;
+    private RIIF2Recorder recorder;
     private Label currentLabel = null;
 
-    public ExpressionOperator(RIIF2Recorder recorder) {
-        this(recorder,null);
-    }
+    private Set<Integer> nonCompareOperation = new HashSet<Integer>(){
+        {
+            add(Expression.OP_PLUS);
+            add(Expression.OP_MINUS);
+            add(Expression.OP_STAR);
+            add(Expression.OP_DIV);
+            add(Expression.OP_MOD);
+            add(Expression.OP_ASSIGN);
+        }
+    };
+
+    private Set<Integer> compareOperation = new HashSet<Integer>() {
+        {
+            add(Expression.OP_BG);
+            add(Expression.OP_BG_EQ);
+            add(Expression.OP_SM);
+            add(Expression.OP_SM_EQ);
+            add(Expression.OP_EQ_EQ);
+            add(Expression.OP_NOT_EQ);
+        }
+    };
+
+    public ExpressionOperator(){}
 
     public ExpressionOperator(RIIF2Recorder recorder, Label currentLabel ){
         this.recorder = recorder;
@@ -35,8 +56,7 @@ public class ExpressionOperator {
 
     public String getType(Expression expression) throws FieldTypeNotMarchException {
 
-        this.resolvedThis(expression);
-        return expression.type();
+        return this.findExpressionType(expression);
     }
 
     public Object getValue(Expression expression) throws FieldTypeNotMarchException {
@@ -48,35 +68,28 @@ public class ExpressionOperator {
         return expression.value();
     }
 
-    public boolean isBoolean(Expression expression) throws FieldTypeNotMarchException {
-        if (expression.isPerformed())
-            return expression.type().equals(RIIF2Grammar.BOOLEAN);
+    public boolean isBoolean(Expression srcExpression) throws FieldTypeNotMarchException {
 
-        this.runOprQueue(expression);
-        return expression.type().equals(RIIF2Grammar.BOOLEAN);
+        String type = this.getType(srcExpression);
+        return type.equals(RIIF2Grammar.BOOLEAN);
     }
 
     boolean isInteger(Expression expression) throws FieldTypeNotMarchException {
-        if (expression.isPerformed())
-            return expression.type().equals(RIIF2Grammar.INTEGER);
 
-        this.runOprQueue(expression);
-        return expression.type().equals(RIIF2Grammar.INTEGER);
+        String type = this.getType(expression);
+        return type.equals(RIIF2Grammar.INTEGER);
     }
 
     boolean isArray(Expression expression) throws FieldTypeNotMarchException {
-        if (expression.isPerformed())
-            return expression.type().equals(RIIF2Grammar.ARRAY);
 
-        this.runOprQueue(expression);
-        return expression.type().equals(RIIF2Grammar.ARRAY);
+        String type = this.getType(expression);
+        return type.equals(RIIF2Grammar.ARRAY);
     }
 
 
     private void runOprQueue(Expression srcExpression) throws FieldTypeNotMarchException {
 
         this.resolvedThis(srcExpression);
-
 
         Operation currentOperation;
         while ( ( currentOperation = srcExpression.pop() )  != null ){
@@ -130,7 +143,6 @@ public class ExpressionOperator {
                     this.oprWithTwoExpression(currentOperation.getOpr()
                             , srcExpression, oprExpression, targetExpression);
             }
-
         }
 
         srcExpression.performed();
@@ -415,6 +427,8 @@ public class ExpressionOperator {
     }
 
     private void resolvedThis(Expression srcExpression) throws FieldTypeNotMarchException {
+        LabelExtractor labelExtractor = new LabelExtractor(srcExpression,this.recorder);
+
         if (srcExpression.type().equals(RIIF2Grammar.ARRAY)){
             // retrieve the array and go inside to resolve all of the elements
 
@@ -449,26 +463,20 @@ public class ExpressionOperator {
                 srcExpression.setValue(id);
 
             }else {
-                List<Label> labels = LabelRetriever.Retriever(srcExpression, this.recorder);
+                Label<Label> extractedLabel  = labelExtractor.extractor();
 
-                if (labels == null || labels.size() == 0)
+                if (extractedLabel== null )
                     throw new FieldTypeNotMarchException(id,
                             srcExpression.getLine(), srcExpression.getColumn());
 
-                if (labels.size() == 1) {
-                    Label label = labels.get(0);
-                    srcExpression.setValue(label.getValue());
-                    srcExpression.setType(label.getType());
 
-                    if (label.isEnumType()){
-                        srcExpression.setEnumLabel(label);
-                    }
+                srcExpression.setValue(extractedLabel.getValue());
+                srcExpression.setType(extractedLabel.getType());
+
+                if (extractedLabel.isEnumType()){
+                    srcExpression.setEnumLabel(extractedLabel);
                 }
 
-                if (labels.size() > 1) {
-
-                    //TODO:: which is an special case
-                }
             }
 
         }
@@ -537,5 +545,123 @@ public class ExpressionOperator {
         //....................
         srcExpression.setType(RIIF2Grammar.DOUBLE);
         srcExpression.setValue(10.0); // for now
+    }
+
+    private String findExpressionType(Expression srcExpression) throws FieldTypeNotMarchException {
+
+        //TODO: pay attention, should not consider the Array Type, or We could consider Array and also the operation on Array
+        // srcExpression's type
+        String srcType = this.typeResolver(srcExpression);
+        if ( srcType == null)
+            throw new FieldTypeNotMarchException(((DeclaratorId)srcExpression.value()).getPrimitiveId().getId(),srcExpression.getLine(),srcExpression.getColumn());
+
+        Iterator<Operation> iterator = srcExpression.getIterator();
+
+        while (iterator.hasNext()) {
+
+            Operation currentOperation = iterator.next();
+
+            Expression oprExpression = currentOperation.getOprExpression();
+            Expression targetExpression = currentOperation.getOprTargetExpression();
+
+            if (oprExpression != null) {
+                if (srcExpression.getEnumLabel() != null) {
+                    oprExpression.setExpressionOperator(
+                            new ExpressionOperator(this.recorder, srcExpression.getEnumLabel()));
+                } else
+                    oprExpression.setExpressionOperator(this);
+
+                srcExpression.setEnumLabel(null);
+            }
+
+            if (targetExpression != null) {
+                targetExpression.setExpressionOperator(this);
+            }
+
+            // the operation with expression self, the type should not change
+            if (currentOperation.isOprWithSelf())
+                continue;
+
+
+            // the operation with one expression
+            if (currentOperation.isOprWithOneExpression()) {
+
+                assert oprExpression != null;
+                String oprType = oprExpression.getType();
+
+                int opr = currentOperation.getOpr();
+
+                assert oprType != null;
+
+                if (!srcType.equals(oprType))
+                    throw new FieldTypeNotMarchException(oprType,oprExpression.getLine(),oprExpression.getColumn());
+
+                if (this.nonCompareOperation.contains(opr))
+                    continue;
+
+                else if (this.compareOperation.contains(opr)) {
+                    srcType = RIIF2Grammar.BOOLEAN;
+                    continue;
+                }
+                else
+                    throw new FieldTypeNotMarchException(oprType,oprExpression.getLine(),oprExpression.getColumn());
+            }
+
+            // the operation with two expression ? :
+            if (currentOperation.isOprWithTwoExpression()) {
+                if (!srcType.equals(RIIF2Grammar.BOOLEAN))
+                    throw new FieldTypeNotMarchException(srcType, srcExpression.getLine(), srcExpression.getColumn());
+
+                assert oprExpression != null;
+                String oprType = oprExpression.getType();
+
+                assert targetExpression != null;
+                String targetType = targetExpression.getType();
+
+                assert oprType != null;
+                assert targetType != null;
+
+                if (!oprType.equals(targetType))
+                    throw new FieldTypeNotMarchException(targetType, targetExpression.getLine(), targetExpression.getColumn());
+
+                srcType = oprType;
+            }
+        }
+
+        return srcType;
+    }
+
+    // the method return the given expression type, not store it into the expression
+    private String typeResolver(Expression expression) throws FieldTypeNotMarchException {
+
+        if ( !expression.type().equals(RIIF2Grammar.USER_DEFINED))
+            return expression.type();
+
+        DeclaratorId declaratorId = (DeclaratorId) expression.value();
+        String id = declaratorId.getPrimitiveId().getId();
+
+        if ( this.currentLabel.isEnumType() ){
+            EnumType enumType = this.currentLabel.getEnumType();
+            enumType.contains(id);
+
+            return RIIF2Grammar.ENUM;
+        }
+
+        LabelExtractor labelExtractor = new LabelExtractor(expression,this.recorder);
+        Label<Label> extractedLabel = labelExtractor.extractor();
+
+        if (extractedLabel == null) {
+            System.out.println("EvtractedLabel is null ");
+            return null;
+        }
+
+        if ( extractedLabel.isEnumType() )
+            expression.setEnumLabel(extractedLabel);
+
+        return extractedLabel.getType();
+    }
+
+    public void setRecorder(RIIF2Recorder recorder) {
+        this.recorder = recorder;
     }
 }

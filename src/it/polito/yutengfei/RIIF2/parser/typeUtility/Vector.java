@@ -1,30 +1,22 @@
 package it.polito.yutengfei.RIIF2.parser.typeUtility;
 
-import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
-import it.polito.yutengfei.RIIF2.util.utilityWrapper.ExpressionOperator;
 
+
+// should have a check on the left if it is not one, then should throw an exception
 public class Vector {
 
     private Expression left;
     private Expression right;
 
 
-    public Vector(Expression left, Expression right) throws ExpressionTypeNotMarchException, FieldTypeNotMarchException {
+    public Vector(Expression left, Expression right) throws ExpressionTypeNotMarchException {
 
         if ( ! left.isInteger() || ! right.isInteger() ){
             throw new ExpressionTypeNotMarchException();
         }
 
         this.left = left;
-        this.right = right;
-    }
-
-    public void setLeft(Expression left ){
-        this.left = left;
-    }
-
-    public void setRight(Expression right ){
         this.right = right;
     }
 
@@ -36,14 +28,9 @@ public class Vector {
         return this.right;
     }
 
-    public int getLength(ExpressionOperator eo ) throws FieldTypeNotMarchException {
 
-        this.left.setExpressionOperator(eo);
-        this.right.setExpressionOperator(eo);
-
-        int le = (int) this.left.getValue();
-        int ri = (int) this.right.getValue();
-        return le*ri;
+    public Expression getLength(){
+        return this.right;
     }
 
 

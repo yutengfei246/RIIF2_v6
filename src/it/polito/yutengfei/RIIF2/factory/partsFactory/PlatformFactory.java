@@ -20,7 +20,7 @@ public class PlatformFactory implements Factory{
 
 
     private Platform createPlatform() {
-        Platform platform = new Platform();
+        Platform platform = new Platform(this.recorder);
         platform.setName(this.identifier);
         platform.setType(RIIF2Grammar.PLATFORM);
 

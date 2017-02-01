@@ -10,7 +10,7 @@ component SIMPLE_CPU_BOARD;
   assign CPU'VOLTAGE = CHIP_VOLTAGE;       // Propagate parameters to children
 
   child_component SIMPLE_SRAM MEMORY[1:NUM_RAMS];      // 17 memory chips
-  assign MEMORY[1 .. NUM_RAMS].VOLTAGE = CHIP_VOLTAGE;
+  assign MEMORY[1..NUM_RAMS].VOLTAGE = CHIP_VOLTAGE;
 
 // ----------------- Define Failure Modes for the Board ----------------------
 // If there is an MBE in any memory, the board will reboot.

@@ -58,21 +58,19 @@ public class CCFactory implements Factory {
 
             String associativeIndex = this.declaratorId.getAssociativeIndex().getId();
             if ( !this.ccLabel.isAssociative()
-                    || this.ccLabel.containsAssociativeIndex(associativeIndex) )
+                    || this.ccLabel.containsAssociative(associativeIndex) )
                 throw new FieldTypeNotMarchException(id,
                         this.declaratorId.getLine(), this.declaratorId.getColumn());
 
             Label<Label> associativeLabel
                     = this.createCCLabel1(associativeIndex,recorder);
 
-            this.ccLabel.putAssoc(associativeIndex,associativeLabel);
+            this.ccLabel.putAssociative(associativeIndex,associativeLabel);
         }
-
-
     }
 
-    private Label<Label> createCCLabel1(String associativeIndex, RIIF2Recorder recorder) {
-        Label<Label> label = new ChildComponent();
+    private Label<Label> createCCLabel1(String associativeIndex, RIIF2Recorder recorder) throws FieldTypeNotMarchException {
+        Label<Label> label = new ChildComponent(this.recorder);
 
         label.setName(associativeIndex);
         label.setType(RIIF2Grammar.TYPE_CC);
@@ -82,7 +80,7 @@ public class CCFactory implements Factory {
     }
 
     private void createCCLabel(String id, RIIF2Recorder recorder) throws FieldTypeNotMarchException {
-        this.ccLabel = new ChildComponent();
+        this.ccLabel = new ChildComponent(this.recorder);
 
         this.ccLabel.setName(id);
         this.ccLabel.setType(RIIF2Grammar.TYPE_CC);
@@ -96,10 +94,11 @@ public class CCFactory implements Factory {
             if (typeType.equals(RIIF2Grammar.TYPE_ASSOCIATIVE))
                 this.ccLabel.setAssociative(true);
 
-            if (typeType.equals(RIIF2Grammar.TYPE_VECTOR) )
-                this.ccLabel.setVector(TypeType.getVector(),this.recorder);
+            if (typeType.equals(RIIF2Grammar.TYPE_VECTOR) ) {
+                this.ccLabel.setVector(true);
+                this.ccLabel.setVectorLength(TypeType.getVector().getLength());
+            }
         }
-
         this.recorder.addLabel(this.ccLabel);
     }
 

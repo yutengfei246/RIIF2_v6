@@ -1,95 +1,34 @@
-component VECTORCALC_CORE;
-// An hardware component performing vectorial calculations
-
-//parameter fail_mode SBU;
-fail_mode SBU;
-assign SBU'RATE = 10; //obtained from radiation tests
-
-parameter SW_FM: table;
-assign SW_FM'HEADERS = {FAILMODE,SFM,RATE};
-assign SW_FM'ITEMS = { //obtained from fault injection
-    ["SUB", "WRONG_DATA", 0.3*SBU'RATE],
-    ["SBU", "WRONG_INSTRUCTION",0.2*SBU'RATE]
-    } ;
-endcomponent
-
-template SW_COMPONENT;
-    //all programs must define the name,size...
-
-    abstract parameter NAME:string;
-    abstract parameter SIZE:integer;
-    abstract parameter LOOPS: integer;
-    abstract parameter PROTECTION: enum {NONE, VAR_DUP};
-    abstract parameter READ_ACCESS: integer;
-    abstract parameter WRITE_ACCESS: integer;
-    abstract platform execute_on;
-
-    //List of possible SFB considered in our library
-    abstract constant SFB_ITEMS : integer := 1000000;
-    abstract constant SFB_LIST := { INT_TIME, UNDETECTABLE,
-                    EARLY, LATE, FULL_UNRESPONSIVE, PARTIAL_UNRESPONSIVE,
-                    RESPONSIVE, DATA_BENIGN, NO_DATA, EDC, NON_EDC };
-
-    // Timing constraints depending on the workload
-    abstract parameter TIMING_CONSTRAINTS : table;
-    impose TIMING_CONSTRAINTS'HEADERS = {WORKLOAD,EXEC_TIME,MAX_TIME,AVG_TIME};
-
-    abstract parameter SFB : table;
-    impose SFB'HEADERs = {SFM_TYPE,SFM,OCCURING_SFB,OCCURRING_SFB_RATE};
+template mTempl;
+abstract parameter aPar : float ;
+impose aPar  = 10.0 ;
 endtemplate
 
-component cpu;
+
+component mCo implements mTempl;
+
+parameter m1 : integer := 50;
+
 endcomponent
 
-component VADD implements SW_COMPONENT;
-    set NAME = "Vector ADD";
-    set SIZE = 524;
-    set PROTECTION = NONE;
-    constant NUMBER_OF_ITEMS :integer:= 10000;
-    set READ_ACCESS = 76*NUMBER_OF_ITEMS / 10000;
-    set WRITE_ACCESS = 75*NUMBER_OF_ITEMS / 10000;
-    set LOOPS = 3;
-    child_component cpu VPRINT ;
-
-    set execute_on = VECTORCALC_CORE;
+component myCom extends mCo;
 
 
-    set TIMING_CONSTRAINTS'ITEMS = {
-        ["TEST_BENCH1",0.0000001,2, 0.000001],
-        ["TEST_BENCH2",0.0000003,2.1, 0.0000004] };
+parameter mm : integer := 1000;
+parameter myP : integer := 100;
+parameter myPar : integer := 10 * myP * mm * m1;
 
-    set SFB'ITEMS = {
-        [ "permanent", "WRONG_DATA", SFB_ITEMS, {0.893, 0.107, 0, 0, 0.891, 0.042, 0.067, 0.413, 0.109,0.052,0.426 } ],
-        [ "permanent", "WRONG_DATA", SFB_ITEMS, {0.893, 0.107, 0, 0, 0.891, 0.042, 0.067, 0.413, 0.109,0.052,0.426 } ],
-        [ "permanent", "WRONG_DATA", SFB_ITEMS, {0.893, 0.107, 0, 0, 0.891, 0.042, 0.067, 0.413, 0.109,0.052,0.426 } ],
-        [ "permanent", "WRONG_DATA", SFB_ITEMS, {0.893, 0.107, 0, 0, 0.891, 0.042, 0.067, 0.413, 0.109,0.052,0.426 } ]
+parameter assoc[] : integer ;
+parameter assoc[Instance] := 100;
 
-    };
+assign assoc[Instance] = 10 ;
+set aPar = 80.0;
 
-    endcomponent
+assign m1 = mm;
+assign mm = 20;
+assign mm = myP;
+assign myPar = 10;
+assign myPar = myP;
+assign m1 = myPar;
+assign myP = myPar;
 
-    component VADD_VARIABLE_DUPLICATION_VER1 extends VADD;
-
-        set NAME = "vector ADD_with_Variable_Duplication";
-        set PROTECTION = VAR_DUP;
-        set TIMING_CONSTRAINTS'ITEMS = {
-        (PROTECTION != VAR_DUP)?
-        ["TEST_BENCH1",self+0.001,self+0.9,self+0.0015]:
-        ["TEST_BENCH1",self,self,self ],
-
-        (PROTECTION != VAR_DUP)?
-        ["TEST_BENCH3",self+0.001,self+0.2,self+100]:
-        ["TEST_BENCH3",self,self,self+10000 ]
-        };
-
-    endcomponent
-
-    component VADD_VARIABLE_DUPLICATION_VER2 extends VADD_VARIABLE_DUPLICATION_VER1;
-
-    set TIMING_CONSTRAINTS'ITEMS[#][EXEC_TIME]=
-        (PROTECTION == VAR_DUP)? self + 10 :self +1000 ;
-    set TIMING_CONSTRAINTS'ITEMS[#][MAX_TIME]=
-        (PROTECTION == VAR_DUP)? self+ 10 : self;
-    set TIMING_CONSTRAINTS'ITEMS[#][AVG_TIME]=
-        (PROTECTION == VAR_DUP)? self +10 : self ;
-    endcomponent
+endcomponent

@@ -11,6 +11,7 @@ import it.polito.yutengfei.RIIF2.factory.Factory;
 import it.polito.yutengfei.RIIF2.id.DeclaratorId;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.RIIF2Type;
+import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 
@@ -33,10 +34,12 @@ public class FMFactory implements Factory {
         this.declaratorId  = failModeDeclarator.getDeclaratorId();
     }
 
+    // find the label position
     private void positionFm() throws VeriableAlreadyExistException, SomeVariableMissingException, FieldTypeNotMarchException {
 
         String fmName = this.declaratorId.getId();
 
+        // if it does not have an attributeIndex or does not have an AssociativeIndex, then create a FailMode
         if ( !this.declaratorId.hasAttributeIndex()
                 && !this.declaratorId.hasAssociativeIndex() ) {
 
@@ -65,13 +68,13 @@ public class FMFactory implements Factory {
     /**
      *  Declarator :: Identifier typeType ? attribute ?
      * */
-    private void positionFmForFailModeDeclarator1() {
+    private void positionFmForFailModeDeclarator1() throws FieldTypeNotMarchException {
 
         if (this.declaratorId.hasAttributeIndex()){
 
             String attributeIndex = this.declaratorId.getAttributeIndex().getId();
             Attribute attribute = PreDefinedAttribute.createAttribute(attributeIndex,
-                    RIIF2Grammar.STRING, null);
+                    RIIF2Grammar.STRING, null,this.recorder);
 
             this.fm.putAttribute(this.declaratorId.getAttributeIndex().getId(),
                     attribute);
@@ -87,9 +90,9 @@ public class FMFactory implements Factory {
 
         String associativeIndex = this.declaratorId.getAssociativeIndex().getId();
 
-        if ( !this.fm.containsAssociativeIndex(associativeIndex)){
+        if ( !this.fm.containsAssociative(associativeIndex)){
             Label<Label> associative = this.createLabel(associativeIndex,RIIF2Grammar.FAIL_MODE,null);
-            this.fm.putAssoc(associativeIndex,associative);
+            this.fm.putAssociative(associativeIndex,associative);
             this.fm = associative;
         }else
             this.fm = this.fm.getAssociative(associativeIndex);
@@ -99,29 +102,31 @@ public class FMFactory implements Factory {
 
         String attributeIndex = this.declaratorId.getAttributeIndex().getId();
 
+        // if it is pre-defined attribute, then return other wise
         if (attributeIndex.equals(RIIF2Grammar.RATE)
                 || associativeIndex.equals(RIIF2Grammar.UNIT))
             return;
 
+        // otherwise create an attribute with type Object....
         Attribute attribute
-                = PreDefinedAttribute.createAttribute(attributeIndex,RIIF2Grammar.STRING,null);
+                = PreDefinedAttribute.createAttribute(attributeIndex,RIIF2Grammar.OBJECT,null,this.recorder);
         this.fm.putAttribute(attributeIndex,attribute);
         this.fm = attribute;
     }
 
-    private Label<Label> createLabel(String associativeIndex, String string, Object o) {
-        Label<Label> label = new FailMode();
+    private Label<Label> createLabel(String associativeIndex, String string, Object o) throws FieldTypeNotMarchException {
+        Label<Label> label = new FailMode(this.recorder);
         label.setName(associativeIndex);
         label.setType(string);
         label.setValue(o);
 
-        PreDefinedAttribute.FMAttribute(label);
+        PreDefinedAttribute.FMAttribute(label,this.recorder);
 
         return label;
     }
 
     private void createFailMode(String fmName) throws FieldTypeNotMarchException {
-        this.fm = new FailMode();
+        this.fm = new FailMode(this.recorder);
         this.fm.setType(RIIF2Grammar.FAIL_MODE);
         this.fm.setName(fmName);
 
@@ -132,11 +137,15 @@ public class FMFactory implements Factory {
             if (typeType.equals(RIIF2Grammar.TYPE_ASSOCIATIVE))
                 this.fm.setAssociative(true);
 
-            if (typeType.equals(RIIF2Grammar.TYPE_VECTOR))
-                this.fm.setVector(TypeType.getVector(),this.recorder);
+            if (typeType.equals(RIIF2Grammar.TYPE_VECTOR)) {
+                this.fm.setVector(true);
+                Vector vector = TypeType.getVector();
+                this.fm.setVectorLength(vector.getLength());
+            }
         }
 
-        PreDefinedAttribute.FMAttribute(this.fm);
+        this.fm.setAttribute(true);
+        PreDefinedAttribute.FMAttribute(this.fm,this.recorder);
         this.recorder.addLabel(this.fm);
     }
 

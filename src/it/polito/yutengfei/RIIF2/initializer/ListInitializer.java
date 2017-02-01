@@ -2,24 +2,24 @@ package it.polito.yutengfei.RIIF2.initializer;
 
 import java.util.LinkedList;
 
-public class ListInitializer implements Initializer<String>{
+public class ListInitializer implements Initializer<Object>{
 
-    private LinkedList<String> initializer = new LinkedList<>();
+    private LinkedList<Object> initializer = new LinkedList<>();
     private int line;
     private int column;
 
     @Override
-    public void addItem(String item) {
+    public void addItem(Object item) {
         this.initializer.add(item);
     }
 
     @Override
-    public String getItem(int index) {
+    public Object getItem(int index) {
         return this.initializer.get(index);
     }
 
     @Override
-    public LinkedList<String> getInitializer() {
+    public LinkedList<Object> getInitializer() {
         return this.initializer;
     }
 

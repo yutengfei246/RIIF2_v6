@@ -11,68 +11,25 @@ import java.util.Objects;
 
 public class Attribute extends Label<Label> {
 
+    // a table label references
     private Label<Label> table;
 
+    public Attribute(RIIF2Recorder recorder) {
+        super(recorder);
+    }
+
+    // get the table label references
     public Label<Label> getTable(){
         return table;
     }
 
-    public  void setTable(Label table){
+    // back to the entry label
+    public void setTable(Label table){
         this.table = table;
     }
 
     @Override
-    public void setAssociative(Boolean b) {
-    }
-
-    @Override
-    public void putAttribute(String key, Attribute attribute) {
-
-    }
-
-    @Override
-    public void putAssoc(String name, Label assocIndex) {
-
-    }
-
-    @Override
-    public Label getAssociative(String index) {
-        return null;
-    }
-
-    @Override
-    public Attribute getAttribute(String index) {
-        return null;
-    }
-
-    @Override
-    public boolean containsAssociativeIndex(String index) {
-        return false;
-    }
-
-    @Override
-    public boolean containsAttributeIndex(String index) {
-        return false;
-    }
-
-    @Override
-    public void setVector(Vector vector, RIIF2Recorder recorder) {
-
-    }
-
-    @Override
-    public void addVectorItem(Label value) {
-
-    }
-
-    @Override
-    public Label getVector(int index) {
-        return null;
-    }
-
-    @Override
     public void setPlatform(RIIF2Recorder recorder) {
-
     }
 
     @Override
@@ -107,10 +64,9 @@ public class Attribute extends Label<Label> {
         }else
 
             System.out.println(this.getName()
-                    + " -Type : "
+                    + " -Type- : "
                     + this.getType()
-                    + " -value :"
+                    + " -value- :"
                     + this.getValue());
     }
-
 }
