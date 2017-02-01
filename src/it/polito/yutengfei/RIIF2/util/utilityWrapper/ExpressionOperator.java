@@ -593,9 +593,16 @@ public class ExpressionOperator implements Serializable{
 
                 assert oprType != null;
 
-                if (!srcType.equals(oprType))
-                    throw new FieldTypeNotMarchException(oprType,oprExpression.getLine(),oprExpression.getColumn());
 
+
+                if (!srcType.equals(oprType)) {
+
+                    if ( (srcType.equals(RIIF2Grammar.DOUBLE) && oprType.equals(RIIF2Grammar.INTEGER) ) ||
+                            (srcType.equals(RIIF2Grammar.INTEGER) && oprType.equals(RIIF2Grammar.DOUBLE)) ){
+                        srcType = RIIF2Grammar.DOUBLE;
+                    }
+                    else throw new FieldTypeNotMarchException(oprType, oprExpression.getLine(), oprExpression.getColumn());
+                }
                 if (this.nonCompareOperation.contains(opr))
                     continue;
 

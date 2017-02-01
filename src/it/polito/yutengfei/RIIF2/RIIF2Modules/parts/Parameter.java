@@ -1,9 +1,11 @@
 package it.polito.yutengfei.RIIF2.RIIF2Modules.parts;
 
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
+import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 
 import java.util.Iterator;
+import java.util.List;
 
 public class Parameter extends Label<Label> {
 
@@ -34,6 +36,16 @@ public class Parameter extends Label<Label> {
                 Expression value = (Expression) super.getValue();
                 value.print();
             }
+
+            if (initialValue instanceof List){
+
+
+                    List<Object> valueList = (List<Object>) super.getValue();
+                    System.out.print(" " + valueList.toString() + " ");
+
+            }
+        }else {
+            System.out.println("The initial value is null");
         }
         System.out.println(";");
 
@@ -47,7 +59,10 @@ public class Parameter extends Label<Label> {
                 if (o instanceof Expression){
                     Expression e = (Expression) o;
                     ((Expression) o).print();
-                }else
+                } else if (o instanceof List){
+                    System.out.print("List  " + ((List)o).toString());
+                }
+                else
                     System.out.print(" " + o.toString() + " ");
 
         }

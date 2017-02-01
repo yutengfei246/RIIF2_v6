@@ -1,9 +1,18 @@
-component myCom;
+component VECTORCALC_CORE;
+// An hardware component performing vectorial calculations
 
-// All SRAMs must have radiation induced failure modes
-abstract fail_mode RAD_FM[];
+//parameter fail_mode SBU;
+fail_mode SBU;
+assign SBU'RATE = 10; //obtained from radiation tests
 
-abstract fail_mode RAD_FM[SBU]'RATE;
-impose RAD_FM[SBU]'UNIT = FITS;
+parameter myPr : float := 10*SBU'RATE;
+parameter myPr'attribute : integer := 1000;
+
+parameter SW_FM: table;
+assign SW_FM'HEADERS = {FAILMODE,SFM,RATE};
+assign SW_FM'ITEMS = { //obtained from fault injection
+    ["SUB", "WRONG_DATA", 0.3*SBU'RATE],
+    ["SBU", "WRONG_INSTRUCTION",0.2*myPr'attribute ]
+    } ;
 
 endcomponent

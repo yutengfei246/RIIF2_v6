@@ -380,7 +380,7 @@ public class AISFactory implements Factory{
 
             if (this.initializer instanceof ListInitializer){
                 ListInitializer listInitializer = (ListInitializer) this.initializer;
-                this.aisLabel.putValue(listInitializer.getInitializer());
+                this.aisLabel.putValue(listInitializer );
             }
 
 

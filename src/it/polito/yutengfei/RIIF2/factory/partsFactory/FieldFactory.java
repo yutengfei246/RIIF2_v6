@@ -18,7 +18,6 @@ import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 
-import java.util.List;
 import java.util.Objects;
 
 public class FieldFactory implements Factory{
@@ -223,7 +222,7 @@ public class FieldFactory implements Factory{
                 this.fieldLabel.setValue(expInitializer);
 
             }else {
-                throw new FieldTypeNotMarchException(expInitializer.getValue().toString(),
+                throw new FieldTypeNotMarchException(this.fieldLabel.getName().toString(),
                         expInitializer.getLine(), expInitializer.getColumn());
             }
 
@@ -232,8 +231,7 @@ public class FieldFactory implements Factory{
         } else if (initializer instanceof ListInitializer){
 
             ListInitializer listInitializer = (ListInitializer) initializer;
-            List<Object> listListInitializer= listInitializer.getInitializer();
-            this.fieldLabel.setValue( listListInitializer ); // List of String
+            this.fieldLabel.setValue( listInitializer ); // List of String
 
         } else {
             // if in the next cases, it should be array or associative TypeType
@@ -249,7 +247,6 @@ public class FieldFactory implements Factory{
                         = (ArrayInitializer) this.initializer;
 
                 //arrayInitializer is a list of Expression.........
-                final int[] i = {0};
                 arrayInitializer
                         .getInitializer()
                         .forEach( expression -> {

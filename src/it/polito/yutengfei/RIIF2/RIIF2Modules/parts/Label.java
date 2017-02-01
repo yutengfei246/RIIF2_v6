@@ -147,9 +147,10 @@ public abstract class Label<T extends Label> implements Serializable {
         if (value instanceof ListInitializer ){
             ListInitializer listValue = (ListInitializer) value;
             List<Object> listObject = listValue.getInitializer();
+
             switch (this.getType()) {
                 case RIIF2Grammar.LIST:
-                    this.value = listObject; // in this case, it is List<Object>
+                    this.valueStack.push(listObject);
                     break;
                 case RIIF2Grammar.LIST_STRING: {
                     Object find = listObject.stream()
