@@ -1,5 +1,7 @@
 package it.polito.yutengfei.RIIF2.recoder;
 
+import it.polito.yutengfei.RIIF2.util.utilityWrapper.TableValueOperator;
+
 import java.io.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -33,11 +35,11 @@ public interface Repository {
         return tempRecorderMap.containsKey(key);
     }
 
-    static Recorder getDeepCopedRecorderFromTemplateRepository(String key){
+    static Recorder getDeepCopedRecorderFromTemplateRepository(String key) {
         return DeepCopy.copy(getRecorderFromTemplateRepository(key));
     }
 
-    static Recorder getDeepCopedRecorderFromComponentRepository(String key){
+    static Recorder getDeepCopedRecorderFromComponentRepository(String key) {
         return DeepCopy.copy(getRecorderFromComponentRepository(key));
     }
 
@@ -48,7 +50,6 @@ public interface Repository {
     static Map<String,Recorder> getComponentRepository(){
         return componentRecorderMap;
     }
-
 
     /* the method for generating the class , each class has the name that stored in recorder*/
     static void generateJavaBean() {
@@ -63,20 +64,36 @@ public interface Repository {
         static Recorder copy(Recorder orig) {
             Recorder obj = null;
             try {
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                ObjectOutputStream out = new ObjectOutputStream(bos);
-                out.writeObject(orig);
-                out.flush();
-                out.close();
-
-                ObjectInputStream in = new ObjectInputStream(
-                        new ByteArrayInputStream(bos.toByteArray()));
-                obj = (Recorder) in.readObject();
+                obj = (Recorder) deepCopy(orig);
             }
             catch(IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
             return obj;
+        }
+
+        static TableValueOperator copy(TableValueOperator tableValueOperator){
+            TableValueOperator tableValueOperator1 = null;
+            try {
+                tableValueOperator1 = (TableValueOperator) deepCopy(tableValueOperator);
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            return tableValueOperator1;
+        }
+
+        static Object deepCopy(Object o) throws IOException, ClassNotFoundException {
+
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream out = new ObjectOutputStream(bos);
+            out.writeObject(o);
+            out.flush();
+            out.close();
+
+            ObjectInputStream in = new ObjectInputStream(
+                    new ByteArrayInputStream(bos.toByteArray()));
+            return in.readObject();
+
         }
     }
 }

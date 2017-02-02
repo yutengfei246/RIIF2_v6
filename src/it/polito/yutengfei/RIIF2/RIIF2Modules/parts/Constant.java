@@ -4,6 +4,7 @@ import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 
 import java.util.Iterator;
+import java.util.List;
 
 public class Constant extends Label<Label> {
 
@@ -13,7 +14,6 @@ public class Constant extends Label<Label> {
 
     @Override
     public void setPlatform(RIIF2Recorder recorder) {
-
     }
 
     @Override
@@ -21,12 +21,11 @@ public class Constant extends Label<Label> {
         return null;
     }
 
-
     @Override
     public void print() {
 
         // print field
-        System.out.print("Parameter " + super.getName() + ":" + super.getType() );
+        System.out.print("Constant " + super.getName() + " : " + super.getType() );
         System.out.print(" := " );
 
         Object initialValue = super.getValue();
@@ -36,29 +35,35 @@ public class Constant extends Label<Label> {
                 Expression value = (Expression) super.getValue();
                 value.print();
             }
-        }
-        System.out.println(";");
 
+            if (initialValue instanceof List){
 
-        System.out.println("Stack value ---");
+                List<Object> valueList = (List<Object>) super.getValue();
+                System.out.print(" " + valueList.toString() + " ");
+            }
+        } else
+            System.out.print(" null ");
+
+        System.out.print(";");
 
         Iterator<Object> iterator = super.getStackValueIterator();
+
+        System.out.print("-Stack-");
         while (iterator.hasNext()){
-            System.out.print(" ");
             Object o = iterator.next();
             if (o instanceof Expression){
                 Expression e = (Expression) o;
                 ((Expression) o).print();
-            }else
+            } else if (o instanceof List){
+                System.out.print("List  " + ((List)o).toString());
+            }
+            else
                 System.out.print(" " + o.toString() + " ");
-
+            System.out.print(" | ");
         }
-
-        System.out.println("\n------Stack value " );
-
+        System.out.print("-Stack-\n" );
 
         super.printAttribute();
         super.printAssociative();
     }
-
 }

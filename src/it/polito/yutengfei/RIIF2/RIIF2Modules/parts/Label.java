@@ -4,11 +4,14 @@ import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
 import it.polito.yutengfei.RIIF2.initializer.ArrayInitializer;
 import it.polito.yutengfei.RIIF2.initializer.ArrayWrapperInitializer;
 import it.polito.yutengfei.RIIF2.initializer.ListInitializer;
+import it.polito.yutengfei.RIIF2.initializer.TableInitializer;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.EnumType;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
+import it.polito.yutengfei.RIIF2.util.utilityWrapper.Row;
+import it.polito.yutengfei.RIIF2.util.utilityWrapper.RowItem;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.TableValueOperator;
 
 import java.io.Serializable;
@@ -128,10 +131,10 @@ public abstract class Label<T extends Label> implements Serializable {
             String valueString = (String) value;
 
             if (this.isEnumType())
-                this.value = valueString;
+                this.valueStack.push(valueString);
 
             if (this instanceof Attribute && this.getName().equals(RIIF2Grammar.UNIT))
-                this.value = valueString;
+                this.valueStack.push(valueString);
         }
 
         // when put value into the stack, we need to check if the given value is good for this label
@@ -225,6 +228,54 @@ public abstract class Label<T extends Label> implements Serializable {
                 }
                if (!tableValueOperator.setRows(arrayInitializer))
                    throw new FieldTypeNotMarchException(this.getName(),arrayInitializer.getLine(),arrayInitializer.getColumn());
+            }
+            this.valueStack.push(tableValueOperator);
+        }
+
+        if (value instanceof TableInitializer ){
+
+            TableInitializer tableInitializer = (TableInitializer) value;
+
+            if ( !(this instanceof Attribute) || !this.getName().equals(RIIF2Grammar.ITEMS) )
+                throw new FieldTypeNotMarchException(this.getName(), tableInitializer.getLine(), tableInitializer.getColumn());
+
+            Attribute attributeLabel = (Attribute)this;
+
+            // create operator
+            List<String> headers = (List<String>) attributeLabel
+                    .getTable()
+                    .getAttribute(RIIF2Grammar.HEADER)
+                    .getValue();
+
+            TableValueOperator tableValueOperator = new TableValueOperator(headers);
+
+            for (Row row : tableInitializer.getInitializer()) {
+
+                if (row.getType() == Row.EXPRESSION){
+                    Expression expression = (Expression) row.getValue();
+                    expression.setRecorder(this.recorder);
+                    expression.setCurrentLabel(this);
+
+                    if (!expression.isArray())
+                        throw new FieldTypeNotMarchException(this.getName(), expression.getLine(),expression.getColumn());
+                }
+
+                if (row.getType() == Row.ROW_ITEMS_ARRAY){
+                    List<RowItem> rowItems = (List<RowItem>) row.getValue();
+
+                    for (RowItem rowItem : rowItems) {
+                        if (rowItem.getType() == RowItem.EXPRESSION){
+                            Expression riExp = (Expression) rowItem.getValue();
+                            riExp.setRecorder(this.recorder);
+                            riExp.setCurrentLabel(this);
+
+                            if (!riExp.isValid()){
+                                return;
+                            }
+                        }
+                    }
+                }
+                tableValueOperator.setRows(row);
             }
             this.valueStack.push(tableValueOperator);
         }

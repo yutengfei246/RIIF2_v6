@@ -7,7 +7,9 @@ import it.polito.yutengfei.RIIF2.parser.typeUtility.RIIF2Type;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-abstract class _RIIF2Parser extends RIIF2BaseListener{
+import java.io.Serializable;
+
+abstract class _RIIF2Parser extends RIIF2BaseListener implements Serializable{
 
     abstract Expression getExpression(ParseTree node);
 

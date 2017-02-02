@@ -1,11 +1,13 @@
 package it.polito.yutengfei.RIIF2.id;
 
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
+
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-public class Id {
+public class Id implements Serializable {
 
     private int line;
     private int column;

@@ -27,7 +27,6 @@ public class RIIF2Grammar {;
     public static final String TYPE_HIER_INDEX = "hier-index";
     public static final String ID_ASSOCIATIVE = "id-associative";
     public static final String ID_ATTRIBUTE = "id-attribute";
-    public static final String LIST_INITIALIZER = "list-type";
     public static final String FAIL_MODE = "fail-mode";
     public static final String ASSIGNMENT = "assignment-declaration";
     public static final String SET = "set-declaration";

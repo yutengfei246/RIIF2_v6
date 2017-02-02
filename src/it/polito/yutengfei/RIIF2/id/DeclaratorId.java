@@ -2,7 +2,9 @@ package it.polito.yutengfei.RIIF2.id;
 
 import it.polito.yutengfei.RIIF2.parser.typeUtility.RIIF2Type;
 
-public class DeclaratorId{
+import java.io.Serializable;
+
+public class DeclaratorId implements Serializable{
 
     private int line , column;
 

@@ -1,7 +1,6 @@
 package it.polito.yutengfei.RIIF2.RIIF2Modules.parts;
 
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
-import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 
 import java.util.Iterator;
@@ -42,6 +41,9 @@ public class Parameter extends Label<Label> {
                 List<Object> valueList = (List<Object>) super.getValue();
                 System.out.print(" " + valueList.toString() + " ");
             }
+
+            if (initialValue instanceof String)
+                System.out.print(" " + initialValue.toString() + " ");
         } else
             System.out.print(" null ");
 

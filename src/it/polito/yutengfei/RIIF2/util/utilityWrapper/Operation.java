@@ -1,6 +1,8 @@
 package it.polito.yutengfei.RIIF2.util.utilityWrapper;
 
-class Operation {
+import java.io.Serializable;
+
+class Operation implements Serializable{
 
 
     private int opr;

@@ -286,6 +286,9 @@ public class Expression implements Initializer, Serializable {
             if (operation.getOpr() == 15 )
                 System.out.print(" * " );
 
+            if (operation.getOpr() == 16)
+                System.out.print(" \\");
+
             Expression oprExpression = operation.getOprExpression();
             Expression targetExpression = operation.getOprTargetExpression();
 
