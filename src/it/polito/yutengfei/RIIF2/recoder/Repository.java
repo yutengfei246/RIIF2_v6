@@ -72,7 +72,7 @@ public interface Repository {
             return obj;
         }
 
-        static TableValueOperator copy(TableValueOperator tableValueOperator){
+        public static TableValueOperator copy(TableValueOperator tableValueOperator){
             TableValueOperator tableValueOperator1 = null;
             try {
                 tableValueOperator1 = (TableValueOperator) deepCopy(tableValueOperator);

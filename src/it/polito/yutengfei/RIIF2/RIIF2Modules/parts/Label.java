@@ -8,6 +8,7 @@ import it.polito.yutengfei.RIIF2.initializer.TableInitializer;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.EnumType;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
+import it.polito.yutengfei.RIIF2.recoder.Repository;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Row;
@@ -247,7 +248,10 @@ public abstract class Label<T extends Label> implements Serializable {
                     .getAttribute(RIIF2Grammar.HEADER)
                     .getValue();
 
-            TableValueOperator tableValueOperator = new TableValueOperator(headers);
+            TableValueOperator tableValueOperator;
+
+            tableValueOperator = new TableValueOperator(headers);
+
 
             for (Row row : tableInitializer.getInitializer()) {
 

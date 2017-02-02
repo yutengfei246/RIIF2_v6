@@ -118,7 +118,7 @@ public class FMFactory implements Factory {
         Label<Label> label = new FailMode(this.recorder);
         label.setName(associativeIndex);
         label.setType(string);
-        label.setValue(o);
+        label.putValue(o);
 
         label.setAttribute(true);
         PreDefinedAttribute.FMAttribute(label,this.recorder);

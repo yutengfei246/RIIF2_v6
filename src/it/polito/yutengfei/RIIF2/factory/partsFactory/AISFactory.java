@@ -432,7 +432,7 @@ public class AISFactory implements Factory{
 
                         items.add(item);
                     });
-                    label.setValue(items);
+                    label.putValue();(items);
                     label.resetSelf();
                 }
             }
@@ -521,7 +521,7 @@ public class AISFactory implements Factory{
                         });
 
                 label.resetSelf();
-                label.setValue(items);
+                label.putValue();(items);
 
                 */
             }
@@ -548,7 +548,7 @@ public class AISFactory implements Factory{
         }
         if (tempLabel instanceof ChildComponent) {
             rtnLabel = new ChildComponent(this.recorder);
-            rtnLabel.setValue(tempLabel.getValue());
+            rtnLabel.putValue(tempLabel.getValue());
         }
 
         assert rtnLabel != null;

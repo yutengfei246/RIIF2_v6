@@ -19,6 +19,9 @@ public class TableValueOperator implements Serializable{
     private List<T_Row> tableStructure;
 
     public TableValueOperator(List<String> headers){
+
+        if (headers == null)
+            System.out.println("Header is null");
         this.headers = headers;
 
         this.tableStructure = new LinkedList<>();
@@ -88,7 +91,7 @@ public class TableValueOperator implements Serializable{
     }
 
     private T_Row createRow(Expression expRow) {
-        return null;
+        return new T_Row(expRow);
     }
 
     private T_Row createRow(List list) {
@@ -102,27 +105,37 @@ public class TableValueOperator implements Serializable{
             this.tableStructure.forEach(t_row -> {
                 List list = t_row.getRow();
 
-                System.out.print("[ ");
-                list.forEach(o -> {
-                    if (o instanceof Expression)
-                        ((Expression) o).print();
-                    else if (o instanceof List) {
-                        System.out.print(" { ");
-                        List theL = (List) o;
-                        theL.forEach(o1 ->
-                                {
-                                    if (o1 instanceof Expression) {
-                                        ((Expression) o1).print();
+                if (list == null ){
+                    Expression expression  = t_row.getExpRow();
+                    if ( expression != null ){
+                        System.out.print(" [ ");
+                        expression.print();
+                        System.out.print(" ] ");
+                    }
 
-                                    } else System.out.print(" " + o1.toString() + " ");
-                                }
-                        );
-                        System.out.print(" } ");
-                    } else
-                        System.out.print(" " + list.toString() + " ");
+                }else {
+                    System.out.print("[ ");
+                    list.forEach(o -> {
+                        if (o instanceof Expression)
+                            ((Expression) o).print();
+                        else if (o instanceof List) {
+                            System.out.print(" { ");
+                            List theL = (List) o;
+                            theL.forEach(o1 ->
+                                    {
+                                        if (o1 instanceof Expression) {
+                                            ((Expression) o1).print();
 
-                });
-                System.out.print(" ]");
+                                        } else System.out.print(" " + o1.toString() + " ");
+                                    }
+                            );
+                            System.out.print(" } ");
+                        } else
+                            System.out.print(" " + list.toString() + " ");
+
+                    });
+                    System.out.print(" ]");
+                }
             });
         }
     }
@@ -140,6 +153,7 @@ public class TableValueOperator implements Serializable{
 
         private List<Object> row = new LinkedList<>();
 
+        private Expression expRow ;
         T_Row(List<?> list){
 
             list.forEach(o -> {
@@ -157,8 +171,19 @@ public class TableValueOperator implements Serializable{
             });
         }
 
+        public T_Row(Expression expRow) {
+            this.expRow = expRow;
+        }
+
+        public Expression getExpRow(){
+            return this.expRow;
+        }
+
         public List getRow() {
-            return row;
+            if (this.row.size() == 0)
+                return null;
+
+            return this.row;
         }
     }
 }

@@ -204,7 +204,7 @@ public class FieldFactory implements Factory{
                             expInitializer.getLine(),expInitializer.getColumn());
 
                 // then set the value of expression into the fieldLabel !!!!
-                this.fieldLabel.setValue(((DeclaratorId)expInitializer.value()).getPrimitiveId().getId());
+                this.fieldLabel.putValue(((DeclaratorId)expInitializer.value()).getPrimitiveId().getId());
 
             // second. if the current label is unit (attribute)
             } else if (this.fieldLabel.getName().equals(RIIF2Grammar.UNIT)) {
@@ -214,12 +214,12 @@ public class FieldFactory implements Factory{
 
                 // then we can assign the value directly.
                 String type = ((DeclaratorId) expInitializer.value()).getPrimitiveId().getId();
-                this.fieldLabel.setValue(type);
+                this.fieldLabel.putValue(type);
 
             // third. other case We could set the expression into the fieldLabel
             }else if (expInitializer.getType().equals(this.fieldLabel.getType())){
 
-                this.fieldLabel.setValue(expInitializer);
+                this.fieldLabel.putValue(expInitializer);
 
             }else {
                 throw new FieldTypeNotMarchException(this.fieldLabel.getName().toString(),
@@ -231,7 +231,7 @@ public class FieldFactory implements Factory{
         } else if (initializer instanceof ListInitializer){
 
             ListInitializer listInitializer = (ListInitializer) initializer;
-            this.fieldLabel.setValue( listInitializer ); // List of String
+            this.fieldLabel.putValue( listInitializer ); // List of String
 
         } else {
             // if in the next cases, it should be array or associative TypeType
@@ -314,7 +314,7 @@ public class FieldFactory implements Factory{
 
                                         assert vectorItem != null;
                                         vectorItem.setName(null);
-                                        vectorItem.setValue(expression.getValue());
+                                        vectorItem.putValue(expression.getValue());
                                         this.fieldLabel.addVectorItem(vectorItem);
                                     });
                         });

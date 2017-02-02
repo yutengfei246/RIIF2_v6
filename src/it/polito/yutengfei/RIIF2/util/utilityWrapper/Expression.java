@@ -4,8 +4,10 @@ package it.polito.yutengfei.RIIF2.util.utilityWrapper;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Label;
 import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
 import it.polito.yutengfei.RIIF2.id.DeclaratorId;
+import it.polito.yutengfei.RIIF2.initializer.ArrayInitializer;
 import it.polito.yutengfei.RIIF2.initializer.Initializer;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
+import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 
 import java.io.Serializable;
 import java.util.Iterator;
@@ -265,16 +267,25 @@ public class Expression implements Initializer, Serializable {
     // use for debug , print the expression,recursive
     public void print() {
         // for each of the operation, print
-        if (this.value() instanceof DeclaratorId){
+        if (this.value() instanceof DeclaratorId) {
             DeclaratorId declaratorId = (DeclaratorId) this.value();
             String id = declaratorId.getPrimitiveId().getId();
 
-            System.out.print(" " + id  );
+            System.out.print(" " + id);
 
-            if (declaratorId.hasAttributeIndex() ){
+            if (declaratorId.hasAttributeIndex()) {
                 String attributeId = declaratorId.getAttributeIndex().getId();
-                System.out.print("'"+attributeId+" ");
+                System.out.print("'" + attributeId + " ");
             }
+
+        } else if (this.value() instanceof ArrayInitializer ) {
+            System.out.print(" [ ");
+            ArrayInitializer arrayInitializer = (ArrayInitializer) this.value();
+            arrayInitializer.getInitializer().forEach(expression -> expression.print());
+            System.out.print(" ] ");
+
+        }else if (this.type().equals(RIIF2Grammar.SELF) ){
+            System.out.print(" " + this.type + " ");
         } else
             System.out.print( " " + this.value().toString() + " ");
 

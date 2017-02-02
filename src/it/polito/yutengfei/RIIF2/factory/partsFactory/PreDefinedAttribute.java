@@ -42,7 +42,7 @@ public class PreDefinedAttribute {
         Attribute attribute = new Attribute(recorder);
         attribute.setName(Id);
         attribute.setType(type);
-        attribute.setValue(value);
+        attribute.putValue(value);
 
         return attribute;
     }
