@@ -156,6 +156,12 @@ public class Expression implements Initializer, Serializable {
         return null;
     }
 
+    public boolean isValid() {
+
+        return this.getType() != null;
+    }
+
+
     public Object getValue() {
 
         try {
@@ -263,7 +269,12 @@ public class Expression implements Initializer, Serializable {
             DeclaratorId declaratorId = (DeclaratorId) this.value();
             String id = declaratorId.getPrimitiveId().getId();
 
-            System.out.print(" " + id + " " );
+            System.out.print(" " + id  );
+
+            if (declaratorId.hasAttributeIndex() ){
+                String attributeId = declaratorId.getAttributeIndex().getId();
+                System.out.print("'"+attributeId+" ");
+            }
         } else
             System.out.print( " " + this.value().toString() + " ");
 

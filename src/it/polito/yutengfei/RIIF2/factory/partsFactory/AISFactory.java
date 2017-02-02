@@ -388,6 +388,11 @@ public class AISFactory implements Factory{
             if (this.initializer instanceof ArrayInitializer){
                 throw new FieldTypeNotMarchException(this.aisLabel.getName(), this.initializer.getLine(),this.initializer.getColumn());
             }
+
+            if (this.initializer instanceof ArrayWrapperInitializer){
+                this.aisLabel.putValue(this.initializer);
+                System.out.println("After assign ");
+            }
 /*
             // arrayWrapper initially is used in matrix
             if (this.initializer instanceof ArrayWrapperInitializer){

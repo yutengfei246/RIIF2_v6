@@ -1,12 +1,15 @@
 package it.polito.yutengfei.RIIF2.RIIF2Modules.parts;
 
 import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
+import it.polito.yutengfei.RIIF2.initializer.ArrayInitializer;
+import it.polito.yutengfei.RIIF2.initializer.ArrayWrapperInitializer;
 import it.polito.yutengfei.RIIF2.initializer.ListInitializer;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.EnumType;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
+import it.polito.yutengfei.RIIF2.util.utilityWrapper.TableValueOperator;
 
 import java.io.Serializable;
 import java.util.*;
@@ -193,7 +196,38 @@ public abstract class Label<T extends Label> implements Serializable {
             }
         }
 
+        // if the value is arrayWrapperInitializer, then the attribute should handle each row.
+        if (value instanceof ArrayWrapperInitializer) {
 
+            ArrayWrapperInitializer arrayWrapperInitializer = (ArrayWrapperInitializer) value;
+
+            if ( !(this instanceof Attribute) || !this.getName().equals(RIIF2Grammar.ITEMS) )
+                throw new FieldTypeNotMarchException(this.getName(), arrayWrapperInitializer.getLine(), arrayWrapperInitializer.getColumn());
+
+            Attribute attributeLabel = (Attribute)this;
+
+            // create operator
+            List<String> headers = (List<String>) attributeLabel
+                    .getTable()
+                    .getAttribute(RIIF2Grammar.HEADER)
+                    .getValue();
+
+            List<ArrayInitializer> arrayInitializerList = arrayWrapperInitializer.getInitializer();
+            TableValueOperator tableValueOperator = new TableValueOperator(headers);
+
+            for (ArrayInitializer arrayInitializer : arrayInitializerList) {
+                List<Expression> expressionList = arrayInitializer.getInitializer();
+                for (Expression expression : expressionList ){
+                    expression.setRecorder(this.recorder);
+                    expression.setCurrentLabel(this);
+                    if ( !expression.isValid() )
+                        throw new FieldTypeNotMarchException(this.getName(),arrayInitializer.getLine(), arrayInitializer.getColumn());
+                }
+               if (!tableValueOperator.setRows(arrayInitializer))
+                   throw new FieldTypeNotMarchException(this.getName(),arrayInitializer.getLine(),arrayInitializer.getColumn());
+            }
+            this.valueStack.push(tableValueOperator);
+        }
     }
 
     public Iterator<Object> getStackValueIterator(){
@@ -424,11 +458,11 @@ public abstract class Label<T extends Label> implements Serializable {
 
     public void printAttribute(){
         if (this.hasAttribute()) {
-            System.out.println("----------------");
+            System.out.print("@Attribute " );
             this.attributeMap.forEach((s, attribute) -> {
                 attribute.print();
             });
-            System.out.println("-----------------");
+            System.out.println(" ");
         }
     }
 

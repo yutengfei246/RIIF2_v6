@@ -5,6 +5,7 @@ component VECTORCALC_CORE;
 fail_mode SBU;
 assign SBU'RATE = 10; //obtained from radiation tests
 
+assign SBU'RATE = 100;
 parameter myPr : float := 10*SBU'RATE;
 parameter myPr'attribute : integer := 1000;
 

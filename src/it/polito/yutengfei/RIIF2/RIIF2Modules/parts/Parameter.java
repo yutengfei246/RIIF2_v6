@@ -26,7 +26,7 @@ public class Parameter extends Label<Label> {
     public void print() {
 
         // print field
-        System.out.print("Parameter " + super.getName() + ":" + super.getType() );
+        System.out.print("Parameter " + super.getName() + " : " + super.getType() );
         System.out.print(" := " );
 
         Object initialValue = super.getValue();
@@ -39,22 +39,18 @@ public class Parameter extends Label<Label> {
 
             if (initialValue instanceof List){
 
-
-                    List<Object> valueList = (List<Object>) super.getValue();
-                    System.out.print(" " + valueList.toString() + " ");
-
+                List<Object> valueList = (List<Object>) super.getValue();
+                System.out.print(" " + valueList.toString() + " ");
             }
-        }else {
-            System.out.println("The initial value is null");
-        }
-        System.out.println(";");
+        } else
+            System.out.print(" null ");
 
-
-        System.out.println("Stack value ---");
+        System.out.print(";");
 
         Iterator<Object> iterator = super.getStackValueIterator();
+
+        System.out.print("-Stack-");
         while (iterator.hasNext()){
-            System.out.print(" ");
             Object o = iterator.next();
                 if (o instanceof Expression){
                     Expression e = (Expression) o;
@@ -64,11 +60,9 @@ public class Parameter extends Label<Label> {
                 }
                 else
                     System.out.print(" " + o.toString() + " ");
-
+            System.out.print(" | ");
         }
-
-        System.out.println("\n------Stack value " );
-
+        System.out.print("-Stack-\n" );
 
         super.printAttribute();
         super.printAssociative();
