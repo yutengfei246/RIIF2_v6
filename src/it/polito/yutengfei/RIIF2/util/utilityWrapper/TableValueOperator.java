@@ -9,18 +9,20 @@ import it.polito.yutengfei.RIIF2.initializer.ListInitializer;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class TableValueOperator implements Serializable{
 
-
-    private final List<String> headers;
+    private final List<?> headers;
     private final Label<?> labelContainer;
 
+    private Map<String, List<Expression> > sharpOperationStack;
     private List<T_Row> tableStructure;
 
-    public TableValueOperator(List<String> headers, Label<?> labelContainer){
+    public TableValueOperator(List<?> headers, Label<?> labelContainer){
 
         this.labelContainer = labelContainer;
 
@@ -29,6 +31,16 @@ public class TableValueOperator implements Serializable{
         this.headers = headers;
 
         this.tableStructure = new LinkedList<>();
+
+        this.sharpOperationStack = new LinkedHashMap< String,List<Expression> >(){{
+            assert headers != null;
+            headers.forEach(s -> put( s.toString() , new LinkedList<>() ) );
+        }};
+    }
+
+    public void putSharpOperation(String headerName, Expression expression) {
+        List<Expression> operations = this.sharpOperationStack.get(headerName);
+        operations.add(expression);
     }
 
     // for each row it would be ArrayInitializer or Object Row
@@ -67,6 +79,16 @@ public class TableValueOperator implements Serializable{
 
         return true;
     }
+
+
+    public List<Label<Label>> getRowList(int index) {
+        return this.tableStructure.get(index).getRow();
+    }
+
+    public Expression getRowExpression(int index ) {
+        return this.tableStructure.get(index).getExpRow();
+    }
+
 
     // Row contains Expression and List
     private class T_Row implements Serializable {

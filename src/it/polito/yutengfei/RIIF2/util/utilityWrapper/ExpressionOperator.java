@@ -56,7 +56,7 @@ public class ExpressionOperator implements Serializable{
 
     public String getType(Expression expression) throws FieldTypeNotMarchException {
 
-        return this.findExpressionType(expression);
+        return this.findExpressionType(null,expression);
     }
 
     public Object getValue(Expression expression) throws FieldTypeNotMarchException {
@@ -86,6 +86,45 @@ public class ExpressionOperator implements Serializable{
         return type.equals(RIIF2Grammar.ARRAY);
     }
 
+    boolean isArrayValid(List<Label<Label>> labelList, Expression expression) throws FieldTypeNotMarchException {
+
+        if ( expression.type().equals(RIIF2Grammar.ARRAY) ){
+            System.out.print("Going to check array");
+            ArrayInitializer arrayInitializer = (ArrayInitializer) expression.value();
+            List<Expression> expressionList = arrayInitializer.getInitializer();
+
+            if (expressionList.size() != labelList.size())
+                return false;
+
+            for ( int i = 0; i < expressionList.size() ; i ++) {
+                Expression exp = expressionList.get(i);
+                Label<Label> ll = labelList.get(i);
+
+                if ( !exp.getType().equals(ll.getType()) )
+                    return false;
+            }
+        }
+
+        Iterator<Operation> iterator = expression.getIterator();
+        while (iterator.hasNext()){
+
+            Operation operation = iterator.next();
+            Expression oprExp = operation.getOprExpression();
+            Expression targetExp = operation.getOprTargetExpression();
+
+            if ( oprExp != null && !oprExp.isArrayValid(labelList) ) {
+                System.out.println("OprExp is not array valid " + oprExp.value().toString());
+                return false;
+            }
+
+            if ( targetExp != null && !targetExp.isArrayValid(labelList) ) {
+                System.out.println("TargeExp is not array valid ");
+                return false;
+            }
+        }
+
+        return true;
+    }
 
     private void runOprQueue(Expression srcExpression) throws FieldTypeNotMarchException {
 
@@ -547,11 +586,12 @@ public class ExpressionOperator implements Serializable{
         srcExpression.setValue(10.0); // for now
     }
 
-    private String findExpressionType(Expression srcExpression) throws FieldTypeNotMarchException {
+    private String findExpressionType(List<Label<Label>> labelList, Expression srcExpression) throws FieldTypeNotMarchException {
 
         //TODO: pay attention, should not consider the Array Type, or We could consider Array and also the operation on Array
         // srcExpression's type
-        String srcType = this.typeResolver(srcExpression);
+        String srcType = this.typeResolver(labelList, srcExpression);
+
         if ( srcType == null)
             throw new FieldTypeNotMarchException(((DeclaratorId)srcExpression.value()).getPrimitiveId().getId(),srcExpression.getLine(),srcExpression.getColumn());
 
@@ -639,7 +679,35 @@ public class ExpressionOperator implements Serializable{
     }
 
     // the method return the given expression type, not store it into the expression
-    private String typeResolver(Expression expression) throws FieldTypeNotMarchException {
+    private String typeResolver(List<Label<Label>> labelList, Expression expression) throws FieldTypeNotMarchException {
+
+
+        if (labelList != null ) {
+            System.out.println("the labelList is not null in this case --" + expression.type() + " " + expression.value().toString());
+
+
+        }
+  //      System.out.println("Expression type " + expression.type());
+        if ( labelList != null && expression.type().equals(RIIF2Grammar.ARRAY) ) {
+            System.out.println("Going to test the array ");
+            ArrayInitializer arrayInitializer = (ArrayInitializer) expression.value();
+
+            List<Expression> expressionList = arrayInitializer.getInitializer();
+
+            for (int i = 0; i < expressionList.size(); i++) {
+
+                Expression expItem =  expressionList.get(i);
+                expItem.setRecorder(this.recorder);
+                expItem.setCurrentLabel(this.currentLabel);
+
+                Label<Label> labelLabel = labelList.get(i);
+
+                System.out.println(" label type " + labelLabel.getType()  + " expItem Type " + expItem.getType() );
+
+                if (!labelLabel.getType().equals(expItem.getType()))
+                    throw new FieldTypeNotMarchException(this.currentLabel.getName(), expItem.getLine(), expItem.getColumn());
+            }
+        }
 
         if ( !expression.type().equals(RIIF2Grammar.USER_DEFINED))
             return expression.type();
@@ -671,4 +739,5 @@ public class ExpressionOperator implements Serializable{
     public void setRecorder(RIIF2Recorder recorder) {
         this.recorder = recorder;
     }
+
 }

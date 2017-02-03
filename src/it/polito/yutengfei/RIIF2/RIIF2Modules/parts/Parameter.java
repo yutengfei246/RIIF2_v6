@@ -56,7 +56,6 @@ public class Parameter extends Label<Label> {
         while (iterator.hasNext()){
             Object o = iterator.next();
                 if (o instanceof Expression){
-                    Expression e = (Expression) o;
                     ((Expression) o).print();
                 } else if (o instanceof List){
                     System.out.print("List  " + o.toString());

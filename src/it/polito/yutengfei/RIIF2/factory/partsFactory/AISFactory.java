@@ -313,11 +313,18 @@ public class AISFactory implements Factory{
 
                     //..tableId  = 'Item[][]
                     // in this case, the aisLable is a attribute label ITEMS of a Table label and the tableIndex would have two different case.
-                }
-
-                else if ((this.aisLabel instanceof Attribute) &&
+                } else if ((this.aisLabel instanceof Attribute) &&
                         this.aisLabel.getName().equals(RIIF2Grammar.ITEMS) && this.declaratorId.hasTableIndex()) {
 
+                        Id tableIndex = this.declaratorId.getTableIndex();
+                        String xx = tableIndex.getXX();
+                        String yy = tableIndex.getYY();
+
+                        expInitializer.isValid(); // throw Exceptions
+
+                        if (xx.equals(RIIF2Grammar.SHARP)) {
+                            this.aisLabel.putSharpOperation(yy,expInitializer);
+                        }
                 }
 /*
 

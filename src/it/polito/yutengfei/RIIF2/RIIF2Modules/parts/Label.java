@@ -1,6 +1,7 @@
 package it.polito.yutengfei.RIIF2.RIIF2Modules.parts;
 
 import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
+import it.polito.yutengfei.RIIF2.factory.Exceptions.SomeVariableMissingException;
 import it.polito.yutengfei.RIIF2.initializer.ArrayInitializer;
 import it.polito.yutengfei.RIIF2.initializer.ArrayWrapperInitializer;
 import it.polito.yutengfei.RIIF2.initializer.ListInitializer;
@@ -8,7 +9,6 @@ import it.polito.yutengfei.RIIF2.initializer.TableInitializer;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.EnumType;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
-import it.polito.yutengfei.RIIF2.recoder.Repository;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Row;
@@ -30,9 +30,6 @@ public abstract class Label<T extends Label> implements Serializable {
     private Map<String,T> associativeMap;
 
     private Map<String,Attribute> attributeMap;
-
-    //TODO: the implementation of Table
-    private Map<String,List<Object> > sharpMap; // this is used only when the label is Table;
 
     private EnumType enumType;
 
@@ -58,32 +55,6 @@ public abstract class Label<T extends Label> implements Serializable {
         this._self2 = -1;
     }
 
-    public void printSelf(){
-        System.out.println( this._self1  +" " + this._self2);
-    }
-
-    public void setSelfValue(Object selfValue){
-        if ( this._self1 == -1 && this._self2 == -1 )
-            this.value = selfValue;
-
-        LinkedList<Object> lst = (LinkedList<Object>) this.value;
-        if (this._self1 != -1 && this._self2 == -1){
-            LinkedList<Object> newLst = new LinkedList<>();
-
-            for (int i = 0 ; i < this._self1 ; i++)
-                newLst.add(lst.get(i));
-            newLst.add(selfValue);
-            for (int i = this._self1; i <  lst.size() ; i++)
-                newLst.add(lst.get(i));
-
-            this.value = newLst;
-        }
-
-        if (this._self1 != -1 && this._self2 != -1){
-            Item item = (Item) lst.get(this._self1);
-            item.getUnitItem(this._self2).setValue(selfValue);
-        }
-    }
 
     public Object getSelfValue(){
         if ( this._self1 == -1 && this._self2 == -1 )
@@ -123,7 +94,6 @@ public abstract class Label<T extends Label> implements Serializable {
      * valueStack setters and getters
      */
     public void putValue(Object value) throws FieldTypeNotMarchException {
-    // TODO: need to check the given value
 
         if (value == null) return;
 
@@ -211,7 +181,7 @@ public abstract class Label<T extends Label> implements Serializable {
             Attribute attributeLabel = (Attribute)this;
 
             // create operator
-            List<String> headers = (List<String>) attributeLabel
+            List headers = (List) attributeLabel
                     .getTable()
                     .getAttribute(RIIF2Grammar.HEADER)
                     .getValue();
@@ -243,7 +213,7 @@ public abstract class Label<T extends Label> implements Serializable {
             Attribute attributeLabel = (Attribute)this;
 
             // create operator
-            List<String> headers = (List<String>) attributeLabel
+            List headers = (List) attributeLabel
                     .getTable()
                     .getAttribute(RIIF2Grammar.HEADER)
                     .getValue();
@@ -253,21 +223,33 @@ public abstract class Label<T extends Label> implements Serializable {
             tableValueOperator = new TableValueOperator(headers,this);
 
 
+            int i = -1 ;
             for (Row row : tableInitializer.getInitializer()) {
-
+                i++;
                 if (row.getType() == Row.EXPRESSION){
                     Expression expression = (Expression) row.getValue();
                     expression.setRecorder(this.recorder);
                     expression.setCurrentLabel(this);
 
-                    if (!expression.isArray())
-                        throw new FieldTypeNotMarchException(this.getName(), expression.getLine(),expression.getColumn());
+                    TableValueOperator tableValueOperator1 = (TableValueOperator) this.valueStack.get(this.valueStack.size() -1 );
+
+                    if (tableValueOperator1 != null) {
+                        List<Label<Label>> labelList = tableValueOperator1.getRowList(i);
+
+                        if (!expression.isArrayValid(labelList))
+                            throw new FieldTypeNotMarchException(this.getName(), expression.getLine(), expression.getColumn());
+                        else
+                            System.out.println("It array valid");
+                    } else
+                        if (!expression.isArray())
+                            throw new FieldTypeNotMarchException(this.getName(),expression.getLine(),expression.getColumn());
                 }
 
                 if (row.getType() == Row.ROW_ITEMS_ARRAY){
-                    List<RowItem> rowItems = (List<RowItem>) row.getValue();
+                    List rowItems = (List) row.getValue();
 
-                    for (RowItem rowItem : rowItems) {
+                    for (Object rowI: rowItems) {
+                        RowItem rowItem = (RowItem) rowI;
                         if (rowItem.getType() == RowItem.EXPRESSION){
                             Expression riExp = (Expression) rowItem.getValue();
                             riExp.setRecorder(this.recorder);
@@ -283,6 +265,16 @@ public abstract class Label<T extends Label> implements Serializable {
             }
             this.valueStack.push(tableValueOperator);
         }
+    }
+
+
+    public void putSharpOperation(String yy, Expression expInitializer) throws SomeVariableMissingException {
+        if (this.valueStack.size() == 0 )
+            throw new SomeVariableMissingException(this.getName(),expInitializer.getLine(),expInitializer.getColumn());
+
+        TableValueOperator valueOperator = (TableValueOperator) this.valueStack.get(this.valueStack.size() -1 );
+        valueOperator.putSharpOperation(yy,expInitializer);
+
     }
 
     public Iterator<Object> getStackValueIterator(){
@@ -537,4 +529,5 @@ public abstract class Label<T extends Label> implements Serializable {
     public RIIF2Recorder getRecorder() {
         return this.recorder;
     }
+
 }

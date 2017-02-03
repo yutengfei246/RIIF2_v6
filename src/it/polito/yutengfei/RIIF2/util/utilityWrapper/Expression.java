@@ -1,6 +1,5 @@
 package it.polito.yutengfei.RIIF2.util.utilityWrapper;
 
-
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Label;
 import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
 import it.polito.yutengfei.RIIF2.id.DeclaratorId;
@@ -61,7 +60,7 @@ public class Expression implements Initializer, Serializable {
 
     // RIIF2Recorder .
     private RIIF2Recorder recorder;
-    private Label<Label> currentLabel;
+    private Label currentLabel;
 
     public void setType(String type) {
         this.type = type;
@@ -114,6 +113,7 @@ public class Expression implements Initializer, Serializable {
     }
 
     public boolean isBoolean() {
+
         try {
             return this.expressionOperator.isBoolean(this);
         } catch (FieldTypeNotMarchException e) {
@@ -143,6 +143,19 @@ public class Expression implements Initializer, Serializable {
         }
 
         return false;
+    }
+
+    public boolean isArrayValid(List<Label<Label>> labelList) {
+        if (! this.isArray())
+            return false;
+
+        try {
+            return this.expressionOperator.isArrayValid( labelList ,this);
+        } catch (FieldTypeNotMarchException e) {
+            e.printStackTrace();
+        }
+
+        return  false;
     }
 
     // this method pop everything and do not keep the operations in the Queue
@@ -264,6 +277,9 @@ public class Expression implements Initializer, Serializable {
         return column;
     }
 
+
+
+
     // use for debug , print the expression,recursive
     public void print() {
         // for each of the operation, print
@@ -281,7 +297,7 @@ public class Expression implements Initializer, Serializable {
         } else if (this.value() instanceof ArrayInitializer ) {
             System.out.print(" [ ");
             ArrayInitializer arrayInitializer = (ArrayInitializer) this.value();
-            arrayInitializer.getInitializer().forEach(expression -> expression.print());
+            arrayInitializer.getInitializer().forEach(Expression::print);
             System.out.print(" ] ");
 
         }else if (this.type().equals(RIIF2Grammar.SELF) ){
@@ -319,7 +335,4 @@ public class Expression implements Initializer, Serializable {
         }
     }
 
-    public RIIF2Recorder getRecorder() {
-        return recorder;
-    }
 }

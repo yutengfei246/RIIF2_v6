@@ -80,7 +80,7 @@ public class Attribute extends Label<Label> {
                 Expression e = (Expression) o;
                 e.print();
             } else if (o instanceof List){
-                System.out.print("List  " + ((List)o).toString());
+                System.out.print("List  " + o.toString());
             } else if (o instanceof TableValueOperator){
                 TableValueOperator tableValueOperator = (TableValueOperator) o;
                 tableValueOperator.print();
