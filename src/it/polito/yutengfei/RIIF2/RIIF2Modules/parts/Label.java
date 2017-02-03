@@ -217,7 +217,7 @@ public abstract class Label<T extends Label> implements Serializable {
                     .getValue();
 
             List<ArrayInitializer> arrayInitializerList = arrayWrapperInitializer.getInitializer();
-            TableValueOperator tableValueOperator = new TableValueOperator(headers);
+            TableValueOperator tableValueOperator = new TableValueOperator(headers,this);
 
             for (ArrayInitializer arrayInitializer : arrayInitializerList) {
                 List<Expression> expressionList = arrayInitializer.getInitializer();
@@ -250,7 +250,7 @@ public abstract class Label<T extends Label> implements Serializable {
 
             TableValueOperator tableValueOperator;
 
-            tableValueOperator = new TableValueOperator(headers);
+            tableValueOperator = new TableValueOperator(headers,this);
 
 
             for (Row row : tableInitializer.getInitializer()) {
@@ -511,7 +511,7 @@ public abstract class Label<T extends Label> implements Serializable {
 
     public abstract void print();
 
-    public void printAttribute(){
+    protected void printAttribute(){
         if (this.hasAttribute()) {
             System.out.print("@Attribute " );
             this.attributeMap.forEach((s, attribute) -> {
@@ -521,11 +521,9 @@ public abstract class Label<T extends Label> implements Serializable {
         }
     }
 
-    public  void printAssociative(){
+    protected void printAssociative(){
 
         if (this.isAssociative()) {
-
-
             this.associativeMap.forEach((s, t) -> {
                 System.out.println("----------------start associative " + s + "--------------------");
                 t.print();
@@ -534,5 +532,9 @@ public abstract class Label<T extends Label> implements Serializable {
 
         }
 
+    }
+
+    public RIIF2Recorder getRecorder() {
+        return this.recorder;
     }
 }

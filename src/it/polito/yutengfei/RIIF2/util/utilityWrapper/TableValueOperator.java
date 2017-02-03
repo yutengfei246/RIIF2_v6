@@ -1,35 +1,37 @@
 package it.polito.yutengfei.RIIF2.util.utilityWrapper;
 
 
+import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Label;
+import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Parameter;
+import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
 import it.polito.yutengfei.RIIF2.initializer.ArrayInitializer;
 import it.polito.yutengfei.RIIF2.initializer.ListInitializer;
+import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 
 import java.io.Serializable;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 public class TableValueOperator implements Serializable{
 
 
     private final List<String> headers;
+    private final Label<?> labelContainer;
 
-    private Map<String,T_Column> sharpStructure;
     private List<T_Row> tableStructure;
 
-    public TableValueOperator(List<String> headers){
+    public TableValueOperator(List<String> headers, Label<?> labelContainer){
+
+        this.labelContainer = labelContainer;
 
         if (headers == null)
             System.out.println("Header is null");
         this.headers = headers;
 
         this.tableStructure = new LinkedList<>();
-        this.sharpStructure = new LinkedHashMap<String,T_Column>(){{
-            headers.forEach(s -> put(s,new T_Column()));
-        }};
     }
 
+    // for each row it would be ArrayInitializer or Object Row
     public Boolean setRows (Object object){
 
         if (object instanceof ArrayInitializer){
@@ -39,16 +41,8 @@ public class TableValueOperator implements Serializable{
             if (expressionList.size() != headers.size())
                 return false;
 
-            T_Row t_row = this.createRow(expressionList);
+            T_Row t_row = new T_Row(expressionList);
             this.tableStructure.add(t_row);
-
-            for ( int i = 0 ; i < this.headers.size() ; i ++ ){
-                String headerName = this.headers.get(i);
-                T_Column column = this.sharpStructure.get(headerName);
-
-                Expression ex = expressionList.get(i);
-                column.add(ex);
-            }
         }
 
         if (object instanceof Row){
@@ -57,53 +51,107 @@ public class TableValueOperator implements Serializable{
             if (row.getType() == Row.EXPRESSION ){
                 Expression expRow = (Expression) row.getValue();
                 if ( expRow.isArray() ){
-                    T_Row t_row = this.createRow(expRow) ;
+                    T_Row t_row = new T_Row(expRow);
                     this.tableStructure.add(t_row);
                 }
-
-                //TODO: create sharp structure
             }
 
             if (row.getType() == Row.ROW_ITEMS_ARRAY) {
-                List<RowItem> rowItemList = (List<RowItem>) row.getValue();
+                Object value = row.getValue();
+                List rowItemList = (List) value;
 
-                T_Row t_row = this.createRow(rowItemList);
+                T_Row t_row = new T_Row(rowItemList);
                 this.tableStructure.add(t_row);
-
-                for (int i = 0; i < this.headers.size() ; i ++ ){
-                    RowItem rowItem = rowItemList.get(i);
-                    String headerName = this.headers.get(i);
-
-                    T_Column t_column = sharpStructure.get(headerName);
-
-                    if (rowItem.getType() == RowItem.EXPRESSION){
-                        Expression expRI = (Expression) rowItem.getValue();
-
-                        if (expRI.isValid())
-                            t_column.add(expRI);
-                    }
-                }
-
             }
-
         }
+
         return true;
     }
 
-    private T_Row createRow(Expression expRow) {
-        return new T_Row(expRow);
+    // Row contains Expression and List
+    private class T_Row implements Serializable {
+
+        // the label List for each item in the table, in this way, when one item change, we can simply push the value into it.
+        private List<Label<Label> > rowLabel = new LinkedList<>();
+
+        // it may have the possibility for each row to be an expression( only is an array )
+        private Expression expRow ;
+
+        T_Row(Expression expRow) {
+            this.expRow = expRow;
+        }
+
+        T_Row(List<?> list) {
+            list.forEach(o -> {
+                // in this case, it is Expression String or a Number ( integer / floating )
+                if (o instanceof Expression ){
+                    Label<Label> itemLabel =  this.createLabel( o );
+                    this.rowLabel.add(itemLabel);
+                }
+
+                // in this case, it is RowItem , in which we have Expression or ListInitializer
+                if (o instanceof RowItem){
+                    RowItem rowItem = (RowItem) o;
+
+                    Label<Label> itemLabel = null;
+                    try {
+                        if (rowItem.getType() == RowItem.LIST_STRING) {
+                            ListInitializer listInitializer = (ListInitializer) rowItem.getValue();
+                            itemLabel = this.createLabel(listInitializer);
+                        } else
+                            itemLabel = this.createLabel(rowItem.getValue());
+                    } finally {
+                        this.rowLabel.add(itemLabel);
+                    }
+                }
+            });
+        }
+
+        private Label<Label> createLabel(Object o) {
+
+            Label<Label> rtnLabel = new Parameter(labelContainer.getRecorder()) ;
+
+            try {
+                if (o instanceof Expression) {
+                    Expression expO = Expression.class.cast(o);
+                    rtnLabel.setType(expO.getType());
+                    rtnLabel.putValue(o);
+                }
+
+                if (o instanceof ListInitializer) {
+                    rtnLabel.setType(RIIF2Grammar.LIST);
+                    //System.out.println("the list should coming out  " + o.toString());
+                    rtnLabel.setValue(o);
+                }
+
+
+                rtnLabel.setName(RIIF2Grammar.TABLE_ITEM);
+            } catch (FieldTypeNotMarchException e) {
+                e.printStackTrace();
+            }
+
+            return rtnLabel;
+        }
+
+        Expression getExpRow(){
+            return this.expRow;
+        }
+
+        public List< Label<Label> > getRow() {
+            if (this.rowLabel.size() == 0)
+                return null;
+
+            return this.rowLabel;
+        }
     }
 
-    private T_Row createRow(List list) {
-        return new T_Row(list);
-    }
 
     public void print() {
         if ( this.tableStructure.size() == 0)
             System.out.print(" Table size is null ");
         else {
             this.tableStructure.forEach(t_row -> {
-                List list = t_row.getRow();
+                List< Label<Label> > list = t_row.getRow();
 
                 if (list == null ){
                     Expression expression  = t_row.getExpRow();
@@ -115,75 +163,10 @@ public class TableValueOperator implements Serializable{
 
                 }else {
                     System.out.print("[ ");
-                    list.forEach(o -> {
-                        if (o instanceof Expression)
-                            ((Expression) o).print();
-                        else if (o instanceof List) {
-                            System.out.print(" { ");
-                            List theL = (List) o;
-                            theL.forEach(o1 ->
-                                    {
-                                        if (o1 instanceof Expression) {
-                                            ((Expression) o1).print();
-
-                                        } else System.out.print(" " + o1.toString() + " ");
-                                    }
-                            );
-                            System.out.print(" } ");
-                        } else
-                            System.out.print(" " + list.toString() + " ");
-
-                    });
+                    list.forEach(Label::print);
                     System.out.print(" ]");
                 }
             });
-        }
-    }
-
-    private class T_Column implements Serializable{
-
-        private List<Object> column = new LinkedList<>();
-
-        public void add(Object ex) {
-            this.column.add(ex);
-        }
-    }
-
-    private class T_Row implements Serializable {
-
-        private List<Object> row = new LinkedList<>();
-
-        private Expression expRow ;
-        T_Row(List<?> list){
-
-            list.forEach(o -> {
-                if (o instanceof Expression)
-                    this.row.add(o);
-
-                if (o instanceof RowItem){
-                    RowItem rowItem = (RowItem) o;
-                    if (rowItem.getType() == RowItem.LIST_STRING){
-                        ListInitializer listInitializer = (ListInitializer) rowItem.getValue();
-                        this.row.add( listInitializer.getInitializer() );
-                    } else
-                        this.row.add(rowItem.getValue());
-                }
-            });
-        }
-
-        public T_Row(Expression expRow) {
-            this.expRow = expRow;
-        }
-
-        public Expression getExpRow(){
-            return this.expRow;
-        }
-
-        public List getRow() {
-            if (this.row.size() == 0)
-                return null;
-
-            return this.row;
         }
     }
 }

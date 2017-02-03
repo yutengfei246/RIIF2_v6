@@ -318,4 +318,8 @@ public class Expression implements Initializer, Serializable {
 
         }
     }
+
+    public RIIF2Recorder getRecorder() {
+        return recorder;
+    }
 }

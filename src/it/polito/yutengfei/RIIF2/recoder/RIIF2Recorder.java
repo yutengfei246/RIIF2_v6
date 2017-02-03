@@ -280,6 +280,7 @@ public class RIIF2Recorder implements Recorder, Serializable {
             return this;
 
         Recorder.record(this);
+        //System.out.println("Going to store the record with name " + this.getIdentifier() + " in to repository ");
         return new RIIF2Recorder();
     }
 

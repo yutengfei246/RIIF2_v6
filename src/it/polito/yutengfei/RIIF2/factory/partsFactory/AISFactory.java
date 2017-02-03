@@ -312,10 +312,15 @@ public class AISFactory implements Factory{
                     this.aisLabel.putValue(id);
 
                     //..tableId  = 'Item[][]
-                    // should be more tracky to solve
-                }else if ((this.aisLabel instanceof Attribute) &&
-                        this.aisLabel.getName().equals(RIIF2Grammar.ITEMS) && this.declaratorId.hasTableIndex()){
-                 /*
+                    // in this case, the aisLable is a attribute label ITEMS of a Table label and the tableIndex would have two different case.
+                }
+
+                else if ((this.aisLabel instanceof Attribute) &&
+                        this.aisLabel.getName().equals(RIIF2Grammar.ITEMS) && this.declaratorId.hasTableIndex()) {
+
+                }
+/*
+
                     Attribute itemsAttribute = (Attribute) this.aisLabel;
 
                     Id tableId = this.declaratorId.getTableIndex();
@@ -350,9 +355,10 @@ public class AISFactory implements Factory{
                         }
                         label.resetSelf();
                     }
+                    }
                     */
 
-                }else if (this.aisLabel.getType().equals(RIIF2Grammar.PLATFORM)){
+                else if (this.aisLabel.getType().equals(RIIF2Grammar.PLATFORM)){
 
                     if ( !expInitializer.type().equals(RIIF2Grammar.USER_DEFINED) )
                         throw new FieldTypeNotMarchException(RIIF2Grammar.ASSIGNMENT,
@@ -439,6 +445,7 @@ public class AISFactory implements Factory{
 
             */
 
+            // the initializer is a tableInitializer
             if (this.initializer instanceof TableInitializer){
 
                 TableInitializer tableInitializer

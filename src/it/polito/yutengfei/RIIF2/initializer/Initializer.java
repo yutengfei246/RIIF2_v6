@@ -1,8 +1,9 @@
 package it.polito.yutengfei.RIIF2.initializer;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
-public interface Initializer<T> {
+public interface Initializer<T> extends Serializable {
 
     void addItem(T item);
     T getItem(int index);

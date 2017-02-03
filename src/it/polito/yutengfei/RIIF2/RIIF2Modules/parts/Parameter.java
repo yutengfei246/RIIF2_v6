@@ -37,13 +37,14 @@ public class Parameter extends Label<Label> {
             }
 
             if (initialValue instanceof List){
-
-                List<Object> valueList = (List<Object>) super.getValue();
+                Object value = super.getValue();
+                List valueList = (List) value;
                 System.out.print(" " + valueList.toString() + " ");
             }
 
             if (initialValue instanceof String)
                 System.out.print(" " + initialValue.toString() + " ");
+
         } else
             System.out.print(" null ");
 
@@ -58,7 +59,7 @@ public class Parameter extends Label<Label> {
                     Expression e = (Expression) o;
                     ((Expression) o).print();
                 } else if (o instanceof List){
-                    System.out.print("List  " + ((List)o).toString());
+                    System.out.print("List  " + o.toString());
                 }
                 else
                     System.out.print(" " + o.toString() + " ");
