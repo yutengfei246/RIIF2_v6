@@ -13,7 +13,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.LinkedList;
 
 public class Tester {
 
@@ -54,25 +53,24 @@ public class Tester {
 
         ParseTree parseTree = parser.program();
 
-        SLV secondLevelVisitor =
-                new SLV(parseTree, parser);
+        SLV secondLevelVisitor = new SLV(parseTree, parser);
 
         secondLevelVisitor.visit(parseTree);
 
-
         Repository.getTemplateRepository()
                 .forEach((s, recorder1) -> {
-                    System.out.println("RECORDER --> " + s + ":");
+                    System.out.println(" <--------------------RECORDER " + s + " ----------------------------------->");
                     ((RIIF2Recorder) recorder1).print8();
                     System.out.println("----------------------------------------");
+                    System.out.println("");
                 });
-
 
         Repository.getComponentRepository()
                 .forEach((s2, recorder2) -> {
-                    System.out.println("RECORDER --> " + s2 + ":");
+                    System.out.println(" <--------------------RECORDER " + s2 + " ------------------------------------>");
                     ((RIIF2Recorder) recorder2).print8();
                     System.out.println("----------------------------------------");
+                    System.out.println("");
                 });
 
         //System.out.println(parseTree.toStringTree());

@@ -8,6 +8,7 @@ import it.polito.yutengfei.RIIF2.factory.Exceptions.SomeVariableMissingException
 import it.polito.yutengfei.RIIF2.factory.Exceptions.VeriableAlreadyExistException;
 import it.polito.yutengfei.RIIF2.factory.Factory;
 import it.polito.yutengfei.RIIF2.id.DeclaratorId;
+import it.polito.yutengfei.RIIF2.id.Id;
 import it.polito.yutengfei.RIIF2.initializer.ArrayInitializer;
 import it.polito.yutengfei.RIIF2.initializer.Initializer;
 import it.polito.yutengfei.RIIF2.initializer.ListInitializer;
@@ -164,7 +165,7 @@ public class FieldFactory implements Factory{
                     this.declaratorId.getAssociativeIndex().getColumn());
 
         this.fieldLabel
-                =(Label<Label>) this.fieldLabel.getAssociative(associativeIndex);
+                = this.fieldLabel.getAssociative(associativeIndex);
 
 
         PrimitiveFieldDeclarator primitiveFieldDeclarator
@@ -194,46 +195,36 @@ public class FieldFactory implements Factory{
             expInitializer.setRecorder(this.recorder);
             expInitializer.setCurrentLabel(this.fieldLabel);
 
-    //        expInitializer.setExpressionOperator(eo);
+            // the expression Initialize is user-defined type
+            if (expInitializer.getType().equals(RIIF2Grammar.USER_DEFINED)) {
 
-            // first. if the current label is enum type.
-            if (this.fieldLabel.isEnumType()){
-                if ( !expInitializer.type().equals(RIIF2Grammar.USER_DEFINED)
-                        || !this.fieldLabel.getEnumType().contains(((DeclaratorId)expInitializer.value()).getPrimitiveId().getId()))
-                    throw new FieldTypeNotMarchException(expInitializer.value().toString(),
-                            expInitializer.getLine(),expInitializer.getColumn());
+                Id primitiveId = ((DeclaratorId)expInitializer.value()).getPrimitiveId();
 
-                // then set the value of expression into the fieldLabel !!!!
-                this.fieldLabel.putValue(((DeclaratorId)expInitializer.value()).getPrimitiveId().getId());
+                if (this.fieldLabel.isEnumType() && this.fieldLabel.getEnumType().contains(primitiveId.getId())) {
+                    this.fieldLabel.setValue(primitiveId.getId());
+                }
 
-            // second. if the current label is unit (attribute)
-            } else if (this.fieldLabel.getName().equals(RIIF2Grammar.UNIT)) {
-                if  (! (expInitializer.value() instanceof DeclaratorId ) )
-                    throw new FieldTypeNotMarchException(expInitializer.value().toString(),
-                            expInitializer.getLine(), expInitializer.getColumn());
-
-                // then we can assign the value directly.
-                String type = ((DeclaratorId) expInitializer.value()).getPrimitiveId().getId();
-                this.fieldLabel.putValue(type);
-
-            // third. other case We could set the expression into the fieldLabel
-            }else if (expInitializer.getType().equals(this.fieldLabel.getType())){
-
-                this.fieldLabel.putValue(expInitializer);
-
-            }else {
-                throw new FieldTypeNotMarchException(this.fieldLabel.getName().toString(),
-                        expInitializer.getLine(), expInitializer.getColumn());
+                else if (this.fieldLabel.getName().equals(RIIF2Grammar.UNIT)) {
+                    this.fieldLabel.setValue(primitiveId.getId());
+                }
             }
 
-            // if initializer is actually a ListInitializer
-            // when is assigned without the type, it is automatically converted to String type
-        } else if (initializer instanceof ListInitializer){
+            // third. other case We could set the expression into the fieldLabel
+            else if (expInitializer.getType().equals(this.fieldLabel.getType())){
+                this.fieldLabel.setValue(expInitializer);
+            }
 
+            else throw new FieldTypeNotMarchException(FieldTypeNotMarchException.MARCHED, this.fieldLabel.getName(), expInitializer.getLine(), expInitializer.getColumn());
+
+        }
+
+        // if initializer is actually a ListInitializer
+        else if (initializer instanceof ListInitializer){
             ListInitializer listInitializer = (ListInitializer) initializer;
-            this.fieldLabel.putValue( listInitializer ); // List of String
+            this.fieldLabel.setValue( listInitializer );
 
-        } else {
+
+        } else if (initializer instanceof  ArrayInitializer){
             // if in the next cases, it should be array or associative TypeType
             if (!this.fieldLabel.isVector() && !this.fieldLabel.isAssociative())
                 throw new FieldTypeNotMarchException(RIIF2Grammar.ARRAY,
@@ -242,14 +233,11 @@ public class FieldFactory implements Factory{
 
             // if it is an ArrayInitializer
             // Label should have the vector
-            if (initializer instanceof ArrayInitializer) {
                 ArrayInitializer arrayInitializer
                         = (ArrayInitializer) this.initializer;
 
                 //arrayInitializer is a list of Expression.........
-                arrayInitializer
-                        .getInitializer()
-                        .forEach( expression -> {
+                arrayInitializer.getInitializer().forEach( expression -> {
 
                             if (!Objects.equals(expression.getType(), this.fieldLabel.getType()))
                                 throw new IllegalArgumentException();
@@ -280,46 +268,6 @@ public class FieldFactory implements Factory{
                         });
             }
 
-            // is a arrayWrapperInitializer
-            // it for matrix, if matrix do not exist, we do not have to care this. may be the improvement
-            /*
-            if (this.initializer instanceof ArrayWrapperInitializer) {
-                ArrayWrapperInitializer arrayWrapperInitializer
-                        = (ArrayWrapperInitializer) this.initializer;
-
-                int vectorLeft = this.fieldLabel.getVectorLeft();
-                int vectorRight = this.fieldLabel.getVectorRight();
-
-                if (arrayWrapperInitializer.size() != vectorRight)
-                    throw new FieldTypeNotMarchException(RIIF2Grammar.ARRAY,
-                            arrayWrapperInitializer.getLine(),
-                            arrayWrapperInitializer.getColumn());
-
-                arrayWrapperInitializer.getInitializer()
-                        .forEach(arrayInitializer -> {
-
-                            if (arrayInitializer.size() != vectorLeft)
-                                throw new IllegalArgumentException();
-
-                            arrayInitializer.getInitializer()
-                                    .forEach(expression -> {
-                                        if (!Objects.equals(expression.getType(), this.fieldLabel.getType()))
-                                            throw new IllegalArgumentException();
-
-                                        Label vectorItem = null;
-                                        if (this.fieldLabel instanceof Parameter)
-                                            vectorItem = new Parameter();
-                                        if (this.fieldLabel instanceof Constant)
-                                            vectorItem = new Constant();
-
-                                        assert vectorItem != null;
-                                        vectorItem.setName(null);
-                                        vectorItem.putValue(expression.getValue());
-                                        this.fieldLabel.addVectorItem(vectorItem);
-                                    });
-                        });
-            } */
-        }
     }
 
     // create a label with the name given

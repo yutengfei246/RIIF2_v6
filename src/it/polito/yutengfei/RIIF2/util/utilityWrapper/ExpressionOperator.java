@@ -15,7 +15,7 @@ import java.util.*;
 
 import static it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression.*;
 
-public class ExpressionOperator implements Serializable{
+class ExpressionOperator implements Serializable{
     private static final String EXP = "exp function";
     private static final String LOG = "log function";
     private RIIF2Recorder recorder;
@@ -43,14 +43,14 @@ public class ExpressionOperator implements Serializable{
         }
     };
 
-    public ExpressionOperator(){}
+    ExpressionOperator(){}
 
-    public ExpressionOperator(RIIF2Recorder recorder, Label currentLabel ){
+    private ExpressionOperator(RIIF2Recorder recorder, Label currentLabel){
         this.recorder = recorder;
         this.currentLabel = currentLabel;
     }
 
-    public void setCurrentLabel( Label currentLabel ){
+    void setCurrentLabel(Label currentLabel){
         this.currentLabel = currentLabel;
     }
 
@@ -68,7 +68,7 @@ public class ExpressionOperator implements Serializable{
         return expression.value();
     }
 
-    public boolean isBoolean(Expression srcExpression) throws FieldTypeNotMarchException {
+    boolean isBoolean(Expression srcExpression) throws FieldTypeNotMarchException {
 
         String type = this.getType(srcExpression);
         return type.equals(RIIF2Grammar.BOOLEAN);
@@ -421,7 +421,6 @@ public class ExpressionOperator implements Serializable{
                 srcExpression.setValue(res);
             }
         }
-
     }
 
     private void oprWithTwoExpression(int opr, Expression srcExpression, Expression oprExpression, Expression targetExpression) throws FieldTypeNotMarchException {
@@ -593,7 +592,9 @@ public class ExpressionOperator implements Serializable{
         String srcType = this.typeResolver(labelList, srcExpression);
 
         if ( srcType == null)
-            throw new FieldTypeNotMarchException(((DeclaratorId)srcExpression.value()).getPrimitiveId().getId(),srcExpression.getLine(),srcExpression.getColumn());
+            throw new FieldTypeNotMarchException(
+                    srcExpression.value().toString()
+                    ,srcExpression.getLine(),srcExpression.getColumn());
 
         Iterator<Operation> iterator = srcExpression.getIterator();
 
@@ -641,7 +642,7 @@ public class ExpressionOperator implements Serializable{
                             (srcType.equals(RIIF2Grammar.INTEGER) && oprType.equals(RIIF2Grammar.DOUBLE)) ){
                         srcType = RIIF2Grammar.DOUBLE;
                     }
-                    else throw new FieldTypeNotMarchException(oprType, oprExpression.getLine(), oprExpression.getColumn());
+                    else throw new FieldTypeNotMarchException(FieldTypeNotMarchException.OPERATION, oprType, oprExpression.getLine(), oprExpression.getColumn());
                 }
                 if (this.nonCompareOperation.contains(opr))
                     continue;

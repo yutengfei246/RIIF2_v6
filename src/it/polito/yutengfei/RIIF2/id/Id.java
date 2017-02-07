@@ -157,12 +157,28 @@ public class Id implements Serializable {
 
     public int getColumn() { return column; }
 
-
     public String getXX() {
         return xx;
     }
 
     public String getYY() {
         return yy;
+    }
+
+    public String toString(){
+        StringBuffer stringBuffer = new StringBuffer();
+
+        if (this.id != null)
+        stringBuffer.append(this.id );
+
+        if (this.hierPostfixIds != null && this.hierPostfixIds().size() != 0)
+            this.hierPostfixIds.forEach(id1 -> stringBuffer.append(id1.toString()));
+
+        if (this.associativeIndex != null )
+            stringBuffer.append("[").append(this.associativeIndex.toString()).append("]");
+
+        if (this.attributeIndex != null)
+            stringBuffer.append("'").append(this.attributeIndex.toString());
+        return stringBuffer.toString();
     }
 }

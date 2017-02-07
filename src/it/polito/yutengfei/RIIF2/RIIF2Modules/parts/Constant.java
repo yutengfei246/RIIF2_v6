@@ -46,23 +46,6 @@ public class Constant extends Label<Label> {
 
         System.out.print(";");
 
-        Iterator<Object> iterator = super.getStackValueIterator();
-
-        System.out.print("-Stack-");
-        while (iterator.hasNext()){
-            Object o = iterator.next();
-            if (o instanceof Expression){
-                Expression e = (Expression) o;
-                ((Expression) o).print();
-            } else if (o instanceof List){
-                System.out.print("List  " + ((List)o).toString());
-            }
-            else
-                System.out.print(" " + o.toString() + " ");
-            System.out.print(" | ");
-        }
-        System.out.print("-Stack-\n" );
-
         super.printAttribute();
         super.printAssociative();
     }

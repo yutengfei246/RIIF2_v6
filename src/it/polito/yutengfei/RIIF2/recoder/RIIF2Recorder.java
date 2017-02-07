@@ -220,7 +220,7 @@ public class RIIF2Recorder implements Recorder, Serializable {
     }
 
     /*only can find in this recorder or parent recorder */
-    public Label getAssignmentLabel(String labelName) {
+    public Label<Label> getAssignmentLabel(String labelName) {
         if (this.getLabel(labelName) != null )
             return this.getLabel(labelName);
 
@@ -232,7 +232,7 @@ public class RIIF2Recorder implements Recorder, Serializable {
         return null;
     }
 
-    public Label getImposeLabel(String labelName) {
+    public Label<Label> getImposeLabel(String labelName) {
         if (this.getLabel(labelName) != null )
             return this.getLabel(labelName);
 
@@ -244,7 +244,7 @@ public class RIIF2Recorder implements Recorder, Serializable {
         return null;
     }
 
-    public Label getSetLabel(String labelName){
+    public Label<Label> getSetLabel(String labelName){
 
         /* in template */
         if (this.isTemplate()){

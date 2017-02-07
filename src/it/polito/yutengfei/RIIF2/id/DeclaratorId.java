@@ -118,4 +118,24 @@ public class DeclaratorId implements Serializable{
     public int getColumn() {
         return this.column;
     }
+
+    @Override
+    public String toString(){
+        StringBuilder stringBuffer = new StringBuilder();
+
+        if (this.primitiveId != null) {
+            stringBuffer.append(this.primitiveId.toString());
+        }
+
+        if (this.associativeIndex != null)
+            stringBuffer.append("[").append(this.associativeIndex.toString()).append("]");
+
+        if (this.attributeIndex != null)
+            stringBuffer.append("'").append(this.attributeIndex.toString());
+
+        if (this.hierPostfix != null )
+            stringBuffer.append(".").append(this.hierPostfix.toString());
+
+        return stringBuffer.toString();
+    }
 }

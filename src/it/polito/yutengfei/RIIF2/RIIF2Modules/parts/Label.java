@@ -1,39 +1,24 @@
 package it.polito.yutengfei.RIIF2.RIIF2Modules.parts;
 
 import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
-import it.polito.yutengfei.RIIF2.factory.Exceptions.SomeVariableMissingException;
-import it.polito.yutengfei.RIIF2.initializer.ArrayInitializer;
-import it.polito.yutengfei.RIIF2.initializer.ArrayWrapperInitializer;
-import it.polito.yutengfei.RIIF2.initializer.ListInitializer;
-import it.polito.yutengfei.RIIF2.initializer.TableInitializer;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.EnumType;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
-import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
-import it.polito.yutengfei.RIIF2.util.utilityWrapper.Row;
-import it.polito.yutengfei.RIIF2.util.utilityWrapper.RowItem;
-import it.polito.yutengfei.RIIF2.util.utilityWrapper.TableValueOperator;
 
-import java.io.Serializable;
 import java.util.*;
 
-public abstract class Label<T extends Label> implements Serializable {
+public abstract class Label<T extends Label> extends ValueMember{
 
     private final RIIF2Recorder recorder;
-
     private String name;
-    private String type;
-    private Object value;
 
     private VectorImpl<Expression> vectorImpl;
-    private Map<String,T> associativeMap;
 
+    private Map<String,T> associativeMap;
     private Map<String,Attribute> attributeMap;
 
     private EnumType enumType;
-
-    private Stack<Object> valueStack = new Stack<>();
 
     private int _self1 = -1;
     private int _self2 = -1;
@@ -42,23 +27,13 @@ public abstract class Label<T extends Label> implements Serializable {
         this.recorder = recorder;
     }
 
-    public void set_self1(int i){
-        this._self1 = i;
-    }
-
     public void set_self2(int i){
         this._self2  = i;
     }
 
-    public void resetSelf(){
-        this._self1 = -1;
-        this._self2 = -1;
-    }
-
-
     public Object getSelfValue(){
         if ( this._self1 == -1 && this._self2 == -1 )
-            return this.value;
+            return super.getValue();
 
         if (!(this.getValue() instanceof List))
             return null;
@@ -76,7 +51,7 @@ public abstract class Label<T extends Label> implements Serializable {
     public String getSelfValueType(){
 
         if (this._self1 == -1 && this._self2 == -1)
-            return this.type;
+            return super.getType();
 
         if (this._self1 != -1  && this._self2 == -1){
             //TODO:: reserved
@@ -89,213 +64,15 @@ public abstract class Label<T extends Label> implements Serializable {
 
         return null;
     }
-
-    /**
-     * valueStack setters and getters
-     */
-    public void putValue(Object value) throws FieldTypeNotMarchException {
-
-        if (value == null) return;
-
-        // if it is String, we could have two possibility : Enum and Unit
-        if (value instanceof String) {
-            String valueString = (String) value;
-
-            if (this.isEnumType())
-                this.valueStack.push(valueString);
-
-            if (this instanceof Attribute && this.getName().equals(RIIF2Grammar.UNIT))
-                this.valueStack.push(valueString);
-        }
-
-        // when put value into the stack, we need to check if the given value is good for this label
-        if (value instanceof Expression ){
-            Expression expValue = (Expression) value;
-
-            if (expValue.getType().equals(this.getType()))
-                this.valueStack.push(expValue);
-
-            else if (expValue.getType().equals(RIIF2Grammar.INTEGER) && this.getType().equals(RIIF2Grammar.DOUBLE))
-                this.valueStack.push(expValue);
-            else
-                throw new FieldTypeNotMarchException(this.getName(), expValue.getLine(), expValue.getColumn());
-        }
-
-        if (value instanceof ListInitializer ){
-            ListInitializer listValue = (ListInitializer) value;
-            List<Object> listObject = listValue.getInitializer();
-
-            switch (this.getType()) {
-                case RIIF2Grammar.LIST:
-                    this.valueStack.push(listObject);
-                    break;
-                case RIIF2Grammar.LIST_STRING: {
-                    Object find = listObject.stream()
-                            .filter(o -> !(o instanceof String))
-                            .findAny().orElse(null);
-
-                    // in this case, there are some Item inside the list was not String Type.
-                    if (find != null)
-                        throw new FieldTypeNotMarchException(this.getName(), listValue.getLine(), listValue.getColumn());
-                    else
-                        this.valueStack.push(listObject);
-                    break;
-                }
-                case RIIF2Grammar.LIST_INTEGER: {
-                    Object find = listObject.stream()
-                            .filter(o -> !(o instanceof Integer))
-                            .findAny().orElse(null);
-
-                    // in this case, there are some Item inside the list was not Integer Type.
-                    if (find != null)
-                        throw new FieldTypeNotMarchException(this.getName(), listValue.getLine(), listValue.getColumn());
-                    else
-                        this.valueStack.push(listObject);
-                    break;
-                }
-                case RIIF2Grammar.LIST_DOUBLE: {
-                    Object find = listObject.stream()
-                            .filter(o -> !(o instanceof Double))
-                            .findAny().orElse(null);
-
-                    // in this case, there are some Item inside the list was not Double Type.
-                    if (find != null)
-                        throw new FieldTypeNotMarchException(this.getName(), listValue.getLine(), listValue.getColumn());
-                    else
-                        this.valueStack.push(listObject);
-                    break;
-                }
-                default:
-                    throw new FieldTypeNotMarchException(this.getName(), listValue.getLine(), listValue.getColumn());
-            }
-        }
-
-        // if the value is arrayWrapperInitializer, then the attribute should handle each row.
-        if (value instanceof ArrayWrapperInitializer) {
-
-            ArrayWrapperInitializer arrayWrapperInitializer = (ArrayWrapperInitializer) value;
-
-            if ( !(this instanceof Attribute) || !this.getName().equals(RIIF2Grammar.ITEMS) )
-                throw new FieldTypeNotMarchException(this.getName(), arrayWrapperInitializer.getLine(), arrayWrapperInitializer.getColumn());
-
-            Attribute attributeLabel = (Attribute)this;
-
-            // create operator
-            List headers = (List) attributeLabel
-                    .getTable()
-                    .getAttribute(RIIF2Grammar.HEADER)
-                    .getValue();
-
-            List<ArrayInitializer> arrayInitializerList = arrayWrapperInitializer.getInitializer();
-            TableValueOperator tableValueOperator = new TableValueOperator(headers,this);
-
-            for (ArrayInitializer arrayInitializer : arrayInitializerList) {
-                List<Expression> expressionList = arrayInitializer.getInitializer();
-                for (Expression expression : expressionList ){
-                    expression.setRecorder(this.recorder);
-                    expression.setCurrentLabel(this);
-                    if ( !expression.isValid() )
-                        throw new FieldTypeNotMarchException(this.getName(),arrayInitializer.getLine(), arrayInitializer.getColumn());
-                }
-               if (!tableValueOperator.setRows(arrayInitializer))
-                   throw new FieldTypeNotMarchException(this.getName(),arrayInitializer.getLine(),arrayInitializer.getColumn());
-            }
-            this.valueStack.push(tableValueOperator);
-        }
-
-        if (value instanceof TableInitializer ){
-
-            TableInitializer tableInitializer = (TableInitializer) value;
-
-            if ( !(this instanceof Attribute) || !this.getName().equals(RIIF2Grammar.ITEMS) )
-                throw new FieldTypeNotMarchException(this.getName(), tableInitializer.getLine(), tableInitializer.getColumn());
-
-            Attribute attributeLabel = (Attribute)this;
-
-            // create operator
-            List headers = (List) attributeLabel
-                    .getTable()
-                    .getAttribute(RIIF2Grammar.HEADER)
-                    .getValue();
-
-            TableValueOperator tableValueOperator;
-
-            tableValueOperator = new TableValueOperator(headers,this);
-
-
-            int i = -1 ;
-            for (Row row : tableInitializer.getInitializer()) {
-                i++;
-                if (row.getType() == Row.EXPRESSION){
-                    Expression expression = (Expression) row.getValue();
-                    expression.setRecorder(this.recorder);
-                    expression.setCurrentLabel(this);
-
-                    TableValueOperator tableValueOperator1 = (TableValueOperator) this.valueStack.get(this.valueStack.size() -1 );
-
-                    if (tableValueOperator1 != null) {
-                        List<Label<Label>> labelList = tableValueOperator1.getRowList(i);
-
-                        if (!expression.isArrayValid(labelList))
-                            throw new FieldTypeNotMarchException(this.getName(), expression.getLine(), expression.getColumn());
-                        else
-                            System.out.println("It array valid");
-                    } else
-                        if (!expression.isArray())
-                            throw new FieldTypeNotMarchException(this.getName(),expression.getLine(),expression.getColumn());
-                }
-
-                if (row.getType() == Row.ROW_ITEMS_ARRAY){
-                    List rowItems = (List) row.getValue();
-
-                    for (Object rowI: rowItems) {
-                        RowItem rowItem = (RowItem) rowI;
-                        if (rowItem.getType() == RowItem.EXPRESSION){
-                            Expression riExp = (Expression) rowItem.getValue();
-                            riExp.setRecorder(this.recorder);
-                            riExp.setCurrentLabel(this);
-
-                            if (!riExp.isValid()){
-                                return;
-                            }
-                        }
-                    }
-                }
-                tableValueOperator.setRows(row);
-            }
-            this.valueStack.push(tableValueOperator);
-        }
+    /*
+     *The given value could be String, Expression, ArrayInitializer, ArrayWrapperInitializer, TableInitializer
+     * */
+    public void setValue(Object value) throws FieldTypeNotMarchException {
+        super.setValue(this ,value);
     }
-
-
-    public void putSharpOperation(String yy, Expression expInitializer) throws SomeVariableMissingException {
-        if (this.valueStack.size() == 0 )
-            throw new SomeVariableMissingException(this.getName(),expInitializer.getLine(),expInitializer.getColumn());
-
-        TableValueOperator valueOperator = (TableValueOperator) this.valueStack.get(this.valueStack.size() -1 );
-        valueOperator.putSharpOperation(yy,expInitializer);
-
-    }
-
-    public Iterator<Object> getStackValueIterator(){
-        return this.valueStack.iterator();
-    }
-
-    public Object popValue(){
-        return this.valueStack.pop();
-    }
-
     /**
      * name value type setters and getters
      */
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public String getName() {
         return name;
     }
@@ -303,101 +80,6 @@ public abstract class Label<T extends Label> implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-
-    public Object getValue(){
-        return this.value;
-    }
-
-    // TODO: need to check the given value
-    public void setValue(Object value) throws FieldTypeNotMarchException {
-
-        if (value == null)
-            return;
-
-        // if it is String, we could have two possibility : Enum and Unit
-        if (value instanceof String) {
-            String valueString = (String) value;
-
-            if (this.isEnumType())
-                this.value = valueString;
-
-            if (this instanceof Attribute && this.getName().equals(RIIF2Grammar.UNIT))
-                this.value = valueString;
-        }
-
-        if (value instanceof RIIF2Recorder){
-            RIIF2Recorder recorder = (RIIF2Recorder) value;
-
-            if ( this instanceof ChildComponent )
-                this.value = recorder;
-        }
-
-        // check the given value if it is an Expression, we should check it is an valid one
-        if (value instanceof Expression) {
-            Expression expValue = (Expression) value;
-
-            if ( expValue.getType().equals(this.getType()) )
-                this.value = value;
-
-            else if (expValue.getType().equals(RIIF2Grammar.INTEGER) && this.getType().equals(RIIF2Grammar.DOUBLE))
-                this.value = value;
-            else
-                throw new FieldTypeNotMarchException(this.getName(),expValue.getLine(),expValue.getColumn());
-        }
-
-        if (value instanceof ListInitializer ){
-            ListInitializer listValue = (ListInitializer) value;
-            List<Object> listObject = listValue.getInitializer();
-
-            switch (this.getType()) {
-                case RIIF2Grammar.LIST:
-                    this.value = listObject; // in this case, it is List<Object>
-                    break;
-                case RIIF2Grammar.LIST_STRING: {
-                    Object find = listObject.stream()
-                            .filter(o -> !(o instanceof String))
-                            .findAny().orElse(null);
-
-                    // in this case, there are some Item inside the list was not String Type.
-                    if (find != null)
-                        throw new FieldTypeNotMarchException(this.getName(), listValue.getLine(), listValue.getColumn());
-                    else
-                        this.value = listObject;
-
-                    break;
-                }
-                case RIIF2Grammar.LIST_INTEGER: {
-                    Object find = listObject.stream()
-                            .filter(o -> !(o instanceof Integer))
-                            .findAny().orElse(null);
-
-                    // in this case, there are some Item inside the list was not Integer Type.
-                    if (find != null)
-                        throw new FieldTypeNotMarchException(this.getName(), listValue.getLine(), listValue.getColumn());
-                    else
-                        this.value = listObject;
-                    break;
-                }
-                case RIIF2Grammar.LIST_DOUBLE: {
-                    Object find = listObject.stream()
-                            .filter(o -> !(o instanceof Double))
-                            .findAny().orElse(null);
-
-                    // in this case, there are some Item inside the list was not Double Type.
-                    if (find != null)
-                        throw new FieldTypeNotMarchException(this.getName(), listValue.getLine(), listValue.getColumn());
-                    else
-                        this.value = listObject;
-                    break;
-                }
-                default:
-                    throw new FieldTypeNotMarchException(this.getName(), listValue.getLine(), listValue.getColumn());
-            }
-        }
-
-
-    }
-
     /**
      * enumType setters and getters
      */
@@ -452,6 +134,7 @@ public abstract class Label<T extends Label> implements Serializable {
     }
 
     public T getAssociative(String associativeName) {
+
         return this.associativeMap.get(associativeName);
     }
 
@@ -505,8 +188,8 @@ public abstract class Label<T extends Label> implements Serializable {
 
     protected void printAttribute(){
         if (this.hasAttribute()) {
-            System.out.print("@Attribute " );
             this.attributeMap.forEach((s, attribute) -> {
+                System.out.print("@Attribute-" );
                 attribute.print();
             });
             System.out.println(" ");
@@ -515,13 +198,12 @@ public abstract class Label<T extends Label> implements Serializable {
 
     protected void printAssociative(){
 
-        if (this.isAssociative()) {
+        if (this.isAssociative() ) {
+            System.out.println("----------------start associative " + this.getName() + "--------------------");
             this.associativeMap.forEach((s, t) -> {
-                System.out.println("----------------start associative " + s + "--------------------");
                 t.print();
-                System.out.println("----------------end associative " + s + "--------------------");
             });
-
+            System.out.println("----------------end associative " + this.getName() + "--------------------");
         }
 
     }

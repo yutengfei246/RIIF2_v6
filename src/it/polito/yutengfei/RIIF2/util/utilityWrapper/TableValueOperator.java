@@ -137,7 +137,7 @@ public class TableValueOperator implements Serializable{
                 if (o instanceof Expression) {
                     Expression expO = Expression.class.cast(o);
                     rtnLabel.setType(expO.getType());
-                    rtnLabel.putValue(o);
+                    rtnLabel.setValue(o);
                 }
 
                 if (o instanceof ListInitializer) {

@@ -74,7 +74,7 @@ public class CCFactory implements Factory {
 
         label.setName(associativeIndex);
         label.setType(RIIF2Grammar.TYPE_CC);
-        label.putValue(recorder);
+        label.setValue(recorder);
 
         return label;
     }
@@ -84,7 +84,7 @@ public class CCFactory implements Factory {
 
         this.ccLabel.setName(id);
         this.ccLabel.setType(RIIF2Grammar.TYPE_CC);
-        this.ccLabel.putValue(recorder);
+        this.ccLabel.setValue(recorder);
 
         if ( this.declaratorId.hasTypeType() ){
 

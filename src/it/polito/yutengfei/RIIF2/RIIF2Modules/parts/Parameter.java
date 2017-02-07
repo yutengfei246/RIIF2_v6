@@ -26,7 +26,15 @@ public class Parameter extends Label<Label> {
 
         // print field
         System.out.print("Parameter " + super.getName() + " : " + super.getType() );
+
+        if (this.isEnumType() ){
+            System.out.print(" [ ");
+            this.getEnumType().getEnums().forEach(s -> System.out.print(" " + s + " "));
+            System.out.print(" ] ");
+        }
+
         System.out.print(" := " );
+
 
         Object initialValue = super.getValue();
 
@@ -50,25 +58,8 @@ public class Parameter extends Label<Label> {
 
         System.out.print(";");
 
-        Iterator<Object> iterator = super.getStackValueIterator();
-
-        System.out.print("-Stack-");
-        while (iterator.hasNext()){
-            Object o = iterator.next();
-                if (o instanceof Expression){
-                    ((Expression) o).print();
-                } else if (o instanceof List){
-                    System.out.print("List  " + o.toString());
-                }
-                else
-                    System.out.print(" " + o.toString() + " ");
-            System.out.print(" | ");
-        }
-        System.out.print("-Stack-\n" );
-
         super.printAttribute();
         super.printAssociative();
     }
-
 
 }
