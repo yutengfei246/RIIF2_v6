@@ -13,4 +13,6 @@ public interface Initializer<T> extends Serializable {
     int getLine();
     void setColumn(int column);
     int getColumn();
+
+
 }

@@ -20,50 +20,10 @@ public abstract class Label<T extends Label> extends ValueMember{
 
     private EnumType enumType;
 
-    private int _self1 = -1;
-    private int _self2 = -1;
-
     protected Label(RIIF2Recorder recorder) {
         this.recorder = recorder;
     }
 
-    public void set_self2(int i){
-        this._self2  = i;
-    }
-
-    public Object getSelfValue(){
-        if ( this._self1 == -1 && this._self2 == -1 )
-            return super.getValue();
-
-        if (!(this.getValue() instanceof List))
-            return null;
-
-        List lst = (List) this.getValue();
-        if (this._self1 != -1 && this._self2 == -1)
-            return lst.get(this._self1);
-
-        if (this._self1 != -1 && this._self2 != -1 )
-            return ((Item)lst.get(this._self1)).getUnitItem(this._self2).getValue();
-
-        return null;
-    }
-
-    public String getSelfValueType(){
-
-        if (this._self1 == -1 && this._self2 == -1)
-            return super.getType();
-
-        if (this._self1 != -1  && this._self2 == -1){
-            //TODO:: reserved
-
-        }
-
-        if (this._self1 != -1 && this._self2 != -1 ){
-            return ((Item)((List) this.getValue()).get(this._self1)).getUnitItem(this._self2).getType();
-        }
-
-        return null;
-    }
     /*
      *The given value could be String, Expression, ArrayInitializer, ArrayWrapperInitializer, TableInitializer
      * */

@@ -124,6 +124,17 @@ public class Expression implements Initializer, Serializable {
         return false;
     }
 
+
+    private List getArray() {
+        try {
+            return this.expressionOperator.getArray(this);
+        } catch (FieldTypeNotMarchException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     public boolean isInteger() {
         try {
             return this.expressionOperator.isInteger(this);
@@ -254,7 +265,11 @@ public class Expression implements Initializer, Serializable {
 
     @Override
     public LinkedList getInitializer() {
-        return null;
+
+        if (this.isArray()){
+            return (LinkedList) this.getArray();
+        }else
+            return null;
     }
 
     @Override
@@ -277,9 +292,6 @@ public class Expression implements Initializer, Serializable {
         return column;
     }
 
-
-
-
     // use for debug , print the expression,recursive
     public void print() {
         // for each of the operation, print
@@ -294,7 +306,13 @@ public class Expression implements Initializer, Serializable {
                 System.out.print("'" + attributeId + " ");
             }
 
-        } else if (this.value() instanceof ArrayInitializer ) {
+        }
+        else if (this.value() instanceof  Expression ){
+            Expression expression = (Expression) this.value;
+            expression.print();
+        }
+
+        else if (this.value() instanceof ArrayInitializer ) {
             System.out.print(" [ ");
             ArrayInitializer arrayInitializer = (ArrayInitializer) this.value();
             arrayInitializer.getInitializer().forEach(Expression::print);
@@ -316,6 +334,12 @@ public class Expression implements Initializer, Serializable {
             if (operation.getOpr() == 16)
                 System.out.print(" \\");
 
+            if (operation.getOpr() == 18)
+                System.out.print(" + ");
+
+            if (operation.getOpr() == 19)
+                System.out.print( " - ");
+
             Expression oprExpression = operation.getOprExpression();
             Expression targetExpression = operation.getOprTargetExpression();
 
@@ -335,4 +359,18 @@ public class Expression implements Initializer, Serializable {
         }
     }
 
+
+    private String xx, yy;
+
+    public void setLocation (String xx, String yy){
+        this.xx = xx; this.yy = yy;
+    }
+
+    public String getXx(){
+        return this.xx;
+    }
+
+    public String getYy(){
+        return this.yy;
+    }
 }

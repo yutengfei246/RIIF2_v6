@@ -9,8 +9,6 @@ import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
-import it.polito.yutengfei.RIIF2.util.utilityWrapper.Row;
-import it.polito.yutengfei.RIIF2.util.utilityWrapper.RowItem;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.TableValueOperator;
 
 import java.io.Serializable;
@@ -69,9 +67,32 @@ class ValueMember implements Serializable {
         else if (value instanceof Expression) {
             Expression expValue = (Expression) value;
 
+
+            if (label.getName().equals(RIIF2Grammar.ITEMS)) {
+
+            }
+
+            if ( expValue.getXx() != null && expValue.getYy() != null ){
+                String xx = expValue.getXx();
+                String yy = expValue.getYy();
+
+                if ( (label instanceof Attribute) && label.getName().equals(RIIF2Grammar.ITEMS) ){
+
+                    if (xx.equals(RIIF2Grammar.SHARP)) {
+                        TableValueOperator tableValueOperator = (TableValueOperator) label.getValue();
+                        tableValueOperator.sharpOperation(yy, expValue);
+                    }
+                }
+            }
+
             // if the expression type == the label type
-            if ( expValue.getType().equals(label.getType()) )
+            else if ( expValue.getType().equals(label.getType()) ) {
+
+                //if (label.getName().equals(RIIF2Grammar.ITEMS))
+                  //  expValue.print();
+
                 this.value = expValue;
+            }
 
             // else if the expression type is integer and label type is double
             else if (expValue.getType().equals(RIIF2Grammar.INTEGER) && label.getType().equals(RIIF2Grammar.DOUBLE))
@@ -117,7 +138,6 @@ class ValueMember implements Serializable {
                     else
                         this.value = listObject;
                     break;
-
                 }
 
                 case RIIF2Grammar.LIST_INTEGER: {
@@ -186,11 +206,14 @@ class ValueMember implements Serializable {
                 if (!tableValueOperator.setRows(arrayInitializer))
                     throw new FieldTypeNotMarchException(label.getName(),arrayInitializer.getLine(),arrayInitializer.getColumn());
             }
+            tableValueOperator.newTableInitializer(arrayWrapperInitializer);
+
             this.value = tableValueOperator;
         }
 
         // table Initializer
         if (value instanceof TableInitializer) {
+
             TableInitializer tableInitializer = (TableInitializer) value;
 
             if (!(label instanceof Attribute) || !label.getName().equals(RIIF2Grammar.ITEMS))
@@ -199,44 +222,12 @@ class ValueMember implements Serializable {
             TableValueOperator tableValueOperator = (TableValueOperator) label.getValue();
 
             if (tableValueOperator == null)
-                throw new FieldTypeNotMarchException(FieldTypeNotMarchException.MESSAGE,"The table header did not defined " + label.getName(), tableInitializer.getLine(),tableInitializer.getColumn());
+                throw new FieldTypeNotMarchException(FieldTypeNotMarchException.MESSAGE,"The table header have not defined " + label.getName(), tableInitializer.getLine(),tableInitializer.getColumn());
 
-            int i = -1 ;
-            for (Row row : tableInitializer.getInitializer()) {
-                i++;
-
-                if (row.getType() == Row.EXPRESSION) {
-                    Expression expression = (Expression) row.getValue();
-                    expression.setRecorder(label.getRecorder());
-                    expression.setCurrentLabel(label);
-
-                //TODO: the last challenge
-
-                }
-
-                if (row.getType() == Row.ROW_ITEMS_ARRAY){
-                    List rowItems = (List) row.getValue();
-
-                    for (Object rowI: rowItems) {
-                        RowItem rowItem = (RowItem) rowI;
-
-                        if (rowItem.getType() == RowItem.EXPRESSION){
-                            Expression riExp = (Expression) rowItem.getValue();
-                            riExp.setRecorder(label.getRecorder());
-                            riExp.setCurrentLabel(label);
-
-                            if (!riExp.isValid())
-                                throw new FieldTypeNotMarchException(FieldTypeNotMarchException.MARCHED,
-                                        label.getName(),riExp.getLine(),riExp.getColumn());
-                        }
-                    }
-                }
-
-                tableValueOperator.setRows(row);
-            }
+            tableValueOperator.newTableInitializer( tableInitializer );
         }
 
-        if (value instanceof TableValueOperator){
+        if (value instanceof TableValueOperator) {
             this.value = value;
         }
     }

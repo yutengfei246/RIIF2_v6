@@ -12,3 +12,7 @@ assign SW_FM'ITEMS = { //obtained from fault injection
     ["SBU", "WRONG_INSTRUCTION",0.2*SBU'RATE]
     } ;
 endcomponent
+
+
+
+

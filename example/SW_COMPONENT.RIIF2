@@ -7,15 +7,26 @@ template SW_COMPONENT;
     abstract parameter PROTECTION: enum{NONE, VAR_DUP};
     abstract parameter READ_ACCESS: integer;
     abstract parameter WRITE_ACCESS: integer;
+
     abstract platform execute_on;
 
     //List of possible SFB considered in our library
     abstract constant SFB_LIST := { INT_TIME, UNDETECTABLE,
-                    EARLY, LATE, FULL_UNRESPONSIVE, PARTIAL_UNRESPONSIVE,
-                    RESPONSIVE, DATA_BENIGN, NO_DATA, EDC, NON_EDC };
+                                    EARLY, LATE, FULL_UNRESPONSIVE, PARTIAL_UNRESPONSIVE,
+                                    RESPONSIVE, DATA_BENIGN, NO_DATA, EDC, NON_EDC
+                                  };
 
     // Timing constraints depending on the workload
     abstract parameter TIMING_CONSTRAINTS : table;
-    impose TIMING_CONSTRAINTS'HEADERS = {SFM_TYPE,SFM,
-                                    OCCURRING_SFB,OCCURRING_SFN_RATE};
+    impose TIMING_CONSTRAINTS'HEADERS = { SFM_TYPE,SFM,
+                                          OCCURRING_SFB,
+                                          OCCURRING_SFN_RATE
+                                        };
 endtemplate
+
+
+
+
+
+
+

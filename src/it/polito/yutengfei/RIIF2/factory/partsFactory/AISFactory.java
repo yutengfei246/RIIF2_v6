@@ -301,12 +301,9 @@ public class AISFactory implements Factory{
                             String xx = tableIndex.getXX();
                             String yy = tableIndex.getYY();
 
-                            expInitializer.isValid(); // throw Exceptions
-
-                            // TODO: the sharp operation
-                            if (xx.equals(RIIF2Grammar.SHARP)) {
-                                // this.aisLabel.putSharpOperation(yy,expInitializer);
-                            }
+                           // expInitializer.isValid(); // throw Exceptions
+                            expInitializer.setLocation(xx,yy);
+                            this.aisLabel.setValue(expInitializer);
                         }
                     }
 

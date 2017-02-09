@@ -11,4 +11,5 @@ component CY7C1263XC18 implements SYNCSRAM_TEMPLATE,FLIP_CHIP_TEMPLATE;
  set PACKAGE_TEMP'MAX = 70;
  set RAD_FM[SBU]'RATE = 0;
  set RAD_FM[SSAP]'RATE = 0;
+
  endcomponent

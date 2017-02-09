@@ -5,7 +5,10 @@ import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Label;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Parameter;
 import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
 import it.polito.yutengfei.RIIF2.initializer.ArrayInitializer;
+import it.polito.yutengfei.RIIF2.initializer.ArrayWrapperInitializer;
 import it.polito.yutengfei.RIIF2.initializer.ListInitializer;
+import it.polito.yutengfei.RIIF2.initializer.TableInitializer;
+import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 
 import java.io.Serializable;
@@ -19,176 +22,249 @@ public class TableValueOperator implements Serializable{
     private final List<?> headers;
     private final Label<?> labelContainer;
 
-    private Map<String, List<Expression> > sharpOperationStack;
-    private List<T_Row> tableStructure;
+    private List<_Row> tableEntry;
 
-    public TableValueOperator(List<?> headers, Label<?> labelContainer){
+    private Map<String, List<Label<Label>> > sharpOperationStack;
 
+    // constructor
+    public TableValueOperator(List<?> headers, Label<?> labelContainer) {
         this.labelContainer = labelContainer;
 
         if (headers == null)
             System.out.println("Header is null");
+
         this.headers = headers;
 
-        this.tableStructure = new LinkedList<>();
+        this.tableEntry = new LinkedList<>();
 
-        this.sharpOperationStack = new LinkedHashMap< String,List<Expression> >(){{
+        this.sharpOperationStack = new LinkedHashMap< String,List<Label<Label>>>(){{
             assert headers != null;
-            headers.forEach(s -> put( s.toString() , new LinkedList<>() ) );
+            headers.forEach(s -> put( s.toString() , new LinkedList<>()) );
         }};
     }
 
-    public void putSharpOperation(String headerName, Expression expression) {
-        List<Expression> operations = this.sharpOperationStack.get(headerName);
-        operations.add(expression);
+    private _Row getRow(int index){
+        return this.tableEntry.get(index);
     }
 
     // for each row it would be ArrayInitializer or Object Row
-    public Boolean setRows (Object object){
+    public Boolean setRows (Object object) {
 
-        if (object instanceof ArrayInitializer){
-            ArrayInitializer arrayInitializer = (ArrayInitializer) object;
-            List<Expression> expressionList = arrayInitializer.getInitializer();
+        // the table is just assigned
+        _Row row = new _Row(this.labelContainer.getRecorder());
 
-            if (expressionList.size() != headers.size())
-                return false;
+        row.initialRow(object);
 
-            T_Row t_row = new T_Row(expressionList);
-            this.tableStructure.add(t_row);
+        this.tableEntry.add(row);
+
+        for ( int i = 0 ; i < row.size() ; i ++) {
+            Label<Label> label = row.getRowItem(i);
+            String headerName = (String) this.headers.get(i);
+
+            this.sharpOperationStack.get(headerName).add(label);
         }
-
-        if (object instanceof Row){
-            Row row = (Row) object;
-
-            if (row.getType() == Row.EXPRESSION ){
-                Expression expRow = (Expression) row.getValue();
-                if ( expRow.isArray() ){
-                    T_Row t_row = new T_Row(expRow);
-                    this.tableStructure.add(t_row);
-                }
-            }
-
-            if (row.getType() == Row.ROW_ITEMS_ARRAY) {
-                Object value = row.getValue();
-                List rowItemList = (List) value;
-
-                T_Row t_row = new T_Row(rowItemList);
-                this.tableStructure.add(t_row);
-            }
-        }
-
         return true;
     }
 
+    public void newTableInitializer(TableInitializer tableInitializer) {
 
-    public List<Label<Label>> getRowList(int index) {
-        return this.tableStructure.get(index).getRow();
-    }
-
-    public Expression getRowExpression(int index ) {
-        return this.tableStructure.get(index).getExpRow();
-    }
-
-
-    // Row contains Expression and List
-    private class T_Row implements Serializable {
-
-        // the label List for each item in the table, in this way, when one item change, we can simply push the value into it.
-        private List<Label<Label> > rowLabel = new LinkedList<>();
-
-        // it may have the possibility for each row to be an expression( only is an array )
-        private Expression expRow ;
-
-        T_Row(Expression expRow) {
-            this.expRow = expRow;
+        if (this.tableEntry == null || this.tableEntry.size() == 0) {
+            tableInitializer.getInitializer().forEach(this::setRows);
+            return;
         }
 
-        T_Row(List<?> list) {
-            list.forEach(o -> {
-                // in this case, it is Expression String or a Number ( integer / floating )
-                if (o instanceof Expression ){
-                    Label<Label> itemLabel =  this.createLabel( o );
-                    this.rowLabel.add(itemLabel);
-                }
+        List<Row> rowList = tableInitializer.getInitializer();
+        List<_Row> tableEntryC = this.tableEntry;
+        this.tableEntry = new LinkedList<>();
 
-                // in this case, it is RowItem , in which we have Expression or ListInitializer
-                if (o instanceof RowItem){
-                    RowItem rowItem = (RowItem) o;
+        this.sharpOperationStack = new LinkedHashMap<String, List<Label<Label>>>() {{
+            assert headers != null;
+            headers.forEach(s -> put(s.toString(), new LinkedList<>()));
+        }};
 
-                    Label<Label> itemLabel = null;
-                    try {
-                        if (rowItem.getType() == RowItem.LIST_STRING) {
-                            ListInitializer listInitializer = (ListInitializer) rowItem.getValue();
-                            itemLabel = this.createLabel(listInitializer);
-                        } else
-                            itemLabel = this.createLabel(rowItem.getValue());
-                    } finally {
-                        this.rowLabel.add(itemLabel);
-                    }
-                }
-            });
+        for (int i = 0; i < rowList.size(); i++) {
+            Row row = rowList.get(i);
+            _Row _row = tableEntryC.get(i);
+
+            if (row.getType() == Row.EXPRESSION) {
+
+                Expression expRow = (Expression) row.getValue();
+                expRow.setCurrentLabel(_row);
+                expRow.setRecorder(this.labelContainer.getRecorder());
+                List array = expRow.getInitializer();
+                array.forEach(o -> {
+                    Expression expression = (Expression) o;
+                    //expression.print();
+                });
+                this.setRows(array);
+            } else this.setRows(row);
         }
 
-        private Label<Label> createLabel(Object o) {
 
-            Label<Label> rtnLabel = new Parameter(labelContainer.getRecorder()) ;
+    }
 
+    public void newTableInitializer(ArrayWrapperInitializer arrayWrapperInitializer) {
+
+        if (this.tableEntry == null || this.tableEntry.size() == 0) {
+            arrayWrapperInitializer.getInitializer().forEach(this::setRows);
+        }
+    }
+
+    public void sharpOperation(String yy, Expression value) {
+
+        if(this.sharpOperationStack == null  || this.sharpOperationStack.size() == 0)
+            return;
+
+        List<Label<Label>> labels = this.sharpOperationStack.get(yy);
+
+
+        // the value is valid for each label in the labelList
+
+        // 1, get type
+        // 2, replacement
+
+        labels.forEach(labelLabel -> {
+
+            value.setCurrentLabel(labelLabel);
+            value.setRecorder(this.labelContainer.getRecorder());
+            value.getType(); // in case the expression including SELF
+            System.out.println(" value " + value.getType() + " label " +labelLabel.getType());
+            value.setLocation(null,null);;
             try {
-                if (o instanceof Expression) {
-                    Expression expO = Expression.class.cast(o);
-                    rtnLabel.setType(expO.getType());
-                    rtnLabel.setValue(o);
-                }
-
-                if (o instanceof ListInitializer) {
-                    rtnLabel.setType(RIIF2Grammar.LIST);
-                    //System.out.println("the list should coming out  " + o.toString());
-                    rtnLabel.setValue(o);
-                }
-
-
-                rtnLabel.setName(RIIF2Grammar.TABLE_ITEM);
+                // this table with name Item type is
+                labelLabel.setValue(value);
+                ((Expression)labelLabel.getValue()).print();
             } catch (FieldTypeNotMarchException e) {
                 e.printStackTrace();
             }
-
-            return rtnLabel;
-        }
-
-        Expression getExpRow(){
-            return this.expRow;
-        }
-
-        public List< Label<Label> > getRow() {
-            if (this.rowLabel.size() == 0)
-                return null;
-
-            return this.rowLabel;
-        }
+        });
     }
 
+    public class _Row extends Label<Label> {
 
-    public void print() {
-        if ( this.tableStructure.size() == 0)
-            System.out.print(" Table size is null ");
-        else {
-            this.tableStructure.forEach(t_row -> {
-                List< Label<Label> > list = t_row.getRow();
+        // Object:: Expression | List
+        private List<Label<Label>> oneRow;
 
-                if (list == null ){
-                    Expression expression  = t_row.getExpRow();
-                    if ( expression != null ){
-                        System.out.print(" [ ");
-                        expression.print();
-                        System.out.print(" ] ");
-                    }
+        _Row(RIIF2Recorder recorder) {
+            super(recorder);
+            this.oneRow = new LinkedList<>();
+        }
 
-                }else {
-                    System.out.print("[ ");
-                    list.forEach(Label::print);
-                    System.out.print(" ]");
+        void initialRow(Object rowItem) {
+            // array wrapper initializer
+            if (rowItem instanceof ArrayInitializer) {
+                ArrayInitializer arrayInitializer = (ArrayInitializer) rowItem;
+                List<Expression> array = arrayInitializer.getInitializer();
+
+                array.forEach(expression -> {
+                    Label<Label> label = this.createLabel(RIIF2Grammar.ITEMS ,expression.getType(), expression);
+                    this.addItem(label);
+                });
+            }
+
+            // the expression returned array
+            if (rowItem instanceof List){
+                ((List) rowItem).forEach(o -> {
+                    Label<Label> label = this.createLabel(RIIF2Grammar.ITEMS, ((Expression)o).getType(),o);
+                    this.addItem(label);
+                });
+            }
+
+            // table initializer , in this case we have Row  -> rowItem list | expression
+            if (rowItem instanceof Row) {
+                Row row = (Row) rowItem;
+
+                // rowItem list
+                if (row.getType() == Row.ROW_ITEMS_ARRAY) {
+                    List rowItems = (List) row.getValue();
+
+                    rowItems.forEach(o -> {
+                        if (o instanceof RowItem) {
+                            RowItem item = (RowItem)o;
+                            if ( item.getType() == RowItem.LIST_STRING){
+                                ListInitializer listInitializer = (ListInitializer) item.getValue();
+                                Label<Label> label = this.createLabel(RIIF2Grammar.ITEMS,RIIF2Grammar.LIST,listInitializer);
+                                this.addItem(label);
+                            }
+
+                            if ( item.getType() == RowItem.EXPRESSION) {
+                                Expression exp = (Expression) item.getValue();
+                                exp.setCurrentLabel(TableValueOperator.this.labelContainer);
+                                exp.setRecorder(this.getRecorder());
+                                Label<Label> label = this.createLabel(RIIF2Grammar.ITEMS,((Expression)item.getValue()).getType(),item.getValue());
+                                this.addItem(label);
+                            }
+                        }
+                    });
                 }
-            });
+            }
+        }
+
+        private Label<Label> createLabel(String items, String type, Object value){
+
+            Parameter parameter = new Parameter(TableValueOperator.this.labelContainer.getRecorder());
+
+            try {
+                parameter.setName(items);
+                parameter.setType(type);
+                parameter.setValue(value);
+            }
+            catch (FieldTypeNotMarchException e) {
+                e.printStackTrace();
+            }
+
+            return parameter;
+        }
+
+        private void addItem(Label<Label> object) {
+            this.oneRow.add(object);
+        }
+
+        public Label<Label> getRowItem(int index) {
+            return this.oneRow.get(index);
+        }
+
+        @Override
+        public void setPlatform(RIIF2Recorder recorder) {}
+
+        @Override
+        public RIIF2Recorder getPlatform() {
+            return null;
+        }
+
+        @Override
+        public void print() {
+
+            if (this.oneRow == null || this.oneRow.size() == 0) {
+                System.out.print(" null ");
+                return;
+            }
+
+            System.out.print(" [ ");
+            this.oneRow.forEach(Label::print);
+
+            System.out.print(" ] ");
+        }
+
+        public int size() {
+            if (this.oneRow == null )
+                return 0;
+
+            return this.oneRow.size();
         }
     }
+
+    public void print(){
+
+        if (this.tableEntry != null && this.tableEntry.size() != 0 ) {
+
+            System.out.print(" { ");
+            this.tableEntry.forEach(_Row::print);
+            System.out.print(" } ");
+        }
+        else
+            System.out.print(" null ");
+
+    }
+
 }

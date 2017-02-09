@@ -68,6 +68,37 @@ class ExpressionOperator implements Serializable{
         return expression.value();
     }
 
+    public List getArray(Expression srcExpression) throws FieldTypeNotMarchException {
+        if ( this.isArray(srcExpression) ) {
+            Object result = this.getValue(srcExpression);
+
+            if (!( result instanceof ArrayInitializer ) )
+                return null;
+
+            List<Expression> array = ((ArrayInitializer) result).getInitializer();
+
+            if (this.currentLabel instanceof TableValueOperator._Row){
+
+                TableValueOperator._Row  row = (TableValueOperator._Row) this.currentLabel;
+
+                for ( int i= 0; i< row.size() ; i ++){
+                    Label<Label> label = row.getRowItem(i);
+                    Expression expression = array.get(i);
+
+                    expression.setCurrentLabel(label);
+                    expression.setRecorder(label.getRecorder());
+
+                    expression.getType();
+                }
+            }
+
+            return array;
+        }
+
+
+        return null;
+    }
+
     boolean isBoolean(Expression srcExpression) throws FieldTypeNotMarchException {
 
         String type = this.getType(srcExpression);
@@ -167,8 +198,9 @@ class ExpressionOperator implements Serializable{
                 if (currentOperation.isOprWithTwoExpression())
                     this.oprArrayWithTwoExpression(currentOperation.getOpr(),
                             srcExpression,oprExpression,targetExpression);
+            }
 
-            }else {
+            else {
 
                 if (currentOperation.isOprWithSelf())
                     this.oprWithSelfExpression(currentOperation.getOpr()
@@ -199,6 +231,8 @@ class ExpressionOperator implements Serializable{
 
         if (opr == OP_IF_ELSE) {
 
+            System.out.println("oper");
+
             if (!srcExpression.type().equals(RIIF2Grammar.BOOLEAN) )
                 throw new FieldTypeNotMarchException(RIIF2Grammar.BOOLEAN,
                         srcExpression.getLine(), srcExpression.getColumn());
@@ -207,6 +241,7 @@ class ExpressionOperator implements Serializable{
                 srcExpression.setValue(oprExpression.getValue());
                 srcExpression.setType(oprExpression.getType());
             }
+
             else {
                 srcExpression.setValue(oprTargetExpression.getValue());
                 srcExpression.setType(oprExpression.getType());
@@ -467,30 +502,6 @@ class ExpressionOperator implements Serializable{
     private void resolvedThis(Expression srcExpression) throws FieldTypeNotMarchException {
         LabelExtractor labelExtractor = new LabelExtractor(srcExpression,this.recorder);
 
-        if (srcExpression.type().equals(RIIF2Grammar.ARRAY)){
-            // retrieve the array and go inside to resolve all of the elements
-
-            if (!(srcExpression.value() instanceof ArrayInitializer))
-                throw new FieldTypeNotMarchException(RIIF2Grammar.ARRAY,
-                        srcExpression.getLine(),srcExpression.getColumn());
-
-            ArrayInitializer arrayInitializer = (ArrayInitializer) srcExpression.value();
-            List<Expression> items = arrayInitializer.getInitializer();
-
-            final int[] i = {-1};
-            items.forEach(expression -> {
-                i[0]++;
-                this.currentLabel.set_self2(i[0]);
-                try {
-                    this.resolvedThis(expression);
-                } catch (FieldTypeNotMarchException e) {
-                    e.printStackTrace();
-                    System.exit(1);
-                }
-            });
-            this.currentLabel.set_self2(-1);
-        }
-
         if ( srcExpression.type().equals(RIIF2Grammar.USER_DEFINED)){
 
             DeclaratorId Id = (DeclaratorId) srcExpression.value();
@@ -499,13 +510,13 @@ class ExpressionOperator implements Serializable{
             if (this.currentLabel.isEnumType() ){
                 srcExpression.setType(RIIF2Grammar.STRING);
                 srcExpression.setValue(id);
+            }
 
-            }else {
+            else {
                 Label<Label> extractedLabel  = labelExtractor.extractor();
 
                 if (extractedLabel== null )
-                    throw new FieldTypeNotMarchException(id,
-                            srcExpression.getLine(), srcExpression.getColumn());
+                    throw new FieldTypeNotMarchException(id, srcExpression.getLine(), srcExpression.getColumn());
 
 
                 srcExpression.setValue(extractedLabel.getValue());
@@ -514,9 +525,7 @@ class ExpressionOperator implements Serializable{
                 if (extractedLabel.isEnumType()){
                     srcExpression.setEnumLabel(extractedLabel);
                 }
-
             }
-
         }
 
         if ( srcExpression.type().equals(RIIF2Grammar.SELF) ){
@@ -524,8 +533,8 @@ class ExpressionOperator implements Serializable{
             if (this.currentLabel == null )
                 System.exit(1);
 
-            srcExpression.setValue(this.currentLabel.getSelfValue());
-            srcExpression.setType(this.currentLabel.getSelfValueType());
+            srcExpression.setValue(this.currentLabel.getValue());
+            srcExpression.setType(this.currentLabel.getType());
 
         }
 
@@ -638,6 +647,8 @@ class ExpressionOperator implements Serializable{
 
                 if (!srcType.equals(oprType)) {
 
+                  // System.out.println(" src Type " + srcType + " opr Type " + oprType);
+
                     if ( (srcType.equals(RIIF2Grammar.DOUBLE) && oprType.equals(RIIF2Grammar.INTEGER) ) ||
                             (srcType.equals(RIIF2Grammar.INTEGER) && oprType.equals(RIIF2Grammar.DOUBLE)) ){
                         srcType = RIIF2Grammar.DOUBLE;
@@ -710,6 +721,12 @@ class ExpressionOperator implements Serializable{
             }
         }
 
+        if ( expression.type().equals(RIIF2Grammar.SELF)){
+            expression.setValue(this.currentLabel.getValue());
+            expression.setType(this.currentLabel.getType());
+            return this.currentLabel.getType();
+        }
+
         if ( !expression.type().equals(RIIF2Grammar.USER_DEFINED))
             return expression.type();
 
@@ -740,5 +757,4 @@ class ExpressionOperator implements Serializable{
     public void setRecorder(RIIF2Recorder recorder) {
         this.recorder = recorder;
     }
-
 }

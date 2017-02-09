@@ -8,17 +8,28 @@ component VADD implements SW_COMPONENT;
     set WRITE_ACCESS = 75*NUMBER_OF_ITEMS / 10000;
     set LOOPS = 3;
     set executed_on = VECTORCALC_CORE;
-    child_component cpu VPRINT ;
 
-    set TIMING_CONSTRAINTS'ITEMS = {
-    ["TEST_BENCH1",0.0000001,2,0.000001],
-    ["TEST_BENCH2",0.0000003,2.1, 0.0000004] }
+    set TIMING_CONSTRAINTS'ITEMS = {  ["TEST_BENCH1",0.0000001,2,0.000001], ["TEST_BENCH2",0.0000003,2.1, 0.0000004] } ;
 
     set SFB'ITEMS = {
         [ "permanent", "WRONG_DATA", SFB_ITEMS, {0.893, 0.107, 0, 0, 0.891, 0.042, 0.067, 0.413, 0.109,0.052,0.426 } ],
         [ "permanent", "WRONG_DATA", SFB_ITEMS, {0.893, 0.107, 0, 0, 0.891, 0.042, 0.067, 0.413, 0.109,0.052,0.426 } ],
         [ "permanent", "WRONG_DATA", SFB_ITEMS, {0.893, 0.107, 0, 0, 0.891, 0.042, 0.067, 0.413, 0.109,0.052,0.426 } ],
-        [ "permanent", "WRONG_DATA", SFB_ITEMS, {0.893, 0.107, 0, 0, 0.891, 0.042, 0.067, 0.413, 0.109,0.052,0.426 } ]
+        [ "permanent", "WRONG_DATA", SFB_ITEMS, {0.893, 0.107, 0, 0, 0.891, 0.042, 0.067, 0.413, 0.109,0.052,0.426 } ] };
+endcomponent
 
+component VADD_VARIABLE_DUPLICATION_VER1 extends VADD;
+    set NAME = "vector ADD_with_Variable_Duplication";
+    set PROTECTION = VAR_DUP;
+    assign TIMING_CONSTRAINS'ITEMS = {
+        (PROTECTION ==VAR_DUP)? ["TEST_BENCH1",self+0.001,self+0.2,self+0.0015]:["TEST_BENCH1",self,self,self ],
+        (PROTECTION == VAR_DUP)? ["TEST_BENCH1",self+0.001,self+0.2,self+0.0015]:["TEST_BENCH1",self,self,self ]
     };
 endcomponent
+
+component VADD_VARIABLE_DUPLICATION_VER2 extends VADD;
+    assign TIMING_CONSTRAINS'ITEMS[#][EXEC_TIME]= (PROTECTION == VAR_DUP)? self + 0.001 : self ;
+    assign TIMING_CONSTRAINS'ITEMS[#][MAX_TIME]= (PROTECTION == VAR_DUP)? self + 0.2 : self;
+    assign TIMING_CONSTRAINS'ITEMS[#][AVG_TIME]= (PROTECTION == VAR_DUP)? self + 0.0015 : self ;
+endcomponent
+
