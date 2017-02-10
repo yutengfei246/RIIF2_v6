@@ -281,6 +281,8 @@ public class FieldFactory implements Factory{
 
         assert this.fieldLabel != null;
         this.fieldLabel.setName(name); // set the name to the field
+        PreDefinedAttribute.FieldAttribute(this.fieldLabel,this.recorder);
+        this.fieldLabel.print();
 
 
         // have a decision of the primitiveType (float, integer,String or anything else )
@@ -359,7 +361,7 @@ public class FieldFactory implements Factory{
     }
 
     // create a field label with given name and type and return it back
-    private Label<Label> createFieldLabel1(String name, String type){
+    private Label<Label> createFieldLabel1(String name, String type) throws FieldTypeNotMarchException {
         Label<Label> fieldLabel = null;
 
         if (Objects.equals(RIIF2Grammar.FIELD_PARAMETER, this.fieldType.getType()))
@@ -369,6 +371,7 @@ public class FieldFactory implements Factory{
 
         assert fieldLabel != null;
 
+        PreDefinedAttribute.FieldAttribute(fieldLabel,this.recorder);
         fieldLabel.setName(name);
         fieldLabel.setType(type);
 

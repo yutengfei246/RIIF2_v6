@@ -24,7 +24,6 @@ public class FailMode extends Label<Label> {
         System.out.print("Fail_Mode " + this.getName());
 
         super.printAttribute();
-
         super.printAssociative();
     }
 }

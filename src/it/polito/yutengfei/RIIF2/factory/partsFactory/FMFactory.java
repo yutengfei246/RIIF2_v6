@@ -130,6 +130,7 @@ public class FMFactory implements Factory {
         this.fm = new FailMode(this.recorder);
         this.fm.setType(RIIF2Grammar.FAIL_MODE);
         this.fm.setName(fmName);
+        PreDefinedAttribute.FieldAttribute(this.fm,this.recorder);
 
         if (this.declaratorId.hasTypeType() ){
             RIIF2Type TypeType = this.declaratorId.getTypeType();

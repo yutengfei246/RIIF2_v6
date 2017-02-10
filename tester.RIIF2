@@ -1,96 +1,50 @@
-component VECTORCALC_CORE;
-// An hardware component performing vectorial calculations
+component FAST_CPU;
 
-//parameter fail_mode SBU;
-fail_mode SBU;
-assign SBU'RATE = 10; //obtained from radiation tests
+// For simple model, MTTF is static constant
+  fail_mode CHIP_FAIL;
+  assign CHIP_FAIL'description = "Permanent hard chip failure. " ;
+  assign CHIP_FAIL'unit = MTTF;
+  assign CHIP_FAIL'RATE = 1000000;
 
-parameter SW_FM: table;
-assign SW_FM'HEADERS = {FAILMODE,SFM,RATE};
-assign SW_FM'ITEMS = { //obtained from fault injection
-    ["SUB", "WRONG_DATA", 0.3*SBU'RATE],
-    ["SBU", "WRONG_INSTRUCTION",0.2*SBU'RATE]
-    } ;
+  parameter VOLTAGE : float := 1.0;               // Voltage at transistor
+  assign VOLTAGE'unit = volts;
+  assign VOLTAGE'min = 0.8;
+  assign VOLTAGE'max = 1.2;
+
 endcomponent
 
-template SW_COMPONENT;
-    //all programs must define the name,size...
 
-    abstract parameter NAME:string;
-    abstract parameter SIZE:integer;
-    abstract parameter LOOPS: integer;
-    abstract parameter PROTECTION: enum {NONE, VAR_DUP};
-    abstract parameter READ_ACCESS: integer;
-    abstract parameter WRITE_ACCESS: integer;
-    abstract platform execute_on;
+component IMPROVED_SRAM_MEMORY;
+// --------------------- Parameter Declaration ----------------------------
+  parameter VOLTAGE : float := 1.0;               // voltage at transistor
+  assign VOLTAGE'unit = volts;
+  assign VOLTAGE'min = 0.8;       // Valid range over which RAM is characterized
+  assign VOLTAGE'max = 1.2;
 
-    //List of possible SFB considered in our library
-    abstract constant SFB_ITEMS : integer := 1000000;
-    abstract constant SFB_LIST := { INT_TIME, UNDETECTABLE,
-                    EARLY, LATE, FULL_UNRESPONSIVE, PARTIAL_UNRESPONSIVE,
-                    RESPONSIVE, DATA_BENIGN, NO_DATA, EDC, NON_EDC };
+  parameter NEUTRON_ENV_DEF : NEUTRON_ENV;  // parameter of type NEUTRON_ENV_DEF
 
-    // Timing constraints depending on the workload
-    abstract parameter TIMING_CONSTRAINTS : table;
-    impose TIMING_CONSTRAINTS'HEADERS = {WORKLOAD,EXEC_TIME,MAX_TIME,AVG_TIME};
+// --------------------- Constant Declaration -----------------------------
+  constant A_DIFF : float := 3.2;        // Constant obtained from layout
+  constant Q_COL_EFF : float := 0.6;     // Represent Qcrit/Qcoll
+  constant MBE_RATIO : float := 0.25;    // For now, simple ratio of MBEs to SBEs
 
-    abstract parameter SFB : table;
-    impose SFB'HEADERs = {SFM_TYPE,SFM,OCCURING_SFB,OCCURRING_SFB_RATE};
-endtemplate
+// --------------------- Define Failure Modes -----------------------------
+// Neutron SBE failures are proportional to Qcrit/Qeff. Qcrit depends on V.
+// For simple example, only consider Neutron SER.
+  fail_mode SBE;
+  assign SBE'description = "Single bit soft error, alpha and neutron.";
+  assign SBE'unit = FITS;
+  assign SBE'rate = NEUTRON_ENV'REL_FLUX * A_DIFF * EXP( - VOLTAGE / Q_COL_EFF);
 
-component cpu;
+// For this simple example, MBE is fixed ratio of SBE
+  fail_mode MBE;
+  assign MBE'description = "Multi-bit soft error, alpha and neutron.";
+  assign MBE'unit = FITS;
+  assign MBE'rate = SBE'RATE * MBE_RATIO;
+
+// For simple model, MTTF is static constant
+  fail_mode CHIP_FAIL;
+  assign CHIP_FAIL'description = "Permanent hard chip failure.";
+  assign CHIP_FAIL'unit = MTTF;
+
 endcomponent
-
-component VADD implements SW_COMPONENT;
-    set NAME = "Vector ADD";
-    set SIZE = 524;
-    set PROTECTION = NONE;
-    constant NUMBER_OF_ITEMS :integer:= 10000;
-    set READ_ACCESS = 76*NUMBER_OF_ITEMS / 10000;
-    set WRITE_ACCESS = 75*NUMBER_OF_ITEMS / 10000;
-    set LOOPS = 3;
-    child_component cpu VPRINT ;
-
-    set execute_on = VECTORCALC_CORE;
-
-
-    set TIMING_CONSTRAINTS'ITEMS = {
-        ["TEST_BENCH1",0.0000001,2, 0.000001],
-        ["TEST_BENCH2",0.0000003,2.1, 0.0000004] };
-
-    set SFB'ITEMS = {
-        [ "permanent", "WRONG_DATA", SFB_ITEMS, {0.893, 0.107, 0, 0, 0.891, 0.042, 0.067, 0.413, 0.109,0.052,0.426 } ],
-        [ "permanent", "WRONG_DATA", SFB_ITEMS, {0.893, 0.107, 0, 0, 0.891, 0.042, 0.067, 0.413, 0.109,0.052,0.426 } ],
-        [ "permanent", "WRONG_DATA", SFB_ITEMS, {0.893, 0.107, 0, 0, 0.891, 0.042, 0.067, 0.413, 0.109,0.052,0.426 } ],
-        [ "permanent", "WRONG_DATA", SFB_ITEMS, {0.893, 0.107, 0, 0, 0.891, 0.042, 0.067, 0.413, 0.109,0.052,0.426 } ]
-
-    };
-endcomponent
-
-    component VADD_VARIABLE_DUPLICATION_VER1 extends VADD;
-
-        set NAME = "vector ADD_with_Variable_Duplication";
-        set PROTECTION = VAR_DUP;
-        set TIMING_CONSTRAINTS'ITEMS = {
-        (PROTECTION != VAR_DUP)?
-        ["TEST_BENCH1",self+0.001,self+0.9,self+0.0015]:
-        ["TEST_BENCH1",self,self,self ],
-
-        (PROTECTION == VAR_DUP)?
-        ["TEST_BENCH3",self+0.001,self+0.2,self+100]:
-        ["TEST_BENCH3",self,self,self+10000 ]
-        };
-
-    endcomponent
-
-    component VADD_VARIABLE_DUPLICATION_VER2 extends VADD_VARIABLE_DUPLICATION_VER1;
-
-    set TIMING_CONSTRAINTS'ITEMS[#][EXEC_TIME]=
-        (PROTECTION == VAR_DUP) ? self + 2000000: self + 200000;
-    set TIMING_CONSTRAINTS'ITEMS[#][MAX_TIME]=
-        (PROTECTION == VAR_DUP)? self+ 10: self  + 2000000;
-    set TIMING_CONSTRAINTS'ITEMS[#][AVG_TIME]=
-        (PROTECTION == VAR_DUP)? self + 200: self + 2000000 ;
-
-    endcomponent
-

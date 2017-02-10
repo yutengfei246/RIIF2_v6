@@ -51,15 +51,18 @@ public class Attribute extends Label<Label> {
                 expression.print();
             }
 
-            if (value instanceof List){
+            else if (value instanceof List){
                 System.out.print(" " + ((List)value).toString() + " " );
             }
 
 
-            if (value instanceof TableValueOperator){
+            else if (value instanceof TableValueOperator){
                 TableValueOperator tableValueOperator = (TableValueOperator) value;
                 tableValueOperator.print();
             }
+
+            else
+                System.out.print(" " + value.toString() + "  ");
         }else
             System.out.print("null; ");
 

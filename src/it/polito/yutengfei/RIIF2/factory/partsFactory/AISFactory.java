@@ -145,7 +145,6 @@ public class AISFactory implements Factory{
                 this.aisLabel
                         = ((RIIF2Recorder)this.aisLabel.getValue()).getLabel(labelName);
             }
-
         }
 
         if (this.aisLabel == null )
@@ -228,7 +227,6 @@ public class AISFactory implements Factory{
             if (this.aisLabel == null)
                 throw new SomeVariableMissingException(hierPostfixName,
                         hierPostfixId.getLine(), hierPostfixId.getColumn());
-
         }
     }
 
@@ -239,8 +237,7 @@ public class AISFactory implements Factory{
             Id attributeId = this.declaratorId.getAttributeIndex();
             String attributeIndex = attributeId.getId();
 
-            Label<Label> tempLabel;
-            tempLabel = this.aisLabel.getAttribute(attributeIndex);
+            Label<Label> tempLabel = this.aisLabel.getAttribute(attributeIndex);
 
             if (tempLabel == null){
                 tempLabel = PreDefinedAttribute.createAttribute(attributeIndex,RIIF2Grammar.STRING,null,this.recorder);
@@ -249,7 +246,6 @@ public class AISFactory implements Factory{
             this.aisLabel = tempLabel;
         }
     }
-
 
     // pay attention: the ais value should be pushed into a stack
     private void assignInitializer() throws FieldTypeNotMarchException, SomeVariableMissingException {
@@ -318,6 +314,9 @@ public class AISFactory implements Factory{
 
                         this.aisLabel.setValue(platformRecorder);
                     }
+
+                    else
+                        throw new FieldTypeNotMarchException(this.aisLabel.getName(), expInitializer.getLine(), expInitializer.getColumn());
 
                 }
 

@@ -4,7 +4,7 @@ component FAST_CPU;
   fail_mode CHIP_FAIL;
   assign CHIP_FAIL'description = "Permanent hard chip failure. " ;
   assign CHIP_FAIL'unit = MTTF;
-  assign CHIP_FAIL'rate = 1000000;
+  assign CHIP_FAIL'RATE = 1000000;
 
   parameter VOLTAGE : float := 1.0;               // Voltage at transistor
   assign VOLTAGE'unit = volts;
@@ -12,6 +12,7 @@ component FAST_CPU;
   assign VOLTAGE'max = 1.2;
 
 endcomponent
+
 component IMPROVED_SRAM_MEMORY;
 // --------------------- Parameter Declaration ----------------------------
   parameter VOLTAGE : float := 1.0;               // voltage at transistor

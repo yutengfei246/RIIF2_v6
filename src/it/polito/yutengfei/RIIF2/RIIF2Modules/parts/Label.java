@@ -67,10 +67,16 @@ public abstract class Label<T extends Label> extends ValueMember{
     }
 
     public void putAttribute(String attributeName, Attribute attribute) {
+        if (this.attributeMap == null )
+            this.setAttribute(true);
+
         this.attributeMap.put(attributeName,attribute);
     }
 
     public Attribute getAttribute(String attributeName) {
+        if (this.attributeMap == null )
+            return null;
+
         return this.attributeMap.get(attributeName);
     }
 
