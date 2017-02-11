@@ -18,7 +18,6 @@ import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.recoder.Repository;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
-import org.w3c.dom.Attr;
 
 import java.util.List;
 import java.util.Map;
@@ -55,11 +54,13 @@ public class AISFactory implements Factory{
     private void aisDeclaration() throws FieldTypeNotMarchException, SomeVariableMissingException {
 
         if (this.primitiveId != null ) {
+
             this.positionAisLabelPrimitiveId();
             this.positionAisAssociative();
             this.positionHierPostfix();
             this.positionAttribute();
             this.assignInitializer();
+
         }
     }
 
@@ -237,137 +238,146 @@ public class AISFactory implements Factory{
             Id attributeId = this.declaratorId.getAttributeIndex();
             String attributeIndex = attributeId.getId();
 
-            Label<Label> tempLabel = this.aisLabel.getAttribute(attributeIndex);
-
-            if (tempLabel == null){
-                tempLabel = PreDefinedAttribute.createAttribute(attributeIndex,RIIF2Grammar.STRING,null,this.recorder);
-                this.aisLabel.putAttribute(attributeIndex, (Attribute) tempLabel);
+            // if the current label is child component then we need to pass value into the child component
+            if ( this.aisLabel instanceof ChildComponent){
+                RIIF2Recorder childComponent = (RIIF2Recorder) this.aisLabel.getValue();
+                this.aisLabel = childComponent.getLabel(attributeIndex);
             }
-            this.aisLabel = tempLabel;
+
+            else {
+                Label<Label> tempLabel = this.aisLabel.getAttribute(attributeIndex);
+
+                if (tempLabel == null) {
+                    tempLabel = PreDefinedAttribute.createAttribute(attributeIndex, RIIF2Grammar.STRING, null, this.recorder);
+                    this.aisLabel.putAttribute(attributeIndex, (Attribute) tempLabel);
+                }
+                this.aisLabel = tempLabel;
+            }
         }
     }
 
     // pay attention: the ais value should be pushed into a stack
     private void assignInitializer() throws FieldTypeNotMarchException, SomeVariableMissingException {
 
-            // if the initializer is an expression
-            if (this.initializer instanceof Expression) {
+        if ( this.aisLabel == null )
+            throw new SomeVariableMissingException(this.declaratorId.toString(), this.declaratorId.getLine(), this.declaratorId.getColumn());
 
-                Expression expInitializer = (Expression) this.initializer;
-                expInitializer.setRecorder(this.recorder);
-                expInitializer.setCurrentLabel(this.aisLabel);
+        // if the initializer is an expression
+        if (this.initializer instanceof Expression) {
 
-                // the expInitializer type is USER_DEFINED
-                if (expInitializer.type().equals(RIIF2Grammar.USER_DEFINED)) {
+            Expression expInitializer = (Expression) this.initializer;
+            expInitializer.setRecorder(this.recorder);
+            expInitializer.setCurrentLabel(this.aisLabel);
 
-                    Id primitiveId = ((DeclaratorId)expInitializer.value()).getPrimitiveId();
+            // the expInitializer type is USER_DEFINED
+            if (expInitializer.getType().equals(RIIF2Grammar.USER_DEFINED)) {
 
-                    // the expInitializer is a enum element.
-                    if (this.aisLabel.isEnumType()) {
-                        String enumType = primitiveId.getId();
+                Id primitiveId = ((DeclaratorId) expInitializer.value()).getPrimitiveId();
 
-                        if (primitiveId.getType().equals(RIIF2Grammar.TYPE_HIER))
-                            throw new FieldTypeNotMarchException(enumType, expInitializer.getLine(), expInitializer.getColumn());
+                // the expInitializer is a enum element.
+                if (this.aisLabel.isEnumType()) {
+                    String enumType = primitiveId.getId();
 
-                        else if (!this.aisLabel.getEnumType().contains(enumType))
-                            throw new SomeVariableMissingException(enumType,expInitializer.getLine(),expInitializer.getColumn());
+                    if (primitiveId.getType().equals(RIIF2Grammar.TYPE_HIER))
+                        throw new FieldTypeNotMarchException(enumType, expInitializer.getLine(), expInitializer.getColumn());
 
-                        else
-                            this.aisLabel.setValue(enumType);
-                    }
-
-                    // current label is an attribute
-                    else if (this.aisLabel instanceof Attribute) {
-
-                        // the expInitializer is a attribute unit.
-                        if (this.aisLabel.getName().equals(RIIF2Grammar.UNIT)) {
-                            String unit = primitiveId.getId();
-
-                            if (primitiveId.getType().equals(RIIF2Grammar.TYPE_HIER))
-                                throw new FieldTypeNotMarchException(unit, expInitializer.getLine(), expInitializer.getColumn());
-                            else
-                                this.aisLabel.setValue(unit);
-                        }
-
-                        //..tableId  = 'Item[][]
-                        // in this case, the aisLable is a attribute label ITEMS of a Table label and the tableIndex would have two different case.
-                        else if (this.aisLabel.getName().equals(RIIF2Grammar.ITEMS) && this.declaratorId.hasTableIndex() ){
-
-                            Id tableIndex = this.declaratorId.getTableIndex();
-                            String xx = tableIndex.getXX();
-                            String yy = tableIndex.getYY();
-
-                           // expInitializer.isValid(); // throw Exceptions
-                            expInitializer.setLocation(xx,yy);
-                            this.aisLabel.setValue(expInitializer);
-                        }
-                    }
-
-                    // the type is platform
-                    else if (this.aisLabel.getType().equals(RIIF2Grammar.PLATFORM)) {
-                        String componentId =  primitiveId.getId();
-
-                        if (!Repository.containsComponent(componentId))
-                            throw new SomeVariableMissingException(componentId,expInitializer.getLine(), expInitializer.getColumn());
-
-                        RIIF2Recorder platformRecorder = (RIIF2Recorder) Repository.getDeepCopedRecorderFromComponentRepository(componentId);
-
-                        this.aisLabel.setValue(platformRecorder);
-                    }
+                    else if (!this.aisLabel.getEnumType().contains(enumType))
+                        throw new SomeVariableMissingException(enumType, expInitializer.getLine(), expInitializer.getColumn());
 
                     else
-                        throw new FieldTypeNotMarchException(this.aisLabel.getName(), expInitializer.getLine(), expInitializer.getColumn());
-
+                        this.aisLabel.setValue(enumType);
                 }
 
-                // if the the expInitializer type same with current label type
-                else if (expInitializer.getType().equals( this.aisLabel.getType()) )
-                    this.aisLabel.setValue(expInitializer);
+                // current label is an attribute
+                else if (this.aisLabel instanceof Attribute) {
 
-                else if (expInitializer.getType().equals( RIIF2Grammar.INTEGER)
-                            && this.aisLabel.getType().equals(RIIF2Grammar.DOUBLE) )
-                    this.aisLabel.setValue(expInitializer);
+                    // the expInitializer is a attribute unit.
+                    if (this.aisLabel.getName().equals(RIIF2Grammar.UNIT)) {
+                        String unit = primitiveId.getId();
 
-                else
-                    throw new FieldTypeNotMarchException( this.aisLabel.getName()
-                            + ":" + this.aisLabel.getType()
-                            + " , " + expInitializer.getType(), expInitializer.getLine(), expInitializer.getColumn());
-            }
+                        if (primitiveId.getType().equals(RIIF2Grammar.TYPE_HIER))
+                            throw new FieldTypeNotMarchException(unit, expInitializer.getLine(), expInitializer.getColumn());
+                        else
+                            this.aisLabel.setValue(unit);
+                    }
 
-            // if the initializer is a listInitializer
-            if (this.initializer instanceof ListInitializer) {
-                ListInitializer listInitializer = (ListInitializer) this.initializer;
-                this.aisLabel.setValue(listInitializer );
-            }
+                    //..tableId  = 'Item[][]
+                    // in this case, the aisLable is a attribute label ITEMS of a Table label and the tableIndex would have two different case.
+                    else if (this.aisLabel.getName().equals(RIIF2Grammar.ITEMS) && this.declaratorId.hasTableIndex()) {
 
+                        Id tableIndex = this.declaratorId.getTableIndex();
+                        String xx = tableIndex.getXX();
+                        String yy = tableIndex.getYY();
 
-            // no this case
-            if (this.initializer instanceof ArrayInitializer){
-                throw new FieldTypeNotMarchException(this.aisLabel.getName(), this.initializer.getLine(),this.initializer.getColumn());
-            }
-
-            if (this.initializer instanceof ArrayWrapperInitializer){
-                this.aisLabel.setValue(this.initializer);
-           //     System.out.println("After assign ");
-            }
-
-            // the initializer is a tableInitializer
-            if (this.initializer instanceof TableInitializer){
-
-                TableInitializer tableInitializer
-                        = (TableInitializer) this.initializer;
-
-                if (!(this.aisLabel instanceof Attribute)
-                        || ( !this.aisLabel.getName().equals(RIIF2Grammar.HEADER)
-                             && !this.aisLabel.getName().equals(RIIF2Grammar.ITEMS) )
-                        ) {
-                    throw new FieldTypeNotMarchException( RIIF2Grammar.ASSIGNMENT,
-                            tableInitializer.getLine(),
-                            tableInitializer.getColumn());
+                        // expInitializer.isValid(); // throw Exceptions
+                        expInitializer.setLocation(xx, yy);
+                        this.aisLabel.setValue(expInitializer);
+                    }
                 }
 
-                this.aisLabel.setValue(tableInitializer);
+                // the type is platform
+                else if (this.aisLabel.getType().equals(RIIF2Grammar.PLATFORM)) {
+                    String componentId = primitiveId.getId();
+
+                    if (!Repository.containsComponent(componentId))
+                        throw new SomeVariableMissingException(componentId, expInitializer.getLine(), expInitializer.getColumn());
+
+                    RIIF2Recorder platformRecorder = (RIIF2Recorder) Repository.getDeepCopedRecorderFromComponentRepository(componentId);
+
+                    this.aisLabel.setValue(platformRecorder);
+                } else
+                    throw new FieldTypeNotMarchException(this.aisLabel.getName(), expInitializer.getLine(), expInitializer.getColumn());
+
             }
+
+            // if the the expInitializer type same with current label type
+            else if (expInitializer.getType().equals(this.aisLabel.getType()))
+                this.aisLabel.setValue(expInitializer);
+
+            else if (expInitializer.getType().equals(RIIF2Grammar.INTEGER)
+                    && this.aisLabel.getType().equals(RIIF2Grammar.DOUBLE))
+                this.aisLabel.setValue(expInitializer);
+
+            else
+                throw new FieldTypeNotMarchException(this.aisLabel.getName()
+                        + ":" + this.aisLabel.getType()
+                        + " , " + expInitializer.getType(), expInitializer.getLine(), expInitializer.getColumn());
+        }
+
+        // if the initializer is a listInitializer
+        if (this.initializer instanceof ListInitializer) {
+            ListInitializer listInitializer = (ListInitializer) this.initializer;
+            this.aisLabel.setValue(listInitializer);
+        }
+
+
+        // no this case
+        if (this.initializer instanceof ArrayInitializer) {
+            throw new FieldTypeNotMarchException(this.aisLabel.getName(), this.initializer.getLine(), this.initializer.getColumn());
+        }
+
+        if (this.initializer instanceof ArrayWrapperInitializer) {
+            this.aisLabel.setValue(this.initializer);
+            //     System.out.println("After assign ");
+        }
+
+        // the initializer is a tableInitializer
+        if (this.initializer instanceof TableInitializer) {
+
+            TableInitializer tableInitializer
+                    = (TableInitializer) this.initializer;
+
+            if (!(this.aisLabel instanceof Attribute)
+                    || (!this.aisLabel.getName().equals(RIIF2Grammar.HEADER)
+                    && !this.aisLabel.getName().equals(RIIF2Grammar.ITEMS))
+                    ) {
+                throw new FieldTypeNotMarchException(RIIF2Grammar.ASSIGNMENT,
+                        tableInitializer.getLine(),
+                        tableInitializer.getColumn());
+            }
+
+            this.aisLabel.setValue(tableInitializer);
+        }
     }
 
     private Label<Label> createLabel(String associativeIndex, Label tempLabel) throws FieldTypeNotMarchException {

@@ -27,16 +27,6 @@ public class Attribute extends Label<Label> {
         this.table = table;
     }
 
-
-    @Override
-    public void setPlatform(RIIF2Recorder recorder) {
-    }
-
-    @Override
-    public RIIF2Recorder getPlatform() {
-        return null;
-    }
-
     @Override
     public void print() {
         System.out.print (this.getName()  + " Type: "
@@ -52,7 +42,7 @@ public class Attribute extends Label<Label> {
             }
 
             else if (value instanceof List){
-                System.out.print(" " + ((List)value).toString() + " " );
+                System.out.print(" " + value.toString() + " " );
             }
 
 

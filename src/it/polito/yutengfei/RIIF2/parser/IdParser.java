@@ -60,6 +60,7 @@ abstract class  IdParser extends TypeParser {
 
         TerminalNode Identifier = ctx.Identifier();
         String identifier = Identifier.getText();
+        identifier = identifier.toLowerCase();
 
         Token IdentifierToken = Identifier.getSymbol();
 
@@ -74,6 +75,7 @@ abstract class  IdParser extends TypeParser {
 
         TerminalNode Identifier = ctx.Identifier();
         String identifier = Identifier.getText();
+        identifier = identifier.toLowerCase();
 
         Token IdentifierToken = ctx.Identifier().getSymbol();
 

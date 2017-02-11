@@ -281,8 +281,7 @@ public class FieldFactory implements Factory{
 
         assert this.fieldLabel != null;
         this.fieldLabel.setName(name); // set the name to the field
-        PreDefinedAttribute.FieldAttribute(this.fieldLabel,this.recorder);
-        this.fieldLabel.print();
+        //PreDefinedAttribute.FieldAttribute(this.fieldLabel,this.recorder);
 
 
         // have a decision of the primitiveType (float, integer,String or anything else )
@@ -310,9 +309,16 @@ public class FieldFactory implements Factory{
                         break;
                 }
 
-            } else {
-                this.fieldLabel.setType(primitiveType);
             }
+            // The user defined type
+            else if ( primitiveType.equals(RIIF2Grammar.USER_DEFINED)) {
+                String userDefinedTypeName = primitiveFieldDeclarator.getPrimitiveType().getValue();
+                this.fieldLabel.setType(userDefinedTypeName);
+            }
+            // the primitive type
+            else  this.fieldLabel.setType(primitiveType);
+
+
             // Since enum type is a special one. So we need to decide if the current type is enum
             if (primitiveType.equals(RIIF2Grammar.ENUM)){
                 this.fieldLabel.setEnumType(primitiveFieldDeclarator.getPrimitiveType().getEnumType());
@@ -337,6 +343,22 @@ public class FieldFactory implements Factory{
                 // if it is a vector, the left item has to be one
                 if (typeType.equals(RIIF2Grammar.TYPE_VECTOR)) {
                     Vector vector = TypeType.getVector();
+
+                    Expression left = vector.getLeft();
+                    Expression right = vector.getRight();
+
+
+                    left.setCurrentLabel(this.fieldLabel);
+                    left.setRecorder(this.recorder);
+                    if (!left.isInteger())
+                        throw new FieldTypeNotMarchException(left.toString(), left.getLine(), left.getColumn());
+
+                    right.setCurrentLabel(this.fieldLabel);
+                    right.setRecorder(this.recorder);
+                    if (!right.isInteger())
+                        throw new FieldTypeNotMarchException(right.toString(), right.getLine(), right.getColumn());
+
+
                     this.fieldLabel.setVector(true);
                     this.fieldLabel.setVectorLength(vector.getLength());
                 }

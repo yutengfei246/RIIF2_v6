@@ -601,9 +601,7 @@ class ExpressionOperator implements Serializable{
         String srcType = this.typeResolver(labelList, srcExpression);
 
         if ( srcType == null)
-            throw new FieldTypeNotMarchException(
-                    srcExpression.value().toString()
-                    ,srcExpression.getLine(),srcExpression.getColumn());
+            throw new FieldTypeNotMarchException( srcExpression.value().toString() ,srcExpression.getLine(),srcExpression.getColumn());
 
         Iterator<Operation> iterator = srcExpression.getIterator();
 
@@ -694,16 +692,12 @@ class ExpressionOperator implements Serializable{
     private String typeResolver(List<Label<Label>> labelList, Expression expression) throws FieldTypeNotMarchException {
 
 
-        if (labelList != null ) {
+        if (labelList != null )
             System.out.println("the labelList is not null in this case --" + expression.type() + " " + expression.value().toString());
 
-
-        }
-  //      System.out.println("Expression type " + expression.type());
         if ( labelList != null && expression.type().equals(RIIF2Grammar.ARRAY) ) {
-            System.out.println("Going to test the array ");
-            ArrayInitializer arrayInitializer = (ArrayInitializer) expression.value();
 
+            ArrayInitializer arrayInitializer = (ArrayInitializer) expression.value();
             List<Expression> expressionList = arrayInitializer.getInitializer();
 
             for (int i = 0; i < expressionList.size(); i++) {
@@ -714,8 +708,6 @@ class ExpressionOperator implements Serializable{
 
                 Label<Label> labelLabel = labelList.get(i);
 
-                System.out.println(" label type " + labelLabel.getType()  + " expItem Type " + expItem.getType() );
-
                 if (!labelLabel.getType().equals(expItem.getType()))
                     throw new FieldTypeNotMarchException(this.currentLabel.getName(), expItem.getLine(), expItem.getColumn());
             }
@@ -725,6 +717,25 @@ class ExpressionOperator implements Serializable{
             expression.setValue(this.currentLabel.getValue());
             expression.setType(this.currentLabel.getType());
             return this.currentLabel.getType();
+        }
+
+        // the type is assigned to unit
+        if ( this.currentLabel.getName().equals(RIIF2Grammar.UNIT)) {
+            return expression.type();
+        }
+
+        // goto the function arguments and check if those function arguments are valid
+        if ( expression.type().equals(RIIF2Grammar.FUNC_EXP) ){
+
+            for (Expression expression1 : expression.getFuncArguments()) {
+                expression1.setCurrentLabel(this.currentLabel);
+                expression1.setRecorder(this.recorder);
+
+                if (!expression1.isValid())
+                    throw new FieldTypeNotMarchException(this.currentLabel.getName(),expression1.getLine(), expression1.getColumn());
+            }
+
+            return RIIF2Grammar.DOUBLE;
         }
 
         if ( !expression.type().equals(RIIF2Grammar.USER_DEFINED))

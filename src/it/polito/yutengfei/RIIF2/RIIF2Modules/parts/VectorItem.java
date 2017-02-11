@@ -9,16 +9,6 @@ public class VectorItem extends Label<Label> {
     }
 
     @Override
-    public void setPlatform(RIIF2Recorder recorder) {
-
-    }
-
-    @Override
-    public RIIF2Recorder getPlatform() {
-        return null;
-    }
-
-    @Override
     public void print() {
 
     }

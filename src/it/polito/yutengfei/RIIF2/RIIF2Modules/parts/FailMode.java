@@ -9,15 +9,6 @@ public class FailMode extends Label<Label> {
         super(recorder);
     }
 
-    @Override
-    public void setPlatform(RIIF2Recorder recorder) {
-
-    }
-
-    @Override
-    public RIIF2Recorder getPlatform() {
-        return null;
-    }
 
     @Override
     public void print() {

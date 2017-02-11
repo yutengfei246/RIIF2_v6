@@ -225,14 +225,6 @@ public class TableValueOperator implements Serializable{
         }
 
         @Override
-        public void setPlatform(RIIF2Recorder recorder) {}
-
-        @Override
-        public RIIF2Recorder getPlatform() {
-            return null;
-        }
-
-        @Override
         public void print() {
 
             if (this.oneRow == null || this.oneRow.size() == 0) {

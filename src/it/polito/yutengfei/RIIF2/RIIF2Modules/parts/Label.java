@@ -146,16 +146,12 @@ public abstract class Label<T extends Label> extends ValueMember{
 
     /***********************************************************************************/
 
-    public abstract void setPlatform(RIIF2Recorder recorder);
-
-    public abstract RIIF2Recorder getPlatform();
-
     public abstract void print();
 
     protected void printAttribute(){
         if (this.hasAttribute()) {
             this.attributeMap.forEach((s, attribute) -> {
-                System.out.print("@Attribute-" );
+                System.out.print(" @Attribute-" );
                 attribute.print();
             });
             System.out.println(" ");

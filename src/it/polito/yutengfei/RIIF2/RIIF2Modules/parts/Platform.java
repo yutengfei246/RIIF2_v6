@@ -11,7 +11,6 @@ public class Platform extends Label<Label>{
         super(recorder);
     }
 
-    @Override
     public void setPlatform(RIIF2Recorder recorder) {
         try {
             super.setValue(recorder);
@@ -20,7 +19,6 @@ public class Platform extends Label<Label>{
         }
     }
 
-    @Override
     public RIIF2Recorder getPlatform() {
         return (RIIF2Recorder) super.getValue();
     }

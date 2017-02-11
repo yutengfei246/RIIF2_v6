@@ -292,6 +292,87 @@ public class Expression implements Initializer, Serializable {
         return column;
     }
 
+
+    public String toString(){
+
+        StringBuffer stringBuffer = new StringBuffer();
+
+        // for each of the operation, print
+        if (this.value() instanceof DeclaratorId) {
+            DeclaratorId declaratorId = (DeclaratorId) this.value();
+            String id = declaratorId.getPrimitiveId().getId();
+
+            stringBuffer.append(" ").append(id);
+
+            if (declaratorId.hasAttributeIndex()) {
+                String attributeId = declaratorId.getAttributeIndex().getId();
+                stringBuffer.append("'" + attributeId + " ");
+            }
+
+        }
+
+        else if (this.value() instanceof  Expression ){
+            Expression expression = (Expression) this.value;
+            stringBuffer.append(expression.toString());
+        }
+
+        else if (this.value() instanceof ArrayInitializer ) {
+
+            stringBuffer.append(" [ ");
+            ArrayInitializer arrayInitializer = (ArrayInitializer) this.value();
+            arrayInitializer.getInitializer().forEach(expression ->
+                stringBuffer.append(expression.toString())
+            );
+            stringBuffer.append(" ] ");
+
+        }
+
+        else if (this.type().equals(RIIF2Grammar.SELF) ){
+            stringBuffer.append(" ").append(this.type).append(" ");
+        }
+
+        else if ( this.type().equals(RIIF2Grammar.FUNC_EXP)){
+            stringBuffer.append(" EXP( "   );
+
+            this.funcArguments.forEach(expression -> stringBuffer.append(expression.toString()));
+
+            stringBuffer.append(" ) ");
+        }
+
+        else
+            stringBuffer.append(" ").append(this.value().toString()).append(" ");
+        Iterator<Operation> iterator = this.getIterator();
+
+        while (iterator.hasNext()) {
+            Operation operation = iterator.next();
+
+            if (operation.getOpr() == 15 )
+                stringBuffer.append(" * " );
+            if (operation.getOpr() == 16)
+                stringBuffer.append(" \\");
+            if (operation.getOpr() == 18)
+                stringBuffer.append(" + ");
+            if (operation.getOpr() == 19)
+                stringBuffer.append(" - ");
+            Expression oprExpression = operation.getOprExpression();
+            Expression targetExpression = operation.getOprTargetExpression();
+
+            if (oprExpression != null ) {
+                oprExpression.setRecorder(this.recorder);
+                oprExpression.setCurrentLabel(this.currentLabel);
+                stringBuffer.append(operation.toString());
+            }
+
+            if (targetExpression != null ) {
+                targetExpression.setRecorder(this.recorder);
+                targetExpression.setCurrentLabel(this.currentLabel);
+                stringBuffer.append(targetExpression.toString());
+            }
+        }
+        return stringBuffer.toString();
+
+    }
+
     // use for debug , print the expression,recursive
     public void print() {
         // for each of the operation, print
@@ -307,6 +388,7 @@ public class Expression implements Initializer, Serializable {
             }
 
         }
+
         else if (this.value() instanceof  Expression ){
             Expression expression = (Expression) this.value;
             expression.print();
@@ -318,9 +400,21 @@ public class Expression implements Initializer, Serializable {
             arrayInitializer.getInitializer().forEach(Expression::print);
             System.out.print(" ] ");
 
-        }else if (this.type().equals(RIIF2Grammar.SELF) ){
+        }
+
+        else if (this.type().equals(RIIF2Grammar.SELF) ){
             System.out.print(" " + this.type + " ");
-        } else
+        }
+
+        else if ( this.type().equals(RIIF2Grammar.FUNC_EXP)){
+            System.out.print(" EXP( "   );
+
+            this.funcArguments.forEach(Expression::print);
+
+            System.out.print(" )");
+        }
+
+        else
             System.out.print( " " + this.value().toString() + " ");
 
         Iterator<Operation> iterator = this.getIterator();

@@ -10,11 +10,7 @@ public class Vector {
     private Expression right;
 
 
-    public Vector(Expression left, Expression right) throws ExpressionTypeNotMarchException {
-
-        if ( ! left.isInteger() || ! right.isInteger() ){
-            throw new ExpressionTypeNotMarchException();
-        }
+    public Vector(Expression left, Expression right) {
 
         this.left = left;
         this.right = right;

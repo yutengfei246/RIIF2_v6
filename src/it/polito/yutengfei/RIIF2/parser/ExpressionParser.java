@@ -121,7 +121,6 @@ abstract class ExpressionParser extends DeclaratorIdParser {
         if (ctx.FUNC_GT_N_FAIL() != null )
             expression.setType(RIIF2Grammar.FUNC_GT_N_FAIL);
 
-
         this.putExpression(ctx,expression);
     }
 
@@ -254,7 +253,6 @@ abstract class ExpressionParser extends DeclaratorIdParser {
             }
             if (ctx.op.getType() == RIIF2Parser.T__16) {
                 expression = leftExp.operation(Expression.OP_MINUS, rightExp);
-                return;
             }
 
         }finally {

@@ -9,18 +9,13 @@ public class ChildComponent extends Label<Label> {
         super(recorder);
     }
 
-    @Override
-    public void setPlatform(RIIF2Recorder recorder) {
-
-    }
-
-    @Override
-    public RIIF2Recorder getPlatform() {
-        return null;
-    }
 
     @Override
     public void print() {
+        System.out.println("child component " + this.getName() + " --------->>");
 
+        ((RIIF2Recorder)super.getValue()).print8();
+
+        System.out.println(" <<-----------child component " + this.getName());
     }
 }

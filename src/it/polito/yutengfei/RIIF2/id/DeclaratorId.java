@@ -25,10 +25,8 @@ public class DeclaratorId implements Serializable{
         this.typeType = typeType;
     }
 
-    public void setId(String id, int line, int charPositionInLine) {
+    public void setId(String id) {
         this.id = id;
-        this.line = line;
-        this.column = charPositionInLine;
     }
 
     public void setPrimitiveId(Id primitiveId) {
@@ -109,6 +107,14 @@ public class DeclaratorId implements Serializable{
 
     public boolean hasTableIndex() {
         return this.tableIndex != null;
+    }
+
+    public void setLine(int line){
+        this.line = line;
+    }
+
+    public void setColumn( int column){
+        this.column = column;
     }
 
     public int getLine() {
