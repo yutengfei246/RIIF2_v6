@@ -24,9 +24,34 @@ public class Vector {
         return this.right;
     }
 
+    public int getLeftValue(){
 
-    public Expression getLength(){
-        return this.right;
+        Object o = this.left.getValue();
+
+        if (o instanceof Expression)
+            return (int) ((Expression) o).getValue();
+
+        return (int) o;
+
+    }
+
+    public int getRightValue(){
+
+        Object o = this.right.getValue();
+
+        if (o instanceof Expression)
+            return (int) ((Expression) o).getValue();
+
+        return (int) o;
+
+    }
+
+
+    public int getLength(){
+
+        if (this.right.getValue() instanceof Expression)
+            return (int) ((Expression) this.right.getValue()).getValue();
+        return (int) this.right.getValue();
     }
 
 

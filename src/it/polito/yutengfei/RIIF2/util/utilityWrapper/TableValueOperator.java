@@ -148,6 +148,12 @@ public class TableValueOperator implements Serializable{
         _Row(RIIF2Recorder recorder) {
             super(recorder);
             this.oneRow = new LinkedList<>();
+            this.setName(RIIF2Grammar._ROW);
+        }
+
+        @Override
+        public void vectorInitializer() {
+
         }
 
         void initialRow(Object rowItem) {

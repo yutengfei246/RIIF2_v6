@@ -13,6 +13,7 @@ template SRAM_TEMPLATE;
 
     abstract fail_mode RAD_FM[SBU]'RATE;
     impose RAD_FM[SBU]'UNIT = FITS;
+
     abstract fail_mode RAD_FM[MBU]'RATE;
     impose RAD_FM[MBU]'UNIT = FITS;
     abstract fail_mode RAD_FM[SEFI]'RATE;
@@ -46,15 +47,15 @@ endtemplate
 
 component CY7C1263XC18 implements SYNCSRAM_TEMPLATE,FLIP_CHIP_TEMPLATE;
 
- set SYNCSRAM_TEMPLATE.NAME = "CY/C1263XC18";
  set MANUFACTURE = "CYPRESS";
  set CORE_VOLTAGE = 1.8;
  set NUM_BITS = 37748736;
  set CLK_Speed = 633;
- set FLIP_CHIP_TEMPLATE.NAME = "165-LBGA";
  set NUM_BUMPS = 165;
  set PACKAGE_TEMP'MIN = 0;
  set PACKAGE_TEMP'MAX = 70;
  set RAD_FM[SBU]'RATE = 0;
+ set SYNCSRAM_TEMPLATE.NAME = "CY/C1263XC18";
+ set FLIP_CHIP_TEMPLATE.NAME = "165-LBGA";
 
  endcomponent

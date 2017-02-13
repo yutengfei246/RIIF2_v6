@@ -31,8 +31,7 @@ abstract class DeclaratorIdParser extends IdParser {
         this.setPosition(ctx,identifier);
 
         TerminalNode DeclaratorId = ctx.Identifier();
-        String primitiveId = DeclaratorId.getText();
-        primitiveId = primitiveId.toLowerCase();
+        String primitiveId = DeclaratorId.getText().toLowerCase();
         identifier.setId( primitiveId );
 
         if (ctx.typeType() != null) {
@@ -53,8 +52,7 @@ abstract class DeclaratorIdParser extends IdParser {
         this.setPosition(ctx,identifier);
 
         TerminalNode DeclaratorId = ctx.Identifier();
-        String primitiveId = DeclaratorId.getText();
-        primitiveId = primitiveId.toLowerCase();
+        String primitiveId = DeclaratorId.getText().toLowerCase();
 
         identifier.setId( primitiveId);
 
@@ -76,8 +74,7 @@ abstract class DeclaratorIdParser extends IdParser {
 
         TerminalNode DeclaratorId = ctx.Identifier();
 
-        String primitiveId = DeclaratorId.getText();
-        primitiveId = primitiveId.toLowerCase();
+        String primitiveId = DeclaratorId.getText().toLowerCase();
         identifier.setId( primitiveId ) ;
 
         if (ctx.typeType() != null) {
@@ -99,8 +96,7 @@ abstract class DeclaratorIdParser extends IdParser {
 
         TerminalNode DeclaratorId = ctx.Identifier();
 
-        String primitiveId = DeclaratorId.getText();
-        primitiveId = primitiveId.toLowerCase();
+        String primitiveId = DeclaratorId.getText().toLowerCase();
         identifier.setId( primitiveId );
 
         Id id = getId( ctx.associativeIndex() );
@@ -121,7 +117,7 @@ abstract class DeclaratorIdParser extends IdParser {
 
         TerminalNode DeclaratorId = ctx.Identifier();
 
-        String associativeIndex = DeclaratorId.getText();
+        String associativeIndex = DeclaratorId.getText().toString();
         identifier.setId(associativeIndex);
 
         Id id = getId(ctx.associativeIndex());
@@ -137,7 +133,7 @@ abstract class DeclaratorIdParser extends IdParser {
 
         TerminalNode DeclaratorId = ctx.Identifier();
 
-        String tableId = DeclaratorId.getText();
+        String tableId = DeclaratorId.getText().toLowerCase();
         identifier.setId(tableId);
 
         this.putDeclaratorId(ctx,identifier);
@@ -150,7 +146,7 @@ abstract class DeclaratorIdParser extends IdParser {
 
         TerminalNode DeclaratorId = ctx.Identifier();
 
-        String tableId = DeclaratorId.getText();
+        String tableId = DeclaratorId.getText().toLowerCase();
         identifier.setId(tableId);
 
         this.putDeclaratorId(ctx,identifier);
@@ -163,8 +159,7 @@ abstract class DeclaratorIdParser extends IdParser {
 
         TerminalNode DeclaratorId = ctx.Identifier();
 
-        String childId = DeclaratorId.getText();
-        childId = childId.toLowerCase();
+        String childId = DeclaratorId.getText().toLowerCase();
         identifier.setId(childId );
 
         if (ctx.typeType() != null){

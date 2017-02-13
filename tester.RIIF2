@@ -34,7 +34,7 @@ component IMPROVED_SRAM_MEMORY;
   assign SBE'description = "Single bit soft error, alpha and neutron.";
   assign SBE'unit = FITS;
 
-// assign SBE'rate = NEUTRON_ENV'REL_FLUX * A_DIFF * EXP( - VOLTAGE / Q_COL_EFF);
+ // assign SBE'rate = NEUTRON_ENV'REL_FLUX * A_DIFF * EXP( - VOLTAGE / Q_COL_EFF);
 
 // For this simple example, MBE is fixed ratio of SBE
   fail_mode MBE;
@@ -88,35 +88,72 @@ endcomponent
 component SIMPLE_CPU_BOARD;
   // --------------------- Constant Declaration -----------------------------
   constant NUM_RAMS : integer := 17;
-  constant CHIP_VOLTAGE : float := 1.0;
+  constant CHIP_VOLTAGE : float := 2.0;
   assign CHIP_VOLTAGE'unit = VOLTS;
   constant MEMORY_UTILIZATION : float := 0.75;
 
   // --------------------- Instantiate Components ---------------------------
   child_component FAST_CPU CPU;            // Single CPU
   assign CPU'VOLTAGE = CHIP_VOLTAGE;       // Propagate parameters to children
-  child_component SIMPLE_SRAM MEMORY[1:NU];      // 17 memory chips
- endcomponent
 
+
+  child_component SIMPLE_SRAM MEMORY[1:NUM_RAMS]; // 17 memory chips
   assign MEMORY[1..NUM_RAMS].VOLTAGE = CHIP_VOLTAGE;
+
 
 // ----------------- Define Failure Modes for the Board ----------------------
 // If there is an MBE in any memory, the board will reboot.
   fail_mode REBOOT;
   assign REBOOT'description = "Reboot due to MBE";
   assign REBOOT'unit = FIT;
-  assign REBOOT'rate = MEMORY_UTILIZATION *
-                        agg_single_fail( MEMORY'MBE[1:NUM_RAMS] );
+
+  //assign REBOOT'rate = MEMORY_UTILIZATION * agg_single_fail( MEMORY'MBE[1:NUM_RAMS] ); // did not consider this situation
 
 // If either the CPU or >1 RAMs have a chip-fail, boards must be replaced.
   fail_mode REPLACE_BOARD;
   assign REPLACE_BOARD'description = "Hard failure causes board replacement.";
   assign REPLACE_BOARD'unit = MTTF;
-  assign REPLACE_BOARD'rate = agg_single_fail(
-                             CPU'CHIP_FAIL,
-                             agg_gt_n_fail( 1, MEMORY'CHIP_FAIL[1:NUM_RAMS] ) );
+
+  //assign REPLACE_BOARD'rate = agg_single_fail( CPU'CHIP_FAIL, agg_gt_n_fail( 1, MEMORY'CHIP_FAIL[1:NUM_RAMS] ) ); // not consider this part
 
 // Explicitly declare that SBEs in the memory have no effect
-  assign null'rate = agg_single_fail( MEMORY'SBE[1:NUM_RAMS] );
+//  assign null'rate = agg_single_fail( MEMORY'SBE[1:NUM_RAMS] ); // not consider in my case
+endcomponent
+
+component SRAM_MEMORY_TEMPLATE;
+// --------------------- Parameter Declaration ----------------------------
+  parameter VOLTAGE : float;                // voltage at transistor
+  parameter NEUTRON_ENV_DEF : NEUTRON_ENV;  // parameter of type NEUTRON_ENV_DEF
+
+// --------------------- Define Failure Modes -----------------------------
+  fail_mode SBE;
+  assign SBE'description = "Single bit soft error.";
+  fail_mode MBE;
+  assign MBE'description = "Multi bit soft error.";
+  fail_mode CHIP_FAIL;
+  assign CHIP_FAIL'description = "Permanent hard chip failure." ;
+
+endcomponent
+
+
+component SRAM_MEMORY extends SRAM_MEMORY_TEMPLATE;
+  // ------------------ Define Valid Parameter Ranges ---------------------------
+  assign VOLTAGE'min = 0.8;       // Valid range over which RAM is characterized
+  assign VOLTAGE'max = 1.2;
+
+  // --------------------- Constant Declaration -----------------------------
+  constant A_DIFF : float := 3.2;        // Constant obtained from layout
+  constant Q_COL_EFF : float := 0.6;     // Represent Qcrit/Qcoll
+  constant MBE_RATIO : float := 0.25;    // For now, simple ratio of MBEs to SBEs
+
+  // --------------------- Specify Failure Rates  -----------------------------
+  assign SBE'unit = FITS;
+  //assign SBE'rate = NEUTRON_ENV'REL_FLUX * A_DIFF * EXP( - VOLTAGE / Q_COL_EFF) ;  // not consider this
+
+  assign MBE'unit = FITS;
+  assign MBE'rate = SBE'RATE * MBE_RATIO;
+
+  assign CHIP_FAIL'unit = MTTF;
+  assign CHIP_FAIL'rate = 1000000;
 
 endcomponent

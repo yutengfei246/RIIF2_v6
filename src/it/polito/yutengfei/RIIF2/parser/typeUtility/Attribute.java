@@ -17,6 +17,11 @@ public class Attribute extends Label<Label> {
         super(recorder);
     }
 
+    @Override
+    public void vectorInitializer() {
+
+    }
+
     // get the table label references
     public Label<Label> getTable(){
         return table;

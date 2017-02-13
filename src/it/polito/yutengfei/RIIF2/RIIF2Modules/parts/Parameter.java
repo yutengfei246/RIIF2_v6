@@ -3,13 +3,26 @@ package it.polito.yutengfei.RIIF2.RIIF2Modules.parts;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 
-import java.util.Iterator;
 import java.util.List;
 
 public class Parameter extends Label<Label> {
 
     public Parameter(RIIF2Recorder recorder){
         super(recorder);
+    }
+
+    @Override
+    public void vectorInitializer() {
+        int length = super.getVectorLength();
+
+        for (int i= 0; i < length ; i ++) {
+            Parameter parameter = this.createParameter();
+            super.assignVectorItem(i,parameter);
+        }
+    }
+
+    private Parameter createParameter() {
+        return new Parameter(super.getRecorder());
     }
 
 
@@ -50,6 +63,7 @@ public class Parameter extends Label<Label> {
 
         System.out.print(";");
 
+        super.printVector();
         super.printAttribute();
         super.printAssociative();
     }

@@ -445,6 +445,7 @@ FUNC_AGG_SINGLE: 'agg_single_fail';
 FUNC_GT_N_FAIL: 'agg_gt_n_fail';
 FUNC_LOG: 'LOG';
 FUNC_EXP: 'EXP';
+NULL: 'null';
 //Second part
 TEMPLATE: 'template';
 END_TEMPLATE: 'endtemplate';

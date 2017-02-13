@@ -10,9 +10,11 @@ import it.polito.yutengfei.RIIF2.factory.Exceptions.VeriableAlreadyExistExceptio
 import it.polito.yutengfei.RIIF2.factory.Factory;
 import it.polito.yutengfei.RIIF2.id.DeclaratorId;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.RIIF2Type;
+import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.recoder.Repository;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
+import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 
 public class CCFactory implements Factory {
     private final ComponentFactory componentFactory;
@@ -96,10 +98,51 @@ public class CCFactory implements Factory {
 
             if (typeType.equals(RIIF2Grammar.TYPE_VECTOR) ) {
                 this.ccLabel.setVector(true);
+
+                this.verifyVector(TypeType);
+
                 this.ccLabel.setVectorLength(TypeType.getVector().getLength());
+                this.ccLabel.vectorInitializer();
             }
         }
         this.recorder.addLabel(this.ccLabel);
+    }
+
+    private void verifyVector(RIIF2Type TypeType) throws FieldTypeNotMarchException {
+
+        Vector  vector = TypeType.getVector();
+        Expression left = vector.getLeft();
+        Expression right = vector.getRight();
+
+        left.setCurrentLabel(this.ccLabel);
+        left.setRecorder(this.recorder);
+
+        right.setCurrentLabel(this.ccLabel);
+        right.setRecorder(this.recorder);
+
+        if (!left.isInteger())
+            throw new FieldTypeNotMarchException(FieldTypeNotMarchException.MESSAGE,left.getLine(),left.getColumn());
+
+        int leftValue;
+        if (left.getValue() instanceof Expression ){
+            this.ccLabel.setVectorLeftExpression((Expression)left.getValue());
+            leftValue = (int) ((Expression) left.getValue()).getValue();
+        }else
+            leftValue = (int) left.getValue();
+
+        if (!right.isInteger())
+            throw new FieldTypeNotMarchException(FieldTypeNotMarchException.MESSAGE,right.getLine(), right.getColumn());
+
+        int rightValue;
+        if(right.getValue() instanceof  Expression){
+            this.ccLabel.setVectorRightExpression((Expression)right.getValue());
+            rightValue = (int) ((Expression) right.getValue()).getValue();
+        }
+        else rightValue = (int) right.getValue();
+
+        if ( leftValue < 0 || leftValue > rightValue )
+            throw new FieldTypeNotMarchException(FieldTypeNotMarchException.MESSAGE, left.getLine(),left.getLine());
+
     }
 
     @Override

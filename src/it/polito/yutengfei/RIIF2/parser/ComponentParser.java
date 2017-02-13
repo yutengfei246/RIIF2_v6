@@ -23,7 +23,7 @@ public class ComponentParser extends DeclaratorParser {
     public void enterComponentDeclaration(RIIF2Parser.ComponentDeclarationContext ctx) {
 
         TerminalNode Identifier = ctx.Identifier();
-        String identifier = Identifier.getText();
+        String identifier = Identifier.getText().toLowerCase();
 
         this.componentFactory.start( identifier );
     }
@@ -36,7 +36,7 @@ public class ComponentParser extends DeclaratorParser {
             this.componentFactory.startImplEx(RIIF2Grammar.COMPONENT);
 
         for (TerminalNode Identifier : Identifiers){
-            String identifier = Identifier.getText();
+            String identifier = Identifier.getText().toLowerCase();
             this.componentFactory.setCurrentComponentExtendsIdentifier(identifier);
         }
     }
@@ -54,7 +54,7 @@ public class ComponentParser extends DeclaratorParser {
             this.componentFactory.startImplEx(RIIF2Grammar.COMPONENT);
 
         for(TerminalNode Identifier : Identifiers){
-            String identifier = Identifier.getText();
+            String identifier = Identifier.getText().toLowerCase();
             this.componentFactory.setCurrentComponentImplementsIdentifier(identifier);
         }
     }

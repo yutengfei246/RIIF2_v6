@@ -14,6 +14,7 @@ import it.polito.yutengfei.RIIF2.parser.typeUtility.RIIF2Type;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
+import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 
 public class FMFactory implements Factory {
 
@@ -140,8 +141,29 @@ public class FMFactory implements Factory {
                 this.fm.setAssociative(true);
 
             if (typeType.equals(RIIF2Grammar.TYPE_VECTOR)) {
+                Vector  vector = TypeType.getVector();
+                Expression left = vector.getLeft();
+                Expression right = vector.getRight();
+
+                left.setCurrentLabel(this.fm);
+                left.setRecorder(this.recorder);
+
+                right.setCurrentLabel(this.fm);
+                right.setRecorder(this.recorder);
+
+                if (!left.isInteger())
+                    throw new FieldTypeNotMarchException(FieldTypeNotMarchException.MESSAGE,left.getLine(),left.getColumn());
+
+                if (!right.isInteger())
+                    throw new FieldTypeNotMarchException(FieldTypeNotMarchException.MESSAGE,right.getLine(), right.getColumn());
+
+                if ((int)left.getValue()<0 || (int)left.getValue() > (int)right.getValue())
+                    throw new FieldTypeNotMarchException(FieldTypeNotMarchException.MESSAGE, left.getLine(),left.getLine());
+
+                if ((int)right.getValue()> this.fm.getVectorLength())
+                    throw new FieldTypeNotMarchException(FieldTypeNotMarchException.MESSAGE,right.getLine(), right.getColumn());
+
                 this.fm.setVector(true);
-                Vector vector = TypeType.getVector();
                 this.fm.setVectorLength(vector.getLength());
             }
         }

@@ -23,7 +23,7 @@ public class TemplateParser extends DeclaratorParser{
     public void enterTemplateDeclaration(RIIF2Parser.TemplateDeclarationContext ctx) {
 
         TerminalNode Identifier = ctx.Identifier();
-        String identifier = Identifier.getText();
+        String identifier = Identifier.getText().toLowerCase();
 
         this.componentFactory.start(identifier);
     }
@@ -38,7 +38,7 @@ public class TemplateParser extends DeclaratorParser{
         assert eXs != null; //?
 
         for (TerminalNode exIdentifier : eXs ){
-            String identifier = exIdentifier.getText();
+            String identifier = exIdentifier.getText().toLowerCase();
             this.componentFactory.setCurrentComponentExtendsIdentifier(identifier);
         }
     }

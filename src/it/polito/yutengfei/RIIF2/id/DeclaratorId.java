@@ -1,6 +1,7 @@
 package it.polito.yutengfei.RIIF2.id;
 
 import it.polito.yutengfei.RIIF2.parser.typeUtility.RIIF2Type;
+import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 
 import java.io.Serializable;
 
@@ -141,6 +142,13 @@ public class DeclaratorId implements Serializable{
 
         if (this.hierPostfix != null )
             stringBuffer.append(".").append(this.hierPostfix.toString());
+
+
+        if (this.typeType != null) {
+
+            if (this.aisType.getVector() != null )
+                stringBuffer.append(" [").append(this.typeType.getVector().getLeftValue()).append(":").append(this.typeType.getVector().getRightValue()).append(" ]");
+        }
 
         return stringBuffer.toString();
     }

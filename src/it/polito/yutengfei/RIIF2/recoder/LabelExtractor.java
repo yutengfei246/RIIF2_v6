@@ -2,8 +2,6 @@ package it.polito.yutengfei.RIIF2.recoder;
 
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.ChildComponent;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Label;
-import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.VectorImpl;
-import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.VectorItem;
 import it.polito.yutengfei.RIIF2.id.DeclaratorId;
 import it.polito.yutengfei.RIIF2.id.Id;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.RIIF2Type;
@@ -56,7 +54,7 @@ public class LabelExtractor {
     /* primitiveId : Identifier
                    | primitiveId (.hierPostfix )
     */
-    public Label<Label> primitiveIdExtractor(Id primitiveId){
+    private Label<Label> primitiveIdExtractor(Id primitiveId){
         Label<Label> rtnLabel = null;
 
         String id = primitiveId.getId();
@@ -96,7 +94,7 @@ public class LabelExtractor {
     }
 
     // ( aisType | associativeIndex ) ?
-    public  Label<Label> aisTypeAssociativeIndexExtractor(Label<Label> theLabel, DeclaratorId declaratorId) {
+    private Label<Label> aisTypeAssociativeIndexExtractor(Label<Label> theLabel, DeclaratorId declaratorId) {
 
         if (theLabel == null)
             return null;
@@ -125,6 +123,8 @@ public class LabelExtractor {
                     if (!expRight.getType().equals(RIIF2Grammar.INTEGER))
                         return null;
 
+                    /*
+
                     Map.Entry<Expression, Expression> vectorEntry =
                             VectorImpl.createExpressionEntryPair(expLeft, expRight);
 
@@ -132,8 +132,9 @@ public class LabelExtractor {
 
                     theLabel.putVectorEntryValue(vectorEntry, label);
 
-                    return label;
 
+                    return label;
+*/
                 default:
                     return null;
             }
@@ -156,7 +157,7 @@ public class LabelExtractor {
     }
 
     // hierPostfix
-    public  Label<Label> hierPostfixExtractor(Label<Label> label2, DeclaratorId declaratorId) {
+    private Label<Label> hierPostfixExtractor(Label<Label> label2, DeclaratorId declaratorId) {
 
         if (label2 == null)
             return null;
@@ -181,7 +182,7 @@ public class LabelExtractor {
     }
 
     // attributeIndex
-    public Label<Label> attributeExtractor(Label<Label> label3, DeclaratorId declaratorId) {
+    private Label<Label> attributeExtractor(Label<Label> label3, DeclaratorId declaratorId) {
 
         if (label3 == null)
             return null;

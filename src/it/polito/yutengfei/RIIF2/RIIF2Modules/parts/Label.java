@@ -1,8 +1,7 @@
 package it.polito.yutengfei.RIIF2.RIIF2Modules.parts;
 
 import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
-import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
-import it.polito.yutengfei.RIIF2.parser.typeUtility.EnumType;
+import it.polito.yutengfei.RIIF2.parser.typeUtility.*;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 
@@ -13,7 +12,7 @@ public abstract class Label<T extends Label> extends ValueMember{
     private final RIIF2Recorder recorder;
     private String name;
 
-    private VectorImpl<Expression> vectorImpl;
+    private Vector<T> vector;
 
     private Map<String,T> associativeMap;
     private Map<String,Attribute> attributeMap;
@@ -112,41 +111,55 @@ public abstract class Label<T extends Label> extends ValueMember{
      * vector setters and getters
      */
     public void setVector(Boolean b) {
-        if (b) this.vectorImpl = new VectorImpl<>();
+        if (b) this.vector = new Vector<>();
     }
 
     public Boolean isVector() {
-        return this.vectorImpl != null;
+        return this.vector != null;
     }
 
-    public void setVectorLength(Expression expression) {
-        this.vectorImpl.setLength(expression);
+    public void setVectorLength(int length) {
+        this.vector.setLength(length);
     }
 
-    public Expression getVectorLength() {
-        return this.vectorImpl.getLength();
+    public int getVectorLength() {
+        return this.vector.getLength();
     }
 
-    public void putVectorEntryValue(Map.Entry<Expression,Expression> entry, VectorItem object ) {
-        this.vectorImpl.putEntryValue(entry, object);
+
+    public void assignVectorItem(int index, T label){
+        this.vector.assignFlatItem(index, label);
     }
 
-    public List<Expression> getVectorEntryValue(Map.Entry<Expression,Expression> entry) {
-        return this.vectorImpl.getEntryValue(entry);
+    public void assignVectorValue(int left, int right, Object value ) throws FieldTypeNotMarchException {
+        this.vector.assignFlatValue(left, right, value);
     }
 
-    public void addVectorItem(Expression item){
-        this.vectorImpl.addVectorItem(item);
+    public void addVectorItem(T item){
+        this.vector.add(item);
     }
 
-    public Expression getVectorItem(int index){
-        return this.vectorImpl.getVectorItem(index);
+    public T getVectorItem(int index){
+        return this.vector.get(index);
     }
 
 
     /***********************************************************************************/
 
+    public abstract void vectorInitializer();
+
     public abstract void print();
+
+    protected void printVector(){
+        if (this.isVector()){
+            System.out.print(" [1:" + this.getVectorLength() + "]");
+
+            this.vector.print();
+        }
+
+
+
+    }
 
     protected void printAttribute(){
         if (this.hasAttribute()) {
@@ -174,4 +187,11 @@ public abstract class Label<T extends Label> extends ValueMember{
         return this.recorder;
     }
 
+    public void setVectorLeftExpression(Expression value) {
+        this.vector.setLeftExpression(value);
+    }
+
+    public void setVectorRightExpression(Expression value) {
+        this.vector.setRightExpression(value);
+    }
 }

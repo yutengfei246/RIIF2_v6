@@ -260,14 +260,8 @@ public class FieldFactory implements Factory{
                                 usedLabel.setName(associativeName);
                                 this.fieldLabel.putAssociative(associativeName,usedLabel);
                             }
-
-                            if (this.fieldLabel.isVector()) {
-                                this.fieldLabel.addVectorItem(expression);
-                            }
-
                         });
             }
-
     }
 
     // create a label with the name given
@@ -353,14 +347,18 @@ public class FieldFactory implements Factory{
                     if (!left.isInteger())
                         throw new FieldTypeNotMarchException(left.toString(), left.getLine(), left.getColumn());
 
+                    Integer leftValue = (Integer) left.getValue();
+                    if (leftValue!=1 )
+                        throw new FieldTypeNotMarchException(left.toString(),left.getLine(),left.getColumn());
+
                     right.setCurrentLabel(this.fieldLabel);
                     right.setRecorder(this.recorder);
                     if (!right.isInteger())
                         throw new FieldTypeNotMarchException(right.toString(), right.getLine(), right.getColumn());
 
-
                     this.fieldLabel.setVector(true);
                     this.fieldLabel.setVectorLength(vector.getLength());
+                    this.fieldLabel.vectorInitializer();
                 }
             }
         }

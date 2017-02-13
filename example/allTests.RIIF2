@@ -84,6 +84,7 @@ component SIMPLE_CPU_BOARD;
   assign null'rate = agg_single_fail( MEMORY'SBE[1:NUM_RAMS] );
 
 endcomponent
+
 component CY7C1263XC18 implements SYNCSRAM_TEMPLATE,FLIP_CHIP_TEMPLATE;
 
  set SYNCSRAM_TEMPLATE.NAME = "CY/C1263XC18";
@@ -203,6 +204,7 @@ component SIMPLE_SRAM;
   assign CHIP_FAIL'rate = 1000000;
 
 endcomponent
+
 component SRAM_MEMORY extends SRAM_MEMORY_TEMPLATE;
   // ------------------ Define Valid Parameter Ranges ---------------------------
   assign VOLTAGE'min = 0.8;       // Valid range over which RAM is characterized
@@ -224,6 +226,7 @@ component SRAM_MEMORY extends SRAM_MEMORY_TEMPLATE;
   assign CHIP_FAIL'rate = 1000000;
 
 endcomponent
+
 component SRAM_MEMORY_TEMPLATE;
 // --------------------- Parameter Declaration ----------------------------
   parameter VOLTAGE : float;                // voltage at transistor
@@ -238,6 +241,7 @@ component SRAM_MEMORY_TEMPLATE;
   assign CHIP_FAIL'description = "Permanent hard chip failure." ;
 
 endcomponent
+
 template SRAM_TEMPLATE;
 
 // All SRAMs nyst defube voltage, temperature and size
@@ -263,6 +267,7 @@ abstract fail_mode RAD_FM[SSAF]'RATE;
 impose RAD_FM[SSAF]'UNIT = FITS;
 
 endtemplate
+
 template SW_COMPONENT;
     //all programs must define the name,size...
 
@@ -284,12 +289,14 @@ template SW_COMPONENT;
     impose TIMING_CONSTRAINTS'HEADERS = {SFM_TYPE,SFM,
                                     OCCURRING_SFB,OCCURRING_SFN_RATE};
 endtemplate
+
 template SYNCSRAM_TEMPLATE extends SRAM_TEMPLATE;
 
 abstract parameter      CKL_Speed : integer;
 impose  CLK_speed'units= MHZ ;
 
 endtemplate
+
 component VADD implements SW_COMPONENT;
     set NAME = "Vector ADD";
     set SIZE = 524;
@@ -310,6 +317,7 @@ component VADD implements SW_COMPONENT;
 
     };
 endcomponent
+
 component VADD_VARIABLE_DUPLICATION_VER1 extends VADD;
     set NAME = "vector ADD_with_Variable_Duplication";
     set PROTECTION = VAR_DUP;

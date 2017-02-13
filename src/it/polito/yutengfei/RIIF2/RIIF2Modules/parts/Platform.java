@@ -11,6 +11,16 @@ public class Platform extends Label<Label>{
         super(recorder);
     }
 
+    @Override
+    public void vectorInitializer() {
+        int length = super.getVectorLength();
+
+        for ( int i =0 ; i < length ; i++){
+            Platform platform = new Platform(super.getRecorder());
+            super.assignVectorItem(i,platform);
+        }
+    }
+
     public void setPlatform(RIIF2Recorder recorder) {
         try {
             super.setValue(recorder);
@@ -28,7 +38,7 @@ public class Platform extends Label<Label>{
 
         System.out.print("Platform " + getName() );
         if (getValue() != null ){
-            System.out.print(" Value-Component " + ((RIIF2Recorder)getValue()).getIdentifier() );
+            System.out.print(" Value-Component " + super.getValue());
         }
 
         System.out.println();

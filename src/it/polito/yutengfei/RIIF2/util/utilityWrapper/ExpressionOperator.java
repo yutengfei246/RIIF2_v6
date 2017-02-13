@@ -2,15 +2,18 @@ package it.polito.yutengfei.RIIF2.util.utilityWrapper;
 
 
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Label;
+import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Platform;
 import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
 import it.polito.yutengfei.RIIF2.id.DeclaratorId;
 import it.polito.yutengfei.RIIF2.initializer.ArrayInitializer;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.EnumType;
 import it.polito.yutengfei.RIIF2.recoder.LabelExtractor;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
+import it.polito.yutengfei.RIIF2.recoder.Repository;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 
 import java.io.Serializable;
+import java.security.cert.Extension;
 import java.util.*;
 
 import static it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression.*;
@@ -65,6 +68,7 @@ class ExpressionOperator implements Serializable{
         }
 
         this.runOprQueue(expression);
+
         return expression.value();
     }
 
@@ -645,8 +649,6 @@ class ExpressionOperator implements Serializable{
 
                 if (!srcType.equals(oprType)) {
 
-                  // System.out.println(" src Type " + srcType + " opr Type " + oprType);
-
                     if ( (srcType.equals(RIIF2Grammar.DOUBLE) && oprType.equals(RIIF2Grammar.INTEGER) ) ||
                             (srcType.equals(RIIF2Grammar.INTEGER) && oprType.equals(RIIF2Grammar.DOUBLE)) ){
                         srcType = RIIF2Grammar.DOUBLE;
@@ -736,6 +738,47 @@ class ExpressionOperator implements Serializable{
             }
 
             return RIIF2Grammar.DOUBLE;
+        }
+
+        if (expression.type().equals(RIIF2Grammar.FUNC_AGG_SINGLE)){
+
+            /*
+            for (Expression expression1 : expression.getFuncArguments()) {
+                expression1.setCurrentLabel(this.currentLabel);
+                expression1.setRecorder(this.recorder);
+
+                if (!expression1.isValid())
+                    throw new FieldTypeNotMarchException(this.currentLabel.getName(),expression1.getLine(), expression1.getColumn());
+            }
+            */
+
+
+
+            return RIIF2Grammar.DOUBLE;
+        }
+
+        if (expression.type().equals(RIIF2Grammar.FUNC_GT_N_FAIL)){
+
+            /*
+            for (Expression expression1 : expression.getFuncArguments()) {
+                expression1.setCurrentLabel(this.currentLabel);
+                expression1.setRecorder(this.recorder);
+
+                if (!expression1.isValid())
+                    throw new FieldTypeNotMarchException(this.currentLabel.getName(),expression1.getLine(), expression1.getColumn());
+            }
+
+*/
+
+
+            return RIIF2Grammar.DOUBLE;
+        }
+
+        if (this.currentLabel instanceof Platform){
+            if (Repository.containsComponent(expression.value().toString())){
+                return RIIF2Grammar.PLATFORM;
+            }
+            return null;
         }
 
         if ( !expression.type().equals(RIIF2Grammar.USER_DEFINED))

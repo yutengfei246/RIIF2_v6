@@ -5,10 +5,12 @@ component VECTORCALC_CORE;
 fail_mode SBU;
 assign SBU'RATE = 10; //obtained from radiation tests
 
-parameter myPr : integer := 10*SBU'RATE;
+parameter myPr : float := 10*SBU'RATE;
+
 parameter myPr'attribute : integer := 1000;
 
 parameter SW_FM: table;
+
 assign SW_FM'HEADERS = {FAILMODE,SFM,RATE};
 // array wrapper example
 assign SW_FM'ITEMS = { //obtained from fault injection

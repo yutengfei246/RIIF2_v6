@@ -130,7 +130,15 @@ abstract class ExpressionParser extends DeclaratorIdParser {
 
         if (ctx.expression() != null )
             expression = this.getExpression(ctx.expression());
-        //TODO :: aisDeclaratorId vector
+
+        if (ctx.aisDeclaratorId() != null) {
+            DeclaratorId declaratorId = this.getDeclaratorId(ctx.aisDeclaratorId());
+            expression = new Expression();
+            expression.setType(RIIF2Grammar.USER_DEFINED);
+            expression.setValue(declaratorId);
+            expression.setColumn(ctx.start.getCharPositionInLine());
+            expression.setLine(ctx.start.getLine());
+        }
 
         this.putExpression(ctx,expression);
     }

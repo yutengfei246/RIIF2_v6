@@ -414,6 +414,18 @@ public class Expression implements Initializer, Serializable {
             System.out.print(" )");
         }
 
+        else if ( this.type().equals(RIIF2Grammar.FUNC_AGG_SINGLE)) {
+            System.out.print(" agg_single_fail( ");
+
+            this.funcArguments.forEach(expression -> {
+
+            System.out.print(" " + expression.toString() + " ");
+
+            });
+
+            System.out.print(" )");
+        }
+
         else
             System.out.print( " " + this.value().toString() + " ");
 

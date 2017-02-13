@@ -57,6 +57,14 @@ public class RIIF2Recorder implements Recorder, Serializable {
         return this.exRecorderMap.get(key);
     }
 
+    public boolean containsImplRecorder(String implNameRecorderName ){
+        return this.implRecorderMap.containsKey(implNameRecorderName);
+    }
+
+    public boolean containsExRecorder(String exNameRecorderName){
+        return this.exRecorderMap.containsKey(exNameRecorderName);
+    }
+
     public Map<String,RIIF2Recorder> getExRecorderMap() {
         return this.exRecorderMap;
     }
@@ -68,6 +76,7 @@ public class RIIF2Recorder implements Recorder, Serializable {
     public void addPlatform(Platform platform) {
         this.platforms.add(platform);
     }
+
     private void addParameter(Parameter fieldLabel) {
         this.parameters.add(fieldLabel);
     }
