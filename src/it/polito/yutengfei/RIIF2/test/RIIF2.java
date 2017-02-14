@@ -62,7 +62,6 @@ public class RIIF2 {
 
         } while (true);
 
-
         while (i< this.inputs.length && this.inputs[i].startsWith("-")){
             switch (this.inputs[i++]){
                 case "-s":
