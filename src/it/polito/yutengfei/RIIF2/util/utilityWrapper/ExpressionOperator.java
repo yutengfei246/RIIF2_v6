@@ -124,7 +124,7 @@ class ExpressionOperator implements Serializable{
     boolean isArrayValid(List<Label<Label>> labelList, Expression expression) throws FieldTypeNotMarchException {
 
         if ( expression.type().equals(RIIF2Grammar.ARRAY) ){
-            System.out.print("Going to check array");
+           // System.out.print("Going to check array");
             ArrayInitializer arrayInitializer = (ArrayInitializer) expression.value();
             List<Expression> expressionList = arrayInitializer.getInitializer();
 
@@ -235,7 +235,7 @@ class ExpressionOperator implements Serializable{
 
         if (opr == OP_IF_ELSE) {
 
-            System.out.println("oper");
+        //    System.out.println("oper");
 
             if (!srcExpression.type().equals(RIIF2Grammar.BOOLEAN) )
                 throw new FieldTypeNotMarchException(RIIF2Grammar.BOOLEAN,
@@ -798,7 +798,7 @@ class ExpressionOperator implements Serializable{
         Label<Label> extractedLabel = labelExtractor.extractor();
 
         if (extractedLabel == null) {
-            System.out.println("EvtractedLabel is null ");
+          //  System.out.println("EvtractedLabel is null ");
             return null;
         }
 

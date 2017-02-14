@@ -48,7 +48,7 @@ abstract class TypeParser extends _RIIF2Parser{
             type = this.getRIIF2Type(ctx.enumType());
         if( ctx.Identifier() != null) {
             TerminalNode Identifier = ctx.Identifier();
-            String identifier = Identifier.getText();
+            String identifier = Identifier.getText().toLowerCase();
             Token IdentifierToken = Identifier.getSymbol();
 
             type = RIIF2Type.primitiveTypeUserDefined( identifier, IdentifierToken.getLine(), IdentifierToken.getCharPositionInLine());
@@ -65,7 +65,7 @@ abstract class TypeParser extends _RIIF2Parser{
         List<TerminalNode> items = ctx.Identifier();
         EnumType enumType = new EnumType();
         for (TerminalNode item : items ) {
-            String enumIdentifier = item.getText();
+            String enumIdentifier = item.getText().toLowerCase();
             enumType.putEnum( enumIdentifier );
         }
 
@@ -163,7 +163,7 @@ abstract class TypeParser extends _RIIF2Parser{
     public void exitChildComponentType(RIIF2Parser.ChildComponentTypeContext ctx) {
 
         TerminalNode Identifier = ctx.Identifier();
-        String identifier = Identifier.getText();
+        String identifier = Identifier.getText().toLowerCase();
 
         Token IdentifierToken = Identifier.getSymbol();
 

@@ -27,4 +27,9 @@ public class FailMode extends Label<Label> {
         super.printAttribute();
         super.printAssociative();
     }
+
+    @Override
+    public String getLiteral() {
+        return null;
+    }
 }

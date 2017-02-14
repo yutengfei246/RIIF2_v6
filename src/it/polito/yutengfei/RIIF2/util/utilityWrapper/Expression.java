@@ -370,8 +370,88 @@ public class Expression implements Initializer, Serializable {
             }
         }
         return stringBuffer.toString();
-
     }
+
+    // get the literal when using expression to generate Database
+    public String getLiteral() {
+
+        StringBuffer literal = new StringBuffer();
+
+        if ( this.value() instanceof  DeclaratorId ) {
+            DeclaratorId declaratorId = (DeclaratorId) this.value();
+            String id = declaratorId.getPrimitiveId().getId();
+            literal.append(id);
+
+            if (declaratorId.hasAttributeIndex()) {
+                String attributeId =declaratorId.getAttributeIndex().getId();
+                literal.append(attributeId);
+            }
+        }
+
+        else if ( this.value() instanceof  Expression){
+            Expression expression = (Expression) this.value;
+            literal.append(expression.getLiteral());
+        }
+
+        else if (this.value() instanceof ArrayInitializer){
+            ArrayInitializer arrayInitializer = (ArrayInitializer) this.value();
+            arrayInitializer.getInitializer().forEach(expression -> literal.append(expression.getLiteral()));
+        }
+
+        else if ( this.type().equals(RIIF2Grammar.SELF)) {
+            literal.append(this.type);
+        }
+
+        else if ( this.type().equals(RIIF2Grammar.FUNC_EXP)) {
+            literal.append("EXP(");
+            this.funcArguments.forEach(expression -> literal.append(expression.getLiteral()));
+            literal.append(")");
+        }
+
+        else if ( this.type().equals(RIIF2Grammar.FUNC_AGG_SINGLE)){
+            literal.append("AGG_SINGLE_FAIL(");
+            this.funcArguments.forEach(expression -> literal.append(expression.getLiteral()));
+            literal.append(")");
+        }
+
+        else literal.append(this.value.toString());
+
+        Iterator<Operation> iterator = this.getIterator();
+
+        while (iterator.hasNext()) {
+            Operation operation = iterator.next();
+
+            if (operation.getOpr() == 15)
+                literal.append("*");
+
+            if (operation.getOpr() == 16)
+                literal.append("\\");
+
+            if (operation.getOpr() == 18)
+                literal.append("+");
+
+            if (operation.getOpr() == 19)
+                literal.append("-");
+
+            Expression oprExpression = operation.getOprExpression();
+            Expression targetExpression = operation.getOprTargetExpression();
+
+            if (oprExpression != null) {
+                oprExpression.setRecorder(this.recorder);
+                oprExpression.setCurrentLabel(this.currentLabel);
+                literal.append(oprExpression.getLiteral());
+            }
+
+            if (targetExpression != null) {
+                targetExpression.setRecorder(this.recorder);
+                targetExpression.setCurrentLabel(this.currentLabel);
+                literal.append(targetExpression.getLiteral());
+            }
+        }
+
+            return literal.toString();
+    }
+
 
     // use for debug , print the expression,recursive
     public void print() {
@@ -417,11 +497,7 @@ public class Expression implements Initializer, Serializable {
         else if ( this.type().equals(RIIF2Grammar.FUNC_AGG_SINGLE)) {
             System.out.print(" agg_single_fail( ");
 
-            this.funcArguments.forEach(expression -> {
-
-            System.out.print(" " + expression.toString() + " ");
-
-            });
+            this.funcArguments.forEach(expression ->  System.out.print(" " + expression.toString() + " ") );
 
             System.out.print(" )");
         }
@@ -479,4 +555,5 @@ public class Expression implements Initializer, Serializable {
     public String getYy(){
         return this.yy;
     }
+
 }

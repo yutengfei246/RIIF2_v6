@@ -3,6 +3,7 @@ package it.polito.yutengfei.RIIF2.RIIF2Modules.parts;
 
 import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
+import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 
 public class ChildComponent extends Label<Label> {
 
@@ -16,6 +17,7 @@ public class ChildComponent extends Label<Label> {
 
         for ( int i =0 ; i< length ; i++) {
             ChildComponent cc = new ChildComponent(super.getRecorder());
+            cc.setName(RIIF2Grammar.ARRAY_ITEM);
             super.assignVectorItem(i,cc);
             try {
                 super.assignVectorValue(i,i,super.getValue());
@@ -25,7 +27,6 @@ public class ChildComponent extends Label<Label> {
 
         }
     }
-
 
     @Override
     public void print() {
@@ -42,5 +43,10 @@ public class ChildComponent extends Label<Label> {
         }
 
         System.out.println(" <<-----------child component " + this.getName());
+    }
+
+    @Override
+    public String getLiteral() {
+        return null;
     }
 }

@@ -1,8 +1,12 @@
 package it.polito.yutengfei.RIIF2.recoder;
 
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.*;
+import it.polito.yutengfei.RIIF2.mysql.SQLConnector;
 
 import java.io.Serializable;
+import java.sql.Array;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 
 public class RIIF2Recorder implements Recorder, Serializable {
@@ -65,12 +69,20 @@ public class RIIF2Recorder implements Recorder, Serializable {
         return this.exRecorderMap.containsKey(exNameRecorderName);
     }
 
-    public Map<String,RIIF2Recorder> getExRecorderMap() {
-        return this.exRecorderMap;
+    public List<String> getImplementsRecorder(){
+        List<String> list = new LinkedList<>();
+
+        this.implRecorderMap.forEach((s, recorder) -> list.add(s));
+
+        return list;
     }
 
-    public Map<String,RIIF2Recorder> getImplRecorderMap() {
-        return this.implRecorderMap;
+    public List<String> getExtendsRecorder(){
+        List<String> list = new LinkedList<>();
+
+        this.exRecorderMap.forEach((s, recorder) ->  list.add(s));
+
+        return list;
     }
 
     public void addPlatform(Platform platform) {
@@ -293,10 +305,93 @@ public class RIIF2Recorder implements Recorder, Serializable {
         return new RIIF2Recorder();
     }
 
-    @Override
-    public void javaBean() {
 
+    @Override // stores into parameters table, and remember to get the recorder id according to the recorder that it exists.
+    public void generateDB(SQLConnector connector) {
+
+        this.implRecorderMap.forEach((s, recorder) -> recorder.generateDB(connector));
+        this.exRecorderMap.forEach((s, recorder) -> recorder.generateDB(connector));
+
+        List<String> selectLabels = new LinkedList<String>(){{
+            add("id");
+        }};
+
+        String where = "name = " + "\"" + this.identifier +   "\"" + ";";
+        //first I need to retrieve the recorder id from recorder table
+        ResultSet resultSet = connector.select("recorder",selectLabels,where);
+        try {
+            if (resultSet.next()) {
+                int recorderNumber= resultSet.getInt("id");
+                this.generateParameterDB(connector,recorderNumber);
+                this.generateConstantDB(connector,recorderNumber);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
+
+    // this method responsible for storing the parameters into parameters table
+    private void generateParameterDB(SQLConnector connector, int recorderNumber) {
+
+        // prepare the list name
+        List<String> listName = new LinkedList<String>() {{
+            add("name");
+            add("type");
+            add("value");
+            add("recorder");
+        }};
+
+        // for each parameter
+        this.parameters.forEach(parameter -> {
+
+            String name = parameter.getName();
+            String type = parameter.getType();
+            Object value = parameter.getValue();
+            int recorder = recorderNumber;
+
+            // prepare the parameter values
+            List<Object> listValues = new LinkedList<Object>() {{
+                add(name);
+                add(type);
+                add(parameter.getLiteral());
+                add(recorder);
+            }};
+            System.out.println(listValues);
+            connector.insert("parameters", listName, listValues);
+        });
+    }
+
+
+    private void generateConstantDB(SQLConnector connector, int recorderNumber) {
+        // prepare the list name
+        List<String> listName = new LinkedList<String>() {{
+            add("name");
+            add("type");
+            add("value");
+            add("recorder");
+        }};
+
+        // for each parameter
+        this.constants.forEach(constant -> {
+
+            String name = constant.getName();
+            String type = constant.getType();
+            Object value = constant.getValue();
+            int recorder = recorderNumber;
+
+            // prepare the parameter values
+            List<Object> listValues = new LinkedList<Object>() {{
+                add(name);
+                add(type);
+                add(constant.getLiteral());
+                add(recorder);
+            }};
+            System.out.println(listValues);
+            connector.insert("constants", listName, listValues);
+        });
+    }
+
 
 
     public void print8(){

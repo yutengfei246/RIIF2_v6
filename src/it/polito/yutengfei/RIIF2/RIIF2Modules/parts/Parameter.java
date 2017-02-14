@@ -27,6 +27,34 @@ public class Parameter extends Label<Label> {
 
 
     @Override
+    public String getLiteral(){
+
+        StringBuffer literal = new StringBuffer();
+
+        Object initialValue = super.getValue();
+
+        if (initialValue != null){
+            if (initialValue instanceof Expression) {
+                literal.append(((Expression)initialValue).getLiteral());
+            }
+
+            if (initialValue instanceof List){
+                Object value = super.getValue();
+                List valueList = (List)value;
+                literal.append(valueList.toString());
+            }
+
+            if (initialValue instanceof String)
+                literal.append(initialValue.toString());
+        }
+        else
+            literal.append("null");
+
+        return literal.toString();
+    }
+
+
+    @Override
     public void print() {
 
         // print field

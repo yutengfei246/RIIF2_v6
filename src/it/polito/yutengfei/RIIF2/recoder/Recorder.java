@@ -1,5 +1,7 @@
 package it.polito.yutengfei.RIIF2.recoder;
 
+import it.polito.yutengfei.RIIF2.mysql.SQLConnector;
+
 public interface Recorder extends Repository{
 
     static void record(Recorder recorder){
@@ -9,6 +11,8 @@ public interface Recorder extends Repository{
         }
     }
 
-    void javaBean();
+    void generateDB(SQLConnector sqlConnector);
     RIIF2Recorder getRIIF2Recorder();
+
+
 }

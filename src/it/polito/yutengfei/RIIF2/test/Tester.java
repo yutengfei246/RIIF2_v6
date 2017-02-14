@@ -2,6 +2,8 @@ package it.polito.yutengfei.RIIF2.test;
 
 import it.polito.yutengfei.RIIF2.RIIF2Lexer;
 import it.polito.yutengfei.RIIF2.RIIF2Parser;
+import it.polito.yutengfei.RIIF2.mysql.MysqlBuilder;
+import it.polito.yutengfei.RIIF2.mysql.SQLConnector;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.recoder.Repository;
 import it.polito.yutengfei.RIIF2.visitor.SLV;
@@ -13,6 +15,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.ResultSet;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Tester {
 
@@ -44,7 +49,7 @@ public class Tester {
         ANTLRInputStream antlrInputStream = null;
         try {
             antlrInputStream = new ANTLRInputStream(this.in);
-        } catch (IOException e) {
+        } catch (IOException ignored) {
         }
 
         RIIF2Lexer riif2Lexer = new RIIF2Lexer(antlrInputStream);
@@ -78,7 +83,19 @@ public class Tester {
 
         System.out.println("Going to generate the database which is the java bean class ");
 
-        Repository.generateJavaBean();
+
+        SQLConnector sqlConnector = MysqlBuilder.getNewSQLConnector();
+        List<String> name = new LinkedList<String>(){{
+            add("id");add("name"); add("type");
+        }};
+
+        List<Object> values = new LinkedList<Object>() {{
+            add("10");add("aa");add("bb");
+        }};
+
+        //sqlConnector.insert("recorder", name, values);
+
+        Repository.generateDB(sqlConnector);
     }
 
 }

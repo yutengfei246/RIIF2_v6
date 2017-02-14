@@ -2,6 +2,7 @@ package it.polito.yutengfei.RIIF2.visitor;
 
 import it.polito.yutengfei.RIIF2.RIIF2BaseVisitor;
 import it.polito.yutengfei.RIIF2.RIIF2Parser;
+import it.polito.yutengfei.RIIF2.mysql.SQLConnector;
 import it.polito.yutengfei.RIIF2.parser.ComponentParser;
 import it.polito.yutengfei.RIIF2.parser.TemplateParser;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
@@ -63,7 +64,7 @@ public class SLV extends RIIF2BaseVisitor<Boolean> implements Recorder{
     }
 
     @Override
-    public void javaBean() {
+    public void generateDB(SQLConnector sqlConnector) {
 
     }
 

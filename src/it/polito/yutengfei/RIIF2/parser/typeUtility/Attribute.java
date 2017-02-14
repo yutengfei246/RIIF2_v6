@@ -64,6 +64,11 @@ public class Attribute extends Label<Label> {
         this.printStackValue();
     }
 
+    @Override
+    public String getLiteral() {
+        return null;
+    }
+
     public void printStackValue() {
 
         super.printAttribute();

@@ -150,6 +150,8 @@ public abstract class Label<T extends Label> extends ValueMember{
 
     public abstract void print();
 
+    public abstract String getLiteral();
+
     protected void printVector(){
         if (this.isVector()){
             System.out.print(" [1:" + this.getVectorLength() + "]");

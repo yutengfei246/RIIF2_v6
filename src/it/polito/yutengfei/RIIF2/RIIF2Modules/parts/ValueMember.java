@@ -68,9 +68,6 @@ class ValueMember implements Serializable {
             Expression expValue = (Expression) value;
 
 
-            if (label.getName().equals(RIIF2Grammar.ITEMS)) {
-
-            }
 
             if ( expValue.getXx() != null && expValue.getYy() != null ){
                 String xx = expValue.getXx();

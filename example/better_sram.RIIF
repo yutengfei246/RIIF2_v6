@@ -1,3 +1,6 @@
+
+
+
 component IMPROVED_SRAM_MEMORY;
 // --------------------- Parameter Declaration ----------------------------
   parameter VOLTAGE : float := 1.0;               // voltage at transistor

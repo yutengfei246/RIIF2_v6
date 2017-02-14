@@ -1,9 +1,13 @@
 package it.polito.yutengfei.RIIF2.recoder;
 
+import it.polito.yutengfei.RIIF2.mysql.SQLConnector;
+import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.TableValueOperator;
 
 import java.io.*;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public interface Repository {
@@ -52,11 +56,44 @@ public interface Repository {
     }
 
     /* the method for generating the class , each class has the name that stored in recorder*/
-    static void generateJavaBean() {
-        System.out.println("Generating template class ");
-        tempRecorderMap.forEach((s, recorder) -> recorder.javaBean() );
-        System.out.println("Generating component class");
-        componentRecorderMap.forEach((s, recorder) -> recorder.javaBean());
+    static void generateDB(SQLConnector sqlConnector) {
+
+        // store into Recorder table 
+        List<String> labels = new LinkedList<String>(){{
+            add("name");
+            add("type");
+            add("implements");
+            add("extends");
+        }};
+
+        tempRecorderMap.forEach((s, recorder) -> {
+            List<Object> values = new LinkedList<>();
+
+            values.add(s);
+            values.add("TEMPLATE");
+            values.add(((RIIF2Recorder)recorder).getImplementsRecorder());
+            values.add(((RIIF2Recorder)recorder).getExtendsRecorder());
+
+            sqlConnector.insert("recorder",labels,values);
+
+        });
+
+
+        componentRecorderMap.forEach((s, recorder) -> {
+            List<Object> values = new LinkedList<>();
+
+            values.add(s);
+            values.add("COMPONENT");
+            values.add(((RIIF2Recorder)recorder).getImplementsRecorder());
+            values.add(((RIIF2Recorder)recorder).getExtendsRecorder());
+
+            sqlConnector.insert("recorder",labels,values);
+
+        });
+
+        tempRecorderMap.forEach((s, recorder) -> recorder.generateDB(sqlConnector) );
+        componentRecorderMap.forEach((s, recorder) -> recorder.generateDB(sqlConnector));
+
     }
 
     class DeepCopy{

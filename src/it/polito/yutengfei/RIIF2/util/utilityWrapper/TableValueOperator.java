@@ -128,12 +128,12 @@ public class TableValueOperator implements Serializable{
             value.setCurrentLabel(labelLabel);
             value.setRecorder(this.labelContainer.getRecorder());
             value.getType(); // in case the expression including SELF
-            System.out.println(" value " + value.getType() + " label " +labelLabel.getType());
+           // System.out.println(" value " + value.getType() + " label " +labelLabel.getType());
             value.setLocation(null,null);;
             try {
                 // this table with name Item type is
                 labelLabel.setValue(value);
-                ((Expression)labelLabel.getValue()).print();
+                //((Expression)labelLabel.getValue()).print();
             } catch (FieldTypeNotMarchException e) {
                 e.printStackTrace();
             }
@@ -242,6 +242,11 @@ public class TableValueOperator implements Serializable{
             this.oneRow.forEach(Label::print);
 
             System.out.print(" ] ");
+        }
+
+        @Override
+        public String getLiteral() {
+            return null;
         }
 
         public int size() {

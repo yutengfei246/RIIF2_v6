@@ -44,4 +44,9 @@ public class Platform extends Label<Label>{
         System.out.println();
 
     }
+
+    @Override
+    public String getLiteral() {
+        return null;
+    }
 }

@@ -37,7 +37,7 @@ public class CCFactory implements Factory {
     }
 
     private void positionCC() throws SomeVariableMissingException, FieldTypeNotMarchException {
-        String typeCcId = this.ccType.getValue();
+        String typeCcId = this.ccType.getValue().toLowerCase();
 
         if ( !Repository.containsComponent(typeCcId))
             throw new SomeVariableMissingException(typeCcId,

@@ -53,6 +53,6 @@ public class RIIF2Grammar {;
     public static final String LIST_STRING = "list-string";
     public static final String LIST_INTEGER = "list-integer";
     public static final String LIST_DOUBLE = "list-double";
-    public static final String TABLE_ITEM = "Item";
     public static final String _ROW = "row";
+    public static final String ARRAY_ITEM = "array-item";
 }

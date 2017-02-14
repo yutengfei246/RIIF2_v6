@@ -1,3 +1,6 @@
+ component cpu;
+ endcomponent
+
 component FAST_CPU;
 
 // For simple model, MTTF is static constant
@@ -10,42 +13,6 @@ component FAST_CPU;
   assign VOLTAGE'unit = volts;
   assign VOLTAGE'min = 0.8;
   assign VOLTAGE'max = 1.2;
-
-endcomponent
-
-component IMPROVED_SRAM_MEMORY;
-// --------------------- Parameter Declaration ----------------------------
-  parameter VOLTAGE : float := 1.0;               // voltage at transistor
-  assign VOLTAGE'unit = volts;
-  assign VOLTAGE'min = 0.8;       // Valid range over which RAM is characterized
-  assign VOLTAGE'max = 1.2;
-
-  parameter NEUTRON_ENV_DEF : NEUTRON_ENV;  // parameter of type NEUTRON_ENV_DEF
-
-// --------------------- Constant Declaration -----------------------------
-  constant A_DIFF : float := 3.2;        // Constant obtained from layout
-  constant Q_COL_EFF : float := 0.6;     // Represent Qcrit/Qcoll
-  constant MBE_RATIO : float := 0.25;    // For now, simple ratio of MBEs to SBEs
-
-// --------------------- Define Failure Modes -----------------------------
-// Neutron SBE failures are proportional to Qcrit/Qeff. Qcrit depends on V.
-// For simple example, only consider Neutron SER.
-  fail_mode SBE;
-  assign SBE'description = "Single bit soft error, alpha and neutron.";
-  assign SBE'unit = FITS;
-
- // assign SBE'rate = NEUTRON_ENV'REL_FLUX * A_DIFF * EXP( - VOLTAGE / Q_COL_EFF);
-
-// For this simple example, MBE is fixed ratio of SBE
-  fail_mode MBE;
-  assign MBE'description = "Multi-bit soft error, alpha and neutron.";
-  assign MBE'unit = FITS;
-  assign MBE'rate = SBE'RATE * MBE_RATIO;
-
-// For simple model, MTTF is static constant
-  fail_mode CHIP_FAIL;
-  assign CHIP_FAIL'description = "Permanent hard chip failure.";
-  assign CHIP_FAIL'unit = MTTF;
 
 endcomponent
 
@@ -69,7 +36,7 @@ component SIMPLE_SRAM;
   assign SBE'unit = FITS;
   assign SBE'rate = A_DIFF * EXP( ( - VOLTAGE / Q_COL_EFF ) ) ;
 
-  //assert SBE'rate < 1000;
+ // assert SBE'rate < 1000;  // do not consider this situation
 
 // In this example, MBE is fixed ratio of SBE
   fail_mode MBE;
@@ -84,42 +51,6 @@ component SIMPLE_SRAM;
   assign CHIP_FAIL'rate = 1000000;
 
 endcomponent
-
-component SIMPLE_CPU_BOARD;
-  // --------------------- Constant Declaration -----------------------------
-  constant NUM_RAMS : integer := 17;
-  constant CHIP_VOLTAGE : float := 2.0;
-  assign CHIP_VOLTAGE'unit = VOLTS;
-  constant MEMORY_UTILIZATION : float := 0.75;
-
-  // --------------------- Instantiate Components ---------------------------
-  child_component FAST_CPU CPU;            // Single CPU
-  assign CPU'VOLTAGE = CHIP_VOLTAGE;       // Propagate parameters to children
-
-
-  child_component SIMPLE_SRAM MEMORY[1:NUM_RAMS]; // 17 memory chips
-  assign MEMORY[1..NUM_RAMS].VOLTAGE = CHIP_VOLTAGE;
-
-
-// ----------------- Define Failure Modes for the Board ----------------------
-// If there is an MBE in any memory, the board will reboot.
-  fail_mode REBOOT;
-  assign REBOOT'description = "Reboot due to MBE";
-  assign REBOOT'unit = FIT;
-
-  //assign REBOOT'rate = MEMORY_UTILIZATION * agg_single_fail( MEMORY'MBE[1:NUM_RAMS] ); // did not consider this situation
-
-// If either the CPU or >1 RAMs have a chip-fail, boards must be replaced.
-  fail_mode REPLACE_BOARD;
-  assign REPLACE_BOARD'description = "Hard failure causes board replacement.";
-  assign REPLACE_BOARD'unit = MTTF;
-
-  //assign REPLACE_BOARD'rate = agg_single_fail( CPU'CHIP_FAIL, agg_gt_n_fail( 1, MEMORY'CHIP_FAIL[1:NUM_RAMS] ) ); // not consider this part
-
-// Explicitly declare that SBEs in the memory have no effect
-//  assign null'rate = agg_single_fail( MEMORY'SBE[1:NUM_RAMS] ); // not consider in my case
-endcomponent
-
 component SRAM_MEMORY_TEMPLATE;
 // --------------------- Parameter Declaration ----------------------------
   parameter VOLTAGE : float;                // voltage at transistor
@@ -135,7 +66,6 @@ component SRAM_MEMORY_TEMPLATE;
 
 endcomponent
 
-
 component SRAM_MEMORY extends SRAM_MEMORY_TEMPLATE;
   // ------------------ Define Valid Parameter Ranges ---------------------------
   assign VOLTAGE'min = 0.8;       // Valid range over which RAM is characterized
@@ -148,7 +78,7 @@ component SRAM_MEMORY extends SRAM_MEMORY_TEMPLATE;
 
   // --------------------- Specify Failure Rates  -----------------------------
   assign SBE'unit = FITS;
-  //assign SBE'rate = NEUTRON_ENV'REL_FLUX * A_DIFF * EXP( - VOLTAGE / Q_COL_EFF) ;  // not consider this
+  //assign SBE'rate = NEUTRON_ENV'REL_FLUX * A_DIFF * EXP( - VOLTAGE / Q_COL_EFF) ;
 
   assign MBE'unit = FITS;
   assign MBE'rate = SBE'RATE * MBE_RATIO;
@@ -157,3 +87,217 @@ component SRAM_MEMORY extends SRAM_MEMORY_TEMPLATE;
   assign CHIP_FAIL'rate = 1000000;
 
 endcomponent
+
+component SIMPLE_CPU_BOARD;
+  // --------------------- Constant Declaration -----------------------------
+  constant NUM_RAMS : integer := 17;
+  constant CHIP_VOLTAGE : float := 1.0;
+  assign CHIP_VOLTAGE'unit = VOLTS;
+  constant MEMORY_UTILIZATION : float := 0.75;
+
+  // --------------------- Instantiate Components ---------------------------
+  child_component FAST_CPU CPU;            // Single CPU
+  assign CPU'VOLTAGE = CHIP_VOLTAGE;       // Propagate parameters to children
+
+  child_component SIMPLE_SRAM MEMORY[1:NUM_RAMS];      // 17 memory chips
+  assign MEMORY[1..NUM_RAMS].VOLTAGE = CHIP_VOLTAGE;
+
+// ----------------- Define Failure Modes for the Board ----------------------
+// If there is an MBE in any memory, the board will reboot.
+  fail_mode REBOOT;
+  assign REBOOT'description = "Reboot due to MBE";
+  assign REBOOT'unit = FIT;
+  assign REBOOT'rate = MEMORY_UTILIZATION *
+                        agg_single_fail( MEMORY'MBE[1:NUM_RAMS] );
+
+// If either the CPU or >1 RAMs have a chip-fail, boards must be replaced.
+  fail_mode REPLACE_BOARD;
+  assign REPLACE_BOARD'description = "Hard failure causes board replacement.";
+  assign REPLACE_BOARD'unit = MTTF;
+  //assign REPLACE_BOARD'rate = agg_single_fail( CPU'CHIP_FAIL, agg_gt_n_fail( 1, MEMORY'CHIP_FAIL[1:NUM_RAMS] ) );
+
+// Explicitly declare that SBEs in the memory have no effect
+  //assign null'rate = agg_single_fail( MEMORY'SBE[1:NUM_RAMS] );
+
+endcomponent
+
+template SRAM_TEMPLATE;
+
+    // All SRAMs must define voltage, temperature and size
+    abstract constant   NAME : string;
+    abstract constant  MANUFACTURE : string;
+    abstract parameter CORE_VOLTAGE : float;
+    abstract parameter NUM_BITS : integer;
+
+    // All SRAMs must have radiation induced failure modes
+    abstract fail_mode RAD_FM[];
+    // All SRAMs must have permanent failure modes
+    abstract fail_mode PER_FM[];
+
+    abstract fail_mode RAD_FM[SBU]'RATE;
+    impose RAD_FM[SBU]'UNIT = FITS;
+
+    abstract fail_mode RAD_FM[MBU]'RATE;
+    impose RAD_FM[MBU]'UNIT = FITS;
+    abstract fail_mode RAD_FM[SEFI]'RATE;
+    impose RAD_FM[SEFI]'UNIT = FITS;
+    abstract fail_mode RAD_FM[SEFI]'RATE;
+    impose RAD_FM[SEFI]'UNIT = FITS;
+    abstract fail_mode RAD_FM[SSAF]'RATE;
+    impose RAD_FM[SSAF]'UNIT = FIT;
+
+endtemplate
+
+template SYNCSRAM_TEMPLATE extends SRAM_TEMPLATE;
+
+abstract parameter      CLK_Speed : integer;
+impose  CLK_Speed'unit = MHZ ;
+
+endtemplate
+
+template FLIP_CHIP_TEMPLATE;
+
+//all flip chip packages must contain the following info
+abstract constant NAME:string;
+abstract parameter NUM_BUMPS :integer;
+abstract parameter PACKAGE_TEMP: float;
+impose PACKAGE_TEMP'UNIT = CELSIUS;
+
+//all flip-chip package have these failure mechanisms
+abstract fail_mode OPEN_BUMP;
+abstract fail_mode DIE_CRACK;
+endtemplate
+
+component CY7C1263XC18 implements SYNCSRAM_TEMPLATE,FLIP_CHIP_TEMPLATE;
+
+ set MANUFACTURE = "CYPRESS";
+ set CORE_VOLTAGE = 1.8;
+ set NUM_BITS = 37748736;
+ set CLK_Speed = 633;
+ set NUM_BUMPS = 165;
+ set PACKAGE_TEMP'MIN = 0;
+ set PACKAGE_TEMP'MAX = 70;
+ set RAD_FM[SBU]'RATE = 0;
+ set SYNCSRAM_TEMPLATE.NAME = "CY/C1263XC18";
+ set FLIP_CHIP_TEMPLATE.NAME = "165-LBGA";
+
+ endcomponent
+
+ component VECTORCALC_CORE;
+ // An hardware component performing vectorial calculations
+
+ //parameter fail_mode SBU;
+ fail_mode SBU;
+ assign SBU'RATE = 10; //obtained from radiation tests
+
+ parameter SW_FM: table;
+ assign SW_FM'HEADERS = {FAILMODE,SFM,RATE};
+ assign SW_FM'ITEMS = { //obtained from fault injection
+     ["SUB", "WRONG_DATA", 0.3*SBU'RATE],
+     ["SBU", "WRONG_INSTRUCTION",0.2*SBU'RATE]
+     } ;
+
+ endcomponent
+
+
+ component myConponent extends  VECTORCALC_CORE;
+
+ assign SBU'RATE = 100;
+ endcomponent
+
+ component myComponent2 extends VECTORCALC_CORE;
+
+ endcomponent
+
+ component VECTORCALC_CORE;
+ // An hardware component performing vectorial calculations
+
+ //parameter fail_mode SBU;
+ fail_mode SBU;
+ assign SBU'RATE = 10; //obtained from radiation tests
+
+ parameter SW_FM: table;
+ assign SW_FM'HEADERS = {FAILMODE,SFM,RATE};
+ assign SW_FM'ITEMS = { //obtained from fault injection
+     ["SUB", "WRONG_DATA", 0.3*SBU'RATE],
+     ["SBU", "WRONG_INSTRUCTION",0.2*SBU'RATE]
+     } ;
+ endcomponent
+
+ template SW_COMPONENT;
+     //all programs must define the name,size...
+
+     abstract parameter NAME:string;
+     abstract parameter SIZE:integer;
+     abstract parameter LOOPS: integer;
+     abstract parameter PROTECTION: enum {NONE, VAR_DUP};
+     abstract parameter READ_ACCESS: integer;
+     abstract parameter WRITE_ACCESS: integer;
+     abstract platform execute_on;
+
+     //List of possible SFB considered in our library
+     abstract constant SFB_ITEMS : integer := 1000000;
+     abstract constant SFB_LIST := { INT_TIME, UNDETECTABLE,
+                     EARLY, LATE, FULL_UNRESPONSIVE, PARTIAL_UNRESPONSIVE,
+                     RESPONSIVE, DATA_BENIGN, NO_DATA, EDC, NON_EDC };
+
+     // Timing constraints depending on the workload
+     abstract parameter TIMING_CONSTRAINTS : table;
+     impose TIMING_CONSTRAINTS'HEADERS = {WORKLOAD,EXEC_TIME,MAX_TIME,AVG_TIME};
+
+     abstract parameter SFB : table;
+     impose SFB'HEADERs = {SFM_TYPE,SFM,OCCURING_SFB,OCCURRING_SFB_RATE};
+ endtemplate
+
+ component VADD implements SW_COMPONENT;
+     set NAME = "Vector ADD";
+     set SIZE = 524;
+     set PROTECTION = NONE;
+     constant NUMBER_OF_ITEMS :integer:= 10000;
+     set READ_ACCESS = 76*NUMBER_OF_ITEMS / 10000;
+     set WRITE_ACCESS = 75*NUMBER_OF_ITEMS / 10000;
+     set LOOPS = 3;
+     child_component cpu VPRINT ;
+
+     set execute_on = VECTORCALC_CORE;
+
+
+     set TIMING_CONSTRAINTS'ITEMS = {
+         ["TEST_BENCH1",0.0000001,2, 0.000001],
+         ["TEST_BENCH2",0.0000003,2.1, 0.0000004] };
+
+     set SFB'ITEMS = {
+         [ "permanent", "WRONG_DATA", SFB_ITEMS, {0.893, 0.107, 0, 0, 0.891, 0.042, 0.067, 0.413, 0.109,0.052,0.426 } ],
+         [ "permanent", "WRONG_DATA", SFB_ITEMS, {0.893, 0.107, 0, 0, 0.891, 0.042, 0.067, 0.413, 0.109,0.052,0.426 } ],
+         [ "permanent", "WRONG_DATA", SFB_ITEMS, {0.893, 0.107, 0, 0, 0.891, 0.042, 0.067, 0.413, 0.109,0.052,0.426 } ],
+         [ "permanent", "WRONG_DATA", SFB_ITEMS, {0.893, 0.107, 0, 0, 0.891, 0.042, 0.067, 0.413, 0.109,0.052,0.426 } ]
+
+     };
+
+     endcomponent
+
+     component VADD_VARIABLE_DUPLICATION_VER1 extends VADD;
+
+         set NAME = "vector ADD_with_Variable_Duplication";
+         set PROTECTION = VAR_DUP;
+         set TIMING_CONSTRAINTS'ITEMS = {
+         (PROTECTION != VAR_DUP)?
+         ["TEST_BENCH1",self+0.001,self+0.9,self+0.0015]:
+         ["TEST_BENCH1",self,self,self ],
+
+         (PROTECTION != VAR_DUP)?
+         ["TEST_BENCH3",self+0.001,self+0.2,self+100]:
+         ["TEST_BENCH3",self,self,self+10000 ]
+         };
+
+     endcomponent
+
+     component VADD_VARIABLE_DUPLICATION_VER2 extends VADD_VARIABLE_DUPLICATION_VER1;
+
+     set TIMING_CONSTRAINTS'ITEMS[#][EXEC_TIME]=
+         (PROTECTION == VAR_DUP) ? self + 10 : self +1000 ;
+     set TIMING_CONSTRAINTS'ITEMS[#][MAX_TIME]=
+         (PROTECTION == VAR_DUP)? self+ 10 : self;
+     set TIMING_CONSTRAINTS'ITEMS[#][AVG_TIME]=
+         (PROTECTION == VAR_DUP)? self +10 : self ;
+     endcomponent
