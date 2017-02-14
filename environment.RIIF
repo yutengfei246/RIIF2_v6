@@ -1,0 +1,22 @@
+// Specify neutron environment based on JESD89a
+// Taken from appendex A.3
+
+environment NEUTRON_ENV_DEF;
+// Input to the environment is the location and solar activity
+  input parameter LOCATION : enum { NYC, LOS_ALAMOS, TOKYO } := NYC;
+  input parameter SUN_ACTIVE : enum { LOW, PEAK, AVG } := AVG;
+// Ouput of the environment is the relative neutron flux
+  output parameter REL_FLUX : float;
+
+  assign REL_FLUX = ( LOCATION == NYC ) ? 
+                      ( ( SUN_ACTIVE == AVG ) ? 1.0 :
+                        ( SUN_ACTIVE == LOW ) ? 0.927 : 1.073 ) :
+                    ( LOCATION == LOS_ALAMOS ) ?
+                      ( ( SUN_ACTIVE == AVG ) ? 5.60 :
+                        ( SUN_ACTIVE == LOW ) ? 5.15 : 5.60 ) :
+                    ( LOCATION == TOKYO ) ?
+                      ( ( SUN_ACTIVE == AVG ) ? 0.66 :
+                        ( SUN_ACTIVE == LOW ) ? 0.62 : 0.64 ) : 
+                        -1; // not defined
+
+endenvironment // NEUTRON_ENV_DEF

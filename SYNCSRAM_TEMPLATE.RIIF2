@@ -1,0 +1,6 @@
+template SYNCSRAM_TEMPLATE extends SRAM_TEMPLATE;
+
+abstract parameter      CKL_Speed : integer;
+impose  CLK_speed'units= MHZ ;
+
+endtemplate

@@ -17,19 +17,17 @@ public class SLV extends RIIF2BaseVisitor<Boolean> implements Recorder{
 
     // keeping the tree for listener
     private final ParseTree parseTree;
-    private final RIIF2Parser parser;
 
-    private RIIF2Recorder recorder = new RIIF2Recorder();
-
-    private ComponentParser componentParser = null;
-    private TemplateParser templateParser = null;
+    private RIIF2Recorder recorder;
+    private ComponentParser componentParser ;
+    private TemplateParser templateParser ;
 
     private int moduleCounter = -1;
     private final ParseTreeWalker walker = new ParseTreeWalker();
 
-    public SLV (ParseTree parseTree, RIIF2Parser parser){
-        this.parser = parser;
+    public SLV (ParseTree parseTree,  RIIF2Recorder recorder){
         this.parseTree = parseTree;
+        this.recorder = recorder;
     }
 
     @Override

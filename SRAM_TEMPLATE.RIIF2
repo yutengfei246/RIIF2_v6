@@ -1,0 +1,75 @@
+template SRAM_TEMPLATE;
+
+// All SRAMs must defined voltage, temperature and size
+abstract constant   NAME : string;
+abstract constant  MANUFATURER : string;
+abstract parameter CORE_VOLTAGE : float;
+abstract parameter NUM_BITS : integer;
+
+// All SRAMs must have radiation induced failure modes
+abstract fail_mode RAD_FM[];
+// All SRAMs must have permanent failure modes
+abstract fail_mode PER_FM[];
+
+abstract fail_mode RAD_FM[SBU]'RATE;
+impose RAD_FM[SBU]'UNITS = FITS;
+abstract fail_mode RAD_FM[MBU]'RATE;
+impose RAD_FM[MBU]'UNIT = FITS;
+abstract fail_mode RAD_FM[SEFI]'RATE;
+impose RAD_FM[SEFI]'UNIT = FITS;
+abstract fail_mode RAD_FM[SEFI]'RATE;
+impose RAD_FM[SEFI]'UNIT = FITS;
+abstract fail_mode RAD_FM[SSAF]'RATE;
+impose RAD_FM[SSAF]'UNIT = FITS;
+
+endtemplate
+
+template SYNCSRAM_TEMPLATE extends SRAM_TEMPLATE;
+
+abstract parameter      CKL_Speed : integer;
+impose  CLK_speed'units= MHZ ;
+
+endtemplate
+
+template FLIP_CHIP_TEMPLATE;
+
+//all flip chip packages must contain the following info
+abstract constant NAME:string;
+abstract parameter NUM_BUMP:integer;
+abstract parameter PACKAGE_TEMP: float;
+impose PACKAGE_TEMP'UNIT = CELSIUS;
+
+//all flip-chip package have these failure mechanisms
+abstract fail_mode OPEN_BUMP;
+abstract fail_mode DIE_CRACK;
+
+endtemplate
+
+component CY7C1263XC18 implements SYNCSRAM_TEMPLATE,FLIP_CHIP_TEMPLATE;
+
+ set SYNCSRAM_TEMPLATE.NAME = "CY/C1263XC18";
+ set MANUFACTURE = "CYPRESS";
+ set CORE_VOLTAGE = 1.8;
+ set NUM_BITS = 37748736;
+ set CLK_Speed = 633;
+ set FLIP_CHIP_TEMPLATE.NAME = "165-LBGA";
+ set NUM_BUMPS = 165;
+ set PACKAGE_TEMP'MIN = 0 ;
+ set PACKAGE_TEMP'MAX = 70;
+ set RAD_FM[SBU]'RATE = 0;
+ set RAD_FM[SSAP]'RATE = 0;
+
+ endcomponent
+
+
+
+
+
+
+
+
+
+
+
+
+

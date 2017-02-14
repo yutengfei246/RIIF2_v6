@@ -1,0 +1,35 @@
+component SIMPLE_SRAM;
+// --------------------- Parameter Declaration ----------------------------
+  parameter VOLTAGE : float := 1.0;               // Voltage at transistor
+  assign VOLTAGE'unit = volts;
+  assign VOLTAGE'min = 0.8;       // Valid range over which RAM is characterized
+  assign VOLTAGE'max = 1.2;
+
+// --------------------- Constant Declaration -----------------------------
+  constant A_DIFF : float := 3.2;        // Constant obtained from layout
+  constant Q_COL_EFF : float := 0.6;     // Represent Qcrit/Qcoll
+  constant MBE_RATIO : float := 0.25;    // For now, simple ratio of MBEs to SBEs
+
+// --------------------- Define Failure Modes -----------------------------
+// Neutron SBE failures are proportional to Qcrit/Qeff. Qcrit depends on V.
+// In this example, only consider Neutron SER.
+  fail_mode SBE;
+  assign SBE'description = "Single bit soft error, alpha and neutron. " ;
+  assign SBE'unit = FITS;
+  assign SBE'rate = A_DIFF * EXP( ( - VOLTAGE / Q_COL_EFF ) ) ;
+
+  assert SBE'rate < 1000;
+
+// In this example, MBE is fixed ratio of SBE
+  fail_mode MBE;
+  assign MBE'description = "Multi-bit soft error, alpha and neutron. " ;
+  assign MBE'unit = FITS;
+  assign MBE'rate = SBE'rate * MBE_RATIO;
+
+// For simple model, MTTF is static constant
+  fail_mode CHIP_FAIL;
+  assign CHIP_FAIL'description = "Permanent hard chip failure. " ;
+  assign CHIP_FAIL'unit = MTTF;
+  assign CHIP_FAIL'rate = 1000000;
+
+endcomponent

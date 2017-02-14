@@ -1,0 +1,14 @@
+component SRAM_MEMORY_TEMPLATE;
+// --------------------- Parameter Declaration ----------------------------
+  parameter VOLTAGE : float;                // voltage at transistor
+  parameter NEUTRON_ENV_DEF : NEUTRON_ENV;  // parameter of type NEUTRON_ENV_DEF
+
+// --------------------- Define Failure Modes -----------------------------
+  fail_mode SBE;
+  assign SBE'description = "Single bit soft error.";
+  fail_mode MBE;
+  assign MBE'description = "Multi bit soft error.";
+  fail_mode CHIP_FAIL;
+  assign CHIP_FAIL'description = "Permanent hard chip failure." ;
+
+endcomponent

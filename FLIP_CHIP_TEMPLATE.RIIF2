@@ -1,0 +1,12 @@
+template FLIP_CHIP_TEMPLATE;
+
+//all flip chip packages must contain the following info
+abstract constant NAME:string;
+abstract parameter NUM_BUMP:integer;
+abstract parameter PACKAGE_TEMP: float;
+impose PACKAGE_TEMP'UNIT = CELSIUS;
+
+//all flip-chip package have these failure mechanisms
+abstract fail_mode OPEN_BUMP;
+abstract fail_mode DIE_CRACK;
+endtemplate

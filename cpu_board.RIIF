@@ -1,0 +1,34 @@
+component SIMPLE_CPU_BOARD;
+  // --------------------- Constant Declaration -----------------------------
+  constant NUM_RAMS : integer := 17;
+  constant CHIP_VOLTAGE : float := 1.0;
+  assign CHIP_VOLTAGE'unit = VOLTS;
+  constant MEMORY_UTILIZATION : float := 0.75;
+
+  // --------------------- Instantiate Components ---------------------------
+  child_component FAST_CPU CPU;            // Single CPU
+  assign CPU'VOLTAGE = CHIP_VOLTAGE;       // Propagate parameters to children
+
+  child_component SIMPLE_SRAM MEMORY[1:NUM_RAMS];      // 17 memory chips
+  assign MEMORY[1..NUM_RAMS].VOLTAGE = CHIP_VOLTAGE;
+
+// ----------------- Define Failure Modes for the Board ----------------------
+// If there is an MBE in any memory, the board will reboot.
+  fail_mode REBOOT;
+  assign REBOOT'description = "Reboot due to MBE";
+  assign REBOOT'unit = FIT;
+  assign REBOOT'rate = MEMORY_UTILIZATION *
+                        agg_single_fail( MEMORY'MBE[1:NUM_RAMS] );
+
+// If either the CPU or >1 RAMs have a chip-fail, boards must be replaced.
+  fail_mode REPLACE_BOARD;
+  assign REPLACE_BOARD'description = "Hard failure causes board replacement.";
+  assign REPLACE_BOARD'unit = MTTF;
+  assign REPLACE_BOARD'rate = agg_single_fail( 
+                             CPU'CHIP_FAIL,
+                             agg_gt_n_fail( 1, MEMORY'CHIP_FAIL[1:NUM_RAMS] ) );
+
+// Explicitly declare that SBEs in the memory have no effect
+  assign null'rate = agg_single_fail( MEMORY'SBE[1:NUM_RAMS] );
+
+endcomponent
