@@ -39,10 +39,10 @@ fieldDeclaration
     ;
 
 fieldDeclaratorType
-    : primitiveFieldDeclarator
-    | associativeIndexDeclarator
-    | tableFieldDeclarator
-    | listFieldDeclarator
+    : primitiveFieldDeclarator  // a normal or assocaitive or array tyoe declarator
+    | associativeIndexDeclarator // a asserted associative instance
+    | tableFieldDeclarator  // table element
+    | listFieldDeclarator // in the case that user don't need declarating type
     ;
 
 childComponentDeclaration
