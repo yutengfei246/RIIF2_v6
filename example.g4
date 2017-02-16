@@ -10,6 +10,8 @@ componentBodyElement
 
 
 
+component exmapleComponent;
+
 
 
 

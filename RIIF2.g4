@@ -39,10 +39,10 @@ fieldDeclaration
     ;
 
 fieldDeclaratorType
-    : primitiveFieldDeclarator  // a normal or assocaitive or array tyoe declarator
-    | associativeIndexDeclarator // a asserted associative instance
-    | tableFieldDeclarator  // table element
-    | listFieldDeclarator // in the case that user don't need declarating type
+    : primitiveFieldDeclarator  // assocaitive,array structure declarator
+    | associativeIndexDeclarator // the explicit associative declarator
+    | tableFieldDeclarator  // table structure
+    | listFieldDeclarator // generial list
     ;
 
 childComponentDeclaration
@@ -61,12 +61,12 @@ setDeclaration
     : SET aisDeclarator ';'
     ;
 
-aisDeclaration
-    : ( IMPOSE | ASSIGN | SET ) aisDeclarator ';'
-    ;
-
 assertion
     : ASSERT (attributeId) ('<' | '>') expression ';'
+    ;
+
+aisDeclaration
+    : ( IMPOSE | ASSIGN | SET ) aisDeclarator ';'
     ;
 
 // §RIIF-2 template
@@ -139,7 +139,7 @@ requirementDeclaration
 
 primitiveFieldDeclarator
     : primitiveFieldDeclaratorId
-      ( ':' primitiveType )
+      ( ':' primitiveType ) // defined all primitive types ( integer, string...)
       ( ':=' fieldInitializer )?
     ;
 
@@ -224,7 +224,7 @@ aisInitializer
 
 // §RIIF-2 version 6 Declarator Id
 
-primitiveFieldDeclaratorId
+primitiveFieldDeclaratorId // typeType -> symbol of array and associative
     : Identifier ( typeType ) ? ( attributeIndex ) ? #primitiveFieldDeclaratorId1
     | Identifier associativeIndex attributeIndex  #primitiveFieldDeclaratorId2
     ;
@@ -252,9 +252,9 @@ failModeDeclaratorId
     ;
 
 aisDeclaratorId
-    : primitiveId /* hier id */
-      ( aisType | associativeIndex ) ?
-      ( hierPostfix ) ? attributeIndex ? tableIndex ?
+    : primitiveId /* hier id */        // associativeIndex -> [Indentifier]
+      ( aisType | associativeIndex ) ? // aisType -> [exp..exp], [] ...
+      ( hierPostfix ) ? attributeIndex ? tableIndex ? // tableIndex -> [row][column] ...
     ;
 
 // §RIIF-2 version 6 Id

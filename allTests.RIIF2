@@ -1,3 +1,13 @@
+component exampleComponent;
+
+parameter aParameter[] : integer ;
+parameter aParameter[ram] = 10 ;
+
+endcomponent
+
+
+
+
 component FAST_CPU;
 
 // For simple model, MTTF is static constant
@@ -59,7 +69,7 @@ component SIMPLE_CPU_BOARD;
 
   // --------------------- Instantiate Components ---------------------------
   child_component FAST_CPU CPU;            // Single CPU
-  assign CPU'VOLTAGE = CHIP_VOLTAGE;       // Propagate parameters to children
+  assign CPU.VOLTAGE = CHIP_VOLTAGE;       // Propagate parameters to children
 
   child_component SIMPLE_SRAM MEMORY[1:NUM_RAMS];      // 17 memory chips
   assign MEMORY[1 .. NUM_RAMS].VOLTAGE = CHIP_VOLTAGE;
