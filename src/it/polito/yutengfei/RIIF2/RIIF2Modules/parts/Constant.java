@@ -12,17 +12,21 @@ public class Constant extends Label<Label> {
     }
 
     @Override
-    public void vectorInitializer() {
+    public void vectorInitializer(String name, String type, Object value ) {
         int length = super.getVectorLength();
 
         for (int i= 0; i < length ; i ++) {
-            Constant parameter = this.createConstant();
+            Constant parameter = this.createConstant(name, type, value );
             super.assignVectorItem(i,parameter);
         }
     }
 
-    private Constant createConstant() {
-        return new Constant(super.getRecorder());
+    private Constant createConstant(String name, String type, Object value) {
+        Constant constant = new Constant(super.getRecorder());
+        constant.setName(name);
+        constant.setType(type);
+
+        return constant;
     }
 
 

@@ -10,11 +10,13 @@ public class FailMode extends Label<Label> {
     }
 
     @Override
-    public void vectorInitializer() {
+    public void vectorInitializer(String name, String type, Object value ) {
         int length = super.getVectorLength();
 
         for (int i= 0; i < length ; i++ ) {
             FailMode fm = new FailMode(super.getRecorder());
+            fm.setName(name);
+            fm.setType(type);
             super.assignVectorItem(i, fm);
         }
     }

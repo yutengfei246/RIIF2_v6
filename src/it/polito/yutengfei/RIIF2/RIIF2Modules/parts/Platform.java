@@ -12,11 +12,13 @@ public class Platform extends Label<Label>{
     }
 
     @Override
-    public void vectorInitializer() {
+    public void vectorInitializer(String name, String type, Object value ) {
         int length = super.getVectorLength();
 
         for ( int i =0 ; i < length ; i++){
             Platform platform = new Platform(super.getRecorder());
+            platform.setName(name);
+            platform.setType(type);
             super.assignVectorItem(i,platform);
         }
     }

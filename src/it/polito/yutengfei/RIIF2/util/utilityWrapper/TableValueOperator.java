@@ -152,9 +152,10 @@ public class TableValueOperator implements Serializable{
         }
 
         @Override
-        public void vectorInitializer() {
+        public void vectorInitializer(String name, String type, Object value) {
 
         }
+
 
         void initialRow(Object rowItem) {
             // array wrapper initializer

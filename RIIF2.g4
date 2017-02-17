@@ -198,7 +198,7 @@ listInitializer
 listItem
     : DecimalLiteral #listItemDecimalLiteral
     | FloatingPointLiteral #listItemFloatingPointLiteral
-    | Identifier  #listItemIdentifier // Identifier means nothing in List expressed as String in JAVA
+    | Identifier  #listItemIdentifier // Identifier expresses a string type input
     ;
 
 tableItemInitializer
@@ -383,8 +383,8 @@ primary
     | TRUE  #primaryTrue
     | FALSE #primaryFalse
     | aisDeclaratorId   #primaryAisDeclaratorId
-    | literal   #primaryLiteral
-    | funcCall  #primaryFuncCall
+    | literal   #primaryLiteral  // string, floating, integer input,
+    | funcCall  #primaryFuncCall // predefined functions in RIIF-2
     | arrayInitializer  #primaryArrayInitializer
     ;
 

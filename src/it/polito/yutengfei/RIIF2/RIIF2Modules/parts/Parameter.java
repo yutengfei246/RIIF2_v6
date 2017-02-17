@@ -12,17 +12,22 @@ public class Parameter extends Label<Label> {
     }
 
     @Override
-    public void vectorInitializer() {
+    public void vectorInitializer(String name, String type, Object value ) {
         int length = super.getVectorLength();
 
         for (int i= 0; i < length ; i ++) {
-            Parameter parameter = this.createParameter();
+            Parameter parameter = this.createParameter(name, type, value);
             super.assignVectorItem(i,parameter);
         }
     }
 
-    private Parameter createParameter() {
-        return new Parameter(super.getRecorder());
+    private Parameter createParameter(String name, String type, Object value) {
+        Parameter parameter = new Parameter(super.getRecorder());
+
+        parameter.setName(name);
+        parameter.setType(type);
+
+        return parameter;
     }
 
 
@@ -58,7 +63,12 @@ public class Parameter extends Label<Label> {
     public void print() {
 
         // print field
-        System.out.print("Parameter " + super.getName() + " : " + super.getType() );
+        System.out.print("Parameter " + super.getName() );
+
+        if (this.isVector())
+            System.out.print(" [1:" + super.getVectorLength() + "]");
+        else
+            System.out.print(  " : " + super.getType() );
 
         if (this.isEnumType() ){
             System.out.print(" [ ");

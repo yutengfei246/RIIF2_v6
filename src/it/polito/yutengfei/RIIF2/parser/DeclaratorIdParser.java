@@ -117,7 +117,7 @@ abstract class DeclaratorIdParser extends IdParser {
 
         TerminalNode DeclaratorId = ctx.Identifier();
 
-        String associativeIndex = DeclaratorId.getText().toString();
+        String associativeIndex = DeclaratorId.getText().toLowerCase();
         identifier.setId(associativeIndex);
 
         Id id = getId(ctx.associativeIndex());

@@ -233,16 +233,22 @@ public class FieldFactory implements Factory{
 
             // if it is an ArrayInitializer
             // Label should have the vector
-                ArrayInitializer arrayInitializer
-                        = (ArrayInitializer) this.initializer;
+            ArrayInitializer arrayInitializer  = (ArrayInitializer) this.initializer;
+
+            if (this.fieldLabel.isVector())
+                this.fieldLabel.setValue(arrayInitializer);
+
+
 
                 //arrayInitializer is a list of Expression.........
                 arrayInitializer.getInitializer().forEach( expression -> {
+                            expression.setCurrentLabel(this.fieldLabel);
+                            expression.setRecorder(this.recorder);
 
                             if (!Objects.equals(expression.getType(), this.fieldLabel.getType()))
                                 throw new IllegalArgumentException();
 
-                            if (this.fieldLabel.isAssociative()) {
+                            if (this.fieldLabel.isAssociative() ) {
                                 Label usedLabel = null;
                                 if (this.fieldLabel instanceof Parameter)
                                     usedLabel = new Parameter(this.recorder);
@@ -358,7 +364,7 @@ public class FieldFactory implements Factory{
 
                     this.fieldLabel.setVector(true);
                     this.fieldLabel.setVectorLength(vector.getLength());
-                    this.fieldLabel.vectorInitializer();
+                    this.fieldLabel.vectorInitializer(RIIF2Grammar.ARRAY_ITEM,this.fieldLabel.getType(),null);
                 }
             }
         }

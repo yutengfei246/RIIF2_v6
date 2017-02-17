@@ -18,9 +18,10 @@ public class Attribute extends Label<Label> {
     }
 
     @Override
-    public void vectorInitializer() {
+    public void vectorInitializer(String name, String type, Object value) {
 
     }
+
 
     // get the table label references
     public Label<Label> getTable(){

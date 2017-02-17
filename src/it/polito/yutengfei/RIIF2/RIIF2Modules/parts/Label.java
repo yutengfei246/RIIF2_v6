@@ -27,7 +27,7 @@ public abstract class Label<T extends Label> extends ValueMember{
      *The given value could be String, Expression, ArrayInitializer, ArrayWrapperInitializer, TableInitializer
      * */
     public void setValue(Object value) throws FieldTypeNotMarchException {
-        super.setValue(this ,value);
+        super.setValue(this ,value, recorder);
     }
     /**
      * name value type setters and getters
@@ -126,6 +126,9 @@ public abstract class Label<T extends Label> extends ValueMember{
         return this.vector.getLength();
     }
 
+    public void setVectorValue(int index, Object value) throws FieldTypeNotMarchException {
+        this.vector.setValue(index,value);
+    }
 
     public void assignVectorItem(int index, T label){
         this.vector.assignFlatItem(index, label);
@@ -146,15 +149,14 @@ public abstract class Label<T extends Label> extends ValueMember{
 
     /***********************************************************************************/
 
-    public abstract void vectorInitializer();
+    public abstract void vectorInitializer(String name, String type, Object value );
 
     public abstract void print();
 
     public abstract String getLiteral();
 
-    protected void printVector(){
+    void printVector(){
         if (this.isVector()){
-            System.out.print(" [1:" + this.getVectorLength() + "]");
 
             this.vector.print();
         }

@@ -36,7 +36,7 @@ class ValueMember implements Serializable {
         return this.value;
     }
 
-    public void setValue(Label label, Object value ) throws FieldTypeNotMarchException {
+    public void setValue(Label label, Object value, RIIF2Recorder theRecorder) throws FieldTypeNotMarchException {
 
         // when the value is missed
         if (value == null)
@@ -67,8 +67,6 @@ class ValueMember implements Serializable {
         else if (value instanceof Expression) {
             Expression expValue = (Expression) value;
 
-
-
             if ( expValue.getXx() != null && expValue.getYy() != null ){
                 String xx = expValue.getXx();
                 String yy = expValue.getYy();
@@ -97,6 +95,26 @@ class ValueMember implements Serializable {
 
             else
                 throw new FieldTypeNotMarchException( FieldTypeNotMarchException.MARCHED, label.getName(),expValue.getLine(),expValue.getColumn());
+        }
+
+        // if the given value is a arrayInitializer
+        else if (value instanceof ArrayInitializer) {
+            ArrayInitializer arrayInitializer = (ArrayInitializer) value;
+            List<Expression> expressionList = arrayInitializer.getInitializer();
+
+            final int[] i = {0};
+            expressionList.forEach(expression -> {
+                expression.setCurrentLabel(label);
+                expression.setRecorder(theRecorder);
+
+                try {
+                    label.setVectorValue(i[0]++ ,expression);
+                } catch (FieldTypeNotMarchException e) {
+                    e.printStackTrace();
+                }
+            });
+
+
         }
 
         // if the given value is list initializer

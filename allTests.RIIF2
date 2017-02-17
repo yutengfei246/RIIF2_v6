@@ -3,6 +3,9 @@ component exampleComponent;
 parameter aParameter[] : integer ;
 parameter aParameter[ram] = 10 ;
 
+
+parameter aParameter1[1:4] : integer := [10,20,30,40] ;
+
 endcomponent
 
 

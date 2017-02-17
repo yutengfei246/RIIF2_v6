@@ -35,6 +35,13 @@ public class Vector<T extends Label> {
         this.arrayList.add(item);
     }
 
+    public void setValue(int index, Object value) throws FieldTypeNotMarchException {
+       // System.out.println("value is " + value);
+        this.arrayList.get(index).setValue(value);
+
+       // System.out.println(this.arrayList.get(index).getValue() + " valiue ");
+    }
+
     public void print() {
         this.arrayList.forEach(Label::print);
     }
