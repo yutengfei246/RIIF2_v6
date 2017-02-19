@@ -136,18 +136,6 @@ public class RIIF2BaseListener implements RIIF2Listener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAisDeclaration(RIIF2Parser.AisDeclarationContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAisDeclaration(RIIF2Parser.AisDeclarationContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterAssertion(RIIF2Parser.AssertionContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -155,6 +143,18 @@ public class RIIF2BaseListener implements RIIF2Listener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitAssertion(RIIF2Parser.AssertionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterAisDeclaration(RIIF2Parser.AisDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAisDeclaration(RIIF2Parser.AisDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

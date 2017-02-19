@@ -71,17 +71,17 @@ public interface RIIF2Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitSetDeclaration(RIIF2Parser.SetDeclarationContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link RIIF2Parser#aisDeclaration}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAisDeclaration(RIIF2Parser.AisDeclarationContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link RIIF2Parser#assertion}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitAssertion(RIIF2Parser.AssertionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link RIIF2Parser#aisDeclaration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAisDeclaration(RIIF2Parser.AisDeclarationContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link RIIF2Parser#templateDeclaration}.
 	 * @param ctx the parse tree

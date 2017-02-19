@@ -1,24 +1,27 @@
 package it.polito.yutengfei.RIIF2.recoder;
 
+import com.sun.corba.se.impl.orbutil.ObjectWriter;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.*;
 import it.polito.yutengfei.RIIF2.mysql.SQLConnector;
 
-import java.io.Serializable;
-import java.sql.Array;
+import java.io.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
 public class RIIF2Recorder implements Recorder, Serializable {
 
-    private Boolean template = false;
+    private Boolean template ;
+    private String identifier ;
 
-    private String identifier = null;
+    /*RIIF2 definition*/
+    private String definition;
 
     /*deep copy*/
     private Map<String,RIIF2Recorder> exRecorderMap = new LinkedHashMap<>();
     private Map<String,RIIF2Recorder> implRecorderMap = new LinkedHashMap<>();
 
+    /*RIIF2 variables*/
     private List<Parameter> parameters = new LinkedList<>();
     private List<Constant> constants = new LinkedList<>();
 
@@ -28,6 +31,14 @@ public class RIIF2Recorder implements Recorder, Serializable {
     private List<Platform> platforms = new LinkedList<>();
 
     /***********************************Setters and Getters************************************/
+
+    public void setDefinition(String definition){
+        this.definition = definition;
+    }
+
+    public String getDefinition() {
+        return this.definition;
+    }
 
     public void setIdentifier( String identifier ) {
         this.identifier = identifier;
@@ -309,6 +320,11 @@ public class RIIF2Recorder implements Recorder, Serializable {
     @Override // stores into parameters table, and remember to get the recorder id according to the recorder that it exists.
     public void generateDB(SQLConnector connector) {
 
+        // first generate the Definition table
+        int indexOfDefinition = this.generateDefinitionDB(connector);
+        System.out.println(" index of definitions " + indexOfDefinition);
+
+
         this.implRecorderMap.forEach((s, recorder) -> recorder.generateDB(connector));
         this.exRecorderMap.forEach((s, recorder) -> recorder.generateDB(connector));
 
@@ -330,6 +346,20 @@ public class RIIF2Recorder implements Recorder, Serializable {
             e.printStackTrace();
         }
     }
+
+    private int generateDefinitionDB(SQLConnector connector) {
+        List<String> labels = new LinkedList<String>(){{
+            add("name"); add("definition");
+        }};
+
+        List<Object> values = new LinkedList<Object>(){{
+            add(RIIF2Recorder.this.identifier); add(RIIF2Recorder.this.getDefinition().getBytes());
+        }};
+
+        return connector.insert("definitions", labels, values);
+    }
+
+
 
     // this method responsible for storing the parameters into parameters table
     private void generateParameterDB(SQLConnector connector, int recorderNumber) {

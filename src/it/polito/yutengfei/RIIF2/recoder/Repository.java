@@ -55,47 +55,6 @@ public interface Repository {
         return componentRecorderMap;
     }
 
-    /* the method for generating the class , each class has the name that stored in recorder*/
-    static void generateDB(SQLConnector sqlConnector) {
-
-        // store into Recorder table 
-        List<String> labels = new LinkedList<String>(){{
-            add("name");
-            add("type");
-            add("implements");
-            add("extends");
-        }};
-
-        tempRecorderMap.forEach((s, recorder) -> {
-            List<Object> values = new LinkedList<>();
-
-            values.add(s);
-            values.add("TEMPLATE");
-            values.add(((RIIF2Recorder)recorder).getImplementsRecorder());
-            values.add(((RIIF2Recorder)recorder).getExtendsRecorder());
-
-            sqlConnector.insert("recorder",labels,values);
-
-        });
-
-
-        componentRecorderMap.forEach((s, recorder) -> {
-            List<Object> values = new LinkedList<>();
-
-            values.add(s);
-            values.add("COMPONENT");
-            values.add(((RIIF2Recorder)recorder).getImplementsRecorder());
-            values.add(((RIIF2Recorder)recorder).getExtendsRecorder());
-
-            sqlConnector.insert("recorder",labels,values);
-
-        });
-
-        tempRecorderMap.forEach((s, recorder) -> recorder.generateDB(sqlConnector) );
-        componentRecorderMap.forEach((s, recorder) -> recorder.generateDB(sqlConnector));
-
-    }
-
     class DeepCopy{
 
         static Recorder copy(Recorder orig) {
@@ -132,5 +91,46 @@ public interface Repository {
             return in.readObject();
 
         }
+    }
+
+    /* the method for generating the class , each class has the name that stored in recorder*/
+    static void generateDB(SQLConnector sqlConnector) {
+
+        // store into Recorder table
+        List<String> labels = new LinkedList<String>(){{
+            add("name");
+            add("type");
+            add("implements");
+            add("extends");
+        }};
+
+        tempRecorderMap.forEach((s, recorder) -> {
+            List<Object> values = new LinkedList<>();
+
+            values.add(s);
+            values.add("TEMPLATE");
+            values.add(((RIIF2Recorder)recorder).getImplementsRecorder());
+            values.add(((RIIF2Recorder)recorder).getExtendsRecorder());
+
+            sqlConnector.insert("recorder",labels,values);
+
+
+            recorder.generateDB(sqlConnector);
+        });
+
+
+        componentRecorderMap.forEach((s, recorder) -> {
+            List<Object> values = new LinkedList<>();
+
+            values.add(s);
+            values.add("COMPONENT");
+            values.add(((RIIF2Recorder)recorder).getImplementsRecorder());
+            values.add(((RIIF2Recorder)recorder).getExtendsRecorder());
+
+            sqlConnector.insert("recorder",labels,values);
+            recorder.generateDB(sqlConnector);
+
+        });
+
     }
 }

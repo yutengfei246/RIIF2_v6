@@ -89,11 +89,13 @@ abstract class InitializerParser extends ExpressionParser {
     private ParseTreeProperty<Expression> arrayItemTree = new ParseTreeProperty<>();
     private ArrayInitializer arrayInitializer = null;
 
-    private ArrayInitializer getArrayInitializer(){
+    @Override
+    public ArrayInitializer getArrayInitializer(){
         ArrayInitializer returnedList = this.arrayInitializer;
         this.cleanArrayInitializer();
         return returnedList;
     }
+
 
     private void cleanArrayInitializer(){
         this.arrayInitializer = null;
@@ -133,7 +135,9 @@ abstract class InitializerParser extends ExpressionParser {
         this.arrayInitializer = arrayInitializer;
 
         // expression ::= arrayInitializer ;
+
         ParserRuleContext parentContext = ctx.getParent();
+/*
         if(parentContext instanceof RIIF2Parser.PrimaryContext){
             Expression expression = new Expression();
             expression.setLine(ctx.start.getLine());
@@ -145,7 +149,7 @@ abstract class InitializerParser extends ExpressionParser {
 
             putExpression(ctx,expression);
         }
-
+*/
         if(parentContext instanceof RIIF2Parser.ArrayInitializerWrapperContext){
             this.putArrayWrapperListInitializer(ctx,this.getArrayInitializer());
         }
@@ -334,6 +338,7 @@ abstract class InitializerParser extends ExpressionParser {
         }
         if (ctx.listInitializer() != null)
             initializer = getListInitializer();
+
         if (ctx.arrayInitializer() != null)
             initializer = getArrayInitializer();
 
@@ -353,6 +358,8 @@ abstract class InitializerParser extends ExpressionParser {
             initializer = getArrayWrapperInitializer();
         if (ctx.tableItemInitializer() != null)
             initializer = getTableInitializer();
+        if (ctx.arrayInitializer() != null)
+            initializer = getArrayInitializer();
 
         this.putInitializer(ctx,initializer);
     }

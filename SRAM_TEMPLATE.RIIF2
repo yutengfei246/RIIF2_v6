@@ -2,7 +2,7 @@ template SRAM_TEMPLATE;
 
 // All SRAMs must defined voltage, temperature and size
 abstract constant   NAME : string;
-abstract constant  MANUFATURER : string;
+abstract constant  MANUFACTURE : string;
 abstract parameter CORE_VOLTAGE : float;
 abstract parameter NUM_BITS : integer;
 
@@ -12,7 +12,7 @@ abstract fail_mode RAD_FM[];
 abstract fail_mode PER_FM[];
 
 abstract fail_mode RAD_FM[SBU]'RATE;
-impose RAD_FM[SBU]'UNITS = FITS;
+impose RAD_FM[SBU]'UNIT = FITS;
 abstract fail_mode RAD_FM[MBU]'RATE;
 impose RAD_FM[MBU]'UNIT = FITS;
 abstract fail_mode RAD_FM[SEFI]'RATE;
@@ -26,8 +26,8 @@ endtemplate
 
 template SYNCSRAM_TEMPLATE extends SRAM_TEMPLATE;
 
-abstract parameter      CKL_Speed : integer;
-impose  CLK_speed'units= MHZ ;
+abstract parameter      CLK_Speed : integer;
+impose  CLK_speed'unit = MHZ ;
 
 endtemplate
 
@@ -35,7 +35,7 @@ template FLIP_CHIP_TEMPLATE;
 
 //all flip chip packages must contain the following info
 abstract constant NAME:string;
-abstract parameter NUM_BUMP:integer;
+abstract parameter NUM_BUMPS:integer;
 abstract parameter PACKAGE_TEMP: float;
 impose PACKAGE_TEMP'UNIT = CELSIUS;
 

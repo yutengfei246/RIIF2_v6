@@ -175,8 +175,14 @@ abstract class ExpressionParser extends DeclaratorIdParser {
 
     @Override
     public void exitPrimaryArrayInitializer(RIIF2Parser.PrimaryArrayInitializerContext ctx) {
-        Expression expression = this.getExpression(ctx.arrayInitializer());
-        this.putExpression(ctx,expression);
+
+        Expression expression = new Expression(); // initializing an expression
+        this.setPosition(ctx,expression);           // record the location
+
+        expression.setType(RIIF2Grammar.ARRAY); // set type
+        expression.setValue(getArrayInitializer());  // hook the arrayInitialize back to here
+    // Expression expression = this.getExpression(ctx.arrayInitializer());
+        this.putExpression(ctx,expression); // put into the parserTreeProperty
     }
 
     @Override

@@ -217,6 +217,7 @@ rowItem
 
 aisInitializer
     : listInitializer
+    | arrayInitializer
     | expression
     | arrayInitializerWrapper
     | tableItemInitializer

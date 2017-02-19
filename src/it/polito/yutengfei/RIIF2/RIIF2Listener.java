@@ -108,16 +108,6 @@ public interface RIIF2Listener extends ParseTreeListener {
 	 */
 	void exitSetDeclaration(RIIF2Parser.SetDeclarationContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link RIIF2Parser#aisDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterAisDeclaration(RIIF2Parser.AisDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link RIIF2Parser#aisDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitAisDeclaration(RIIF2Parser.AisDeclarationContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link RIIF2Parser#assertion}.
 	 * @param ctx the parse tree
 	 */
@@ -127,6 +117,16 @@ public interface RIIF2Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAssertion(RIIF2Parser.AssertionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link RIIF2Parser#aisDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterAisDeclaration(RIIF2Parser.AisDeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RIIF2Parser#aisDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitAisDeclaration(RIIF2Parser.AisDeclarationContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link RIIF2Parser#templateDeclaration}.
 	 * @param ctx the parse tree

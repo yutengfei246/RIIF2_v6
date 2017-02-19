@@ -4,7 +4,9 @@ parameter aParameter[] : integer ;
 parameter aParameter[ram] := 10 ;
 
 
-parameter aParameter1[1:4] : integer := [10,20,30,40] ;
+// the aParameter1 definitions ...
+parameter aParameter1[1:4] : integer := [10,20,30,40] ; // the aParameter1 definitions 2...
+assign aParameter1[1..4] = [1,2,3,4];
 
 endcomponent
 

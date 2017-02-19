@@ -193,14 +193,17 @@ public class AISFactory implements Factory{
             // if the declaratorId is flat vector type
             if (type.equals(RIIF2Grammar.TYPE_FLAT_VECTOR)) {
 
+                if ( !this.aisLabel.isVector())
+                    throw new FieldTypeNotMarchException(this.declaratorId.toString(), this.declaratorId.getLine(), this.declaratorId.getColumn());
+
                 this.verifyVector(aisType);
                 Vector vector = aisType.getVector();
                 int left = vector.getLeftValue();
                 int right = vector.getRightValue();
 
                 List<Label> currListLabel = new LinkedList<>();
-                for (int i = left; i < right; i++) {
-                    Label label = this.aisLabel.getVectorItem(i);
+                for (int i = left; i <= right; i++) {
+                    Label label = this.aisLabel.getVectorItem(i-1);
                     currListLabel.add(label);
                 }
 
@@ -285,6 +288,7 @@ public class AISFactory implements Factory{
     // pay attention: the ais value should be pushed into a stack
     private void assignInitializer() throws FieldTypeNotMarchException, SomeVariableMissingException {
 
+        int i = 0;
         for (Label label : this.listLabel) {
             this.aisLabel = label;
 
@@ -299,7 +303,7 @@ public class AISFactory implements Factory{
                 expInitializer.setCurrentLabel(this.aisLabel);
 
 
-                // in the case the declaretor has table Index
+                // in the case the declarator has table Index
                 if (this.aisLabel.getName().equals(RIIF2Grammar.ITEMS) && this.declaratorId.hasTableIndex()){
                     Id tableIndex = this.declaratorId.getTableIndex();
                     String xx = tableIndex.getXX();
@@ -339,23 +343,6 @@ public class AISFactory implements Factory{
                                 throw new FieldTypeNotMarchException(unit, expInitializer.getLine(), expInitializer.getColumn());
                             else this.aisLabel.setValue(unit);
                         }
-
-                        //..tableId  = 'Item[][]
-                        // in this case, the aisLable is a attribute label ITEMS of a Table label and the tableIndex would have two different case.
-
-                        /*
-                        else if (this.aisLabel.getName().equals(RIIF2Grammar.ITEMS) && this.declaratorId.hasTableIndex()) {
-
-                            Id tableIndex = this.declaratorId.getTableIndex();
-                            String xx = tableIndex.getXX();
-                            String yy = tableIndex.getYY();
-
-                            // expInitializer.isValid(); // throw Exceptions
-                            expInitializer.setLocation(xx, yy);
-                            this.aisLabel.setValue(expInitializer);
-                        }
-
-                        */
                     }
 
                     // the type is platform
@@ -370,7 +357,6 @@ public class AISFactory implements Factory{
                         this.aisLabel.setValue(platformRecorder);
                     } else
                         throw new FieldTypeNotMarchException(this.aisLabel.getName(), expInitializer.getLine(), expInitializer.getColumn());
-
                 }
 
                 // if the the expInitializer type same with current label type
@@ -394,9 +380,16 @@ public class AISFactory implements Factory{
             }
 
 
-            // no this case
+
             if (this.initializer instanceof ArrayInitializer) {
-                throw new FieldTypeNotMarchException(this.aisLabel.getName(), this.initializer.getLine(), this.initializer.getColumn());
+                ArrayInitializer arrayInitializer = (ArrayInitializer) this.initializer;
+                List<Expression> expressions = arrayInitializer.getInitializer();
+
+                Expression expression = expressions.get(i++);
+                expression.setCurrentLabel(this.aisLabel);
+                expression.setRecorder(this.recorder);
+
+                this.aisLabel.setValue(expression);
             }
 
             if (this.initializer instanceof ArrayWrapperInitializer) {

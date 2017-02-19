@@ -15,19 +15,10 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
  */
 public class SLV extends RIIF2BaseVisitor<Boolean> implements Recorder{
 
-    // keeping the tree for listener
-    private final ParseTree parseTree;
-
-    private RIIF2Recorder recorder;
-    private ComponentParser componentParser ;
-    private TemplateParser templateParser ;
-
-    private int moduleCounter = -1;
-    private final ParseTreeWalker walker = new ParseTreeWalker();
-
-    public SLV (ParseTree parseTree,  RIIF2Recorder recorder){
+    public SLV(ParseTree parseTree, RIIF2Recorder recorder, RIIF2Parser parser){
         this.parseTree = parseTree;
         this.recorder = recorder;
+        this.parser = parser;
     }
 
     @Override
@@ -41,10 +32,12 @@ public class SLV extends RIIF2BaseVisitor<Boolean> implements Recorder{
         ParseTree componentTree = this.parseTree.getChild(this.moduleCounter);
         walker.walk(this.componentParser,componentTree);
 
+        // set the RIIF2 definition
+        this.recorder.setDefinition(this.parser.getTokenStream().getText(ctx));
+        // replace the recorder
         this.recorder = this.recorder.getRIIF2Recorder();
         return true;
     }
-
 
     @Override
     public Boolean visitTemplateDeclaration(RIIF2Parser.TemplateDeclarationContext ctx) {
@@ -57,9 +50,26 @@ public class SLV extends RIIF2BaseVisitor<Boolean> implements Recorder{
         ParseTree templateTree = this.parseTree.getChild(this.moduleCounter);
         walker.walk(this.templateParser,templateTree);
 
+        // set the RIIF2 definition
+        this.recorder.setDefinition(this.parser.getTokenStream().getText(ctx));
+        // replace the recorder
         this.recorder = this.recorder.getRIIF2Recorder();
         return true;
     }
+
+
+    // keeping the tree for listener
+    private final ParseTree parseTree;
+
+    // keeping the parser : RIIF2 definition
+    private final RIIF2Parser parser;
+    private RIIF2Recorder recorder;
+    private ComponentParser componentParser ;
+
+    private TemplateParser templateParser ;
+    private int moduleCounter = -1;
+
+    private final ParseTreeWalker walker = new ParseTreeWalker();
 
     @Override
     public void generateDB(SQLConnector sqlConnector) {

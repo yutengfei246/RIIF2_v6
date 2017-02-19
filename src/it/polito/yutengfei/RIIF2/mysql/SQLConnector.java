@@ -110,7 +110,7 @@ public class SQLConnector {
             try {
                // System.out.println("the string buffer " + meg );
                 Statement statement = this.sql.createStatement();
-                result = statement.executeUpdate(meg,statement.RETURN_GENERATED_KEYS);
+                result = statement.executeUpdate(meg, Statement.RETURN_GENERATED_KEYS);
             } catch (SQLException e) {
                 e.printStackTrace();
             }

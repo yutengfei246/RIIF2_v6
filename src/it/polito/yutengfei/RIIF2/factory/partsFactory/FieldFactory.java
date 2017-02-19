@@ -46,6 +46,7 @@ public class FieldFactory implements Factory{
         this.declaratorId = this.declarator.getDeclaratorId();
         this.initializer = this.declarator.getInitializer();
 
+        this.recorder.setDefinition(declarator.toString());
  //       this.eo = new ExpressionOperator(this.recorder);
     }
 

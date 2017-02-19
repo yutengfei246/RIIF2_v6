@@ -15,6 +15,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+
+// once the parse success,pass the RIIF2 definition into the DB
 public class RIIF2 {
 
     private final String[] inputs;
@@ -45,7 +47,7 @@ public class RIIF2 {
         int i = 0;
 
         do {
-            if (i < this.inputs.length && !this.inputs[i].startsWith("-"))  in = new FileInputStream(this.inputs[i++] );
+            if (i < this.inputs.length && !this.inputs[i].startsWith("-")) in = new FileInputStream(this.inputs[i++] );
             else break;
 
             ANTLRInputStream antlrInputStream = new ANTLRInputStream(in);
@@ -55,8 +57,9 @@ public class RIIF2 {
 
             ParseTree parseTree = parser.program();
 
-            SLV secondLevelVisitor = new SLV(parseTree, recorder);
-            secondLevelVisitor.visit(parseTree);
+
+            SLV secondLevelVisitor = new SLV(parseTree, recorder, parser);
+            secondLevelVisitor.visit(parseTree); // start visit mechanism
 
             recorder = secondLevelVisitor.getRIIF2Recorder();
 
