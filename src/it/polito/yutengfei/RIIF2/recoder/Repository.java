@@ -112,7 +112,7 @@ public interface Repository {
             values.add(((RIIF2Recorder)recorder).getImplementsRecorder());
             values.add(((RIIF2Recorder)recorder).getExtendsRecorder());
 
-            sqlConnector.insert("recorder",labels,values);
+            //sqlConnector.insert("recorder",labels,values);
 
 
             recorder.generateDB(sqlConnector);
@@ -127,7 +127,7 @@ public interface Repository {
             values.add(((RIIF2Recorder)recorder).getImplementsRecorder());
             values.add(((RIIF2Recorder)recorder).getExtendsRecorder());
 
-            sqlConnector.insert("recorder",labels,values);
+        //    sqlConnector.insert("recorder",labels,values);
             recorder.generateDB(sqlConnector);
 
         });

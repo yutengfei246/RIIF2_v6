@@ -31,10 +31,16 @@ public class ChildComponent extends Label<Label> {
 
     @Override
     public void print() {
-        System.out.println("child component " + this.getName() + " --------->>");
 
-        if (this.isVector())
+
+        System.out.println("child_component " + this.getName() + "--------------------------------------" );
+
+        if (this.isAssociative())
+            super.printAssociative();
+
+        else if (this.isVector())
             super.printVector();
+
         else {
 
             if (  (super.getValue()) != null)
@@ -43,7 +49,7 @@ public class ChildComponent extends Label<Label> {
                 System.out.print(" null ");
         }
 
-        System.out.println(" <<-----------child component " + this.getName());
+        System.out.println("-------------------------------------------------child_component " + this.getName());
     }
 
     @Override

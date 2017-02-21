@@ -36,7 +36,86 @@ public class SQLConnector {
 
     }
 
+    /*return generated Key */
     public int insert(String tableName, List<String> columnLabels, List<Object> values){
+        String update = this.generateValidUpdateString(tableName,columnLabels,values);
+
+        return this.queryUpdate(update);
+    }
+
+
+    public ResultSet select(String tableName, List<String> labels, String where){
+        String select = this.generateValidSelectString(tableName,labels,where);
+
+        return this.querySelect(select);
+    }
+
+    private ResultSet querySelect(String s) {
+
+        ResultSet resultSet = null;
+
+        try {
+            if( this.sql!= null) {
+               // System.out.println("the string buffer " + s);
+                Statement statement = this.sql.createStatement();
+                resultSet = statement.executeQuery(s);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return resultSet;
+    }
+
+
+    private int  queryUpdate(String meg){
+
+        int result = -1 ;
+
+        try {
+            if( this.sql!= null) {
+                // System.out.println("the string buffer " + meg );
+                Statement statement = this.sql.createStatement();
+                result = statement.executeUpdate(meg, Statement.RETURN_GENERATED_KEYS);
+                ResultSet resultSet = statement.getGeneratedKeys();
+
+                while (resultSet.next()) {
+                    result = resultSet.getInt(1);
+                }
+
+                resultSet.close();
+                statement.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+
+    private String generateValidSelectString(String tableName, List<String> labels, String where) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append(SELECT);
+
+        for ( int i = 0; i< labels.size() ; i++ ){
+            String s = labels.get(i);
+            stringBuilder.append(DOT);
+            stringBuilder.append(s);
+            stringBuilder.append(DOT);
+
+            if(i!=labels.size()-1)
+                stringBuilder.append(COMMA);
+        }
+
+        stringBuilder.append(FROM).append(DOT).append(tableName).append(DOT).append(WHERE).append(where);
+
+        return stringBuilder.toString();
+    }
+
+
+    private String generateValidUpdateString(String tableName, List<String> columnLabels, List<Object> values){
         StringBuilder stringBuffer = new StringBuilder();
 
         stringBuffer.append(INSERT).append(DOT).append(tableName).append(DOT).append(BO);
@@ -63,60 +142,6 @@ public class SQLConnector {
 
         stringBuffer.append(BS).append(";");
 
-        return this.queryUpdate(stringBuffer.toString());
+        return stringBuffer.toString();
     }
-
-    public ResultSet select(String tableName, List<String> labels, String where){
-        StringBuilder stringBuilder = new StringBuilder();
-
-        stringBuilder.append(SELECT);
-
-        for ( int i = 0; i< labels.size() ; i++ ){
-            String s = labels.get(i);
-            stringBuilder.append(DOT);
-            stringBuilder.append(s);
-            stringBuilder.append(DOT);
-
-            if(i!=labels.size()-1)
-                stringBuilder.append(COMMA);
-        }
-
-        stringBuilder.append(FROM).append(DOT).append(tableName).append(DOT).append(WHERE).append(where);
-        return this.querySelect(stringBuilder.toString());
-    }
-
-    private ResultSet querySelect(String s) {
-        ResultSet resultSet = null;
-
-        if( this.sql!= null){
-            try {
-                //System.out.println("the string buffer " + meg );
-                Statement statement = this.sql.createStatement();
-                resultSet = statement.executeQuery(s);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return resultSet;
-    }
-
-
-    private int queryUpdate(String meg){
-
-        int result = -1 ;
-
-        if( this.sql!= null){
-            try {
-               // System.out.println("the string buffer " + meg );
-                Statement statement = this.sql.createStatement();
-                result = statement.executeUpdate(meg, Statement.RETURN_GENERATED_KEYS);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return result;
-    }
-
 }

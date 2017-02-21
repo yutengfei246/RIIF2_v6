@@ -160,9 +160,6 @@ public abstract class Label<T extends Label> extends ValueMember{
 
             this.vector.print();
         }
-
-
-
     }
 
     protected void printAttribute(){
@@ -197,5 +194,30 @@ public abstract class Label<T extends Label> extends ValueMember{
 
     public void setVectorRightExpression(Expression value) {
         this.vector.setRightExpression(value);
+    }
+
+    public Collection<T> getAssociatives() {
+        if (this.associativeMap == null || this.associativeMap.size() == 0)
+            return null;
+
+        return this.associativeMap.values();
+    }
+
+    public Collection<Attribute> getAttributes() {
+        if (this.attributeMap == null || this.attributeMap.size() == 0)
+            return null;
+
+        return this.attributeMap.values();
+    }
+
+    public List getArray() {
+
+        if (this.vector != null) {
+            ArrayList array = this.vector.getArrayList();
+
+            return array;
+        }
+
+        return null;
     }
 }

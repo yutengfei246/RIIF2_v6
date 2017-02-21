@@ -1,12 +1,9 @@
 package it.polito.yutengfei.RIIF2.recoder;
 
-import com.sun.corba.se.impl.orbutil.ObjectWriter;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.*;
 import it.polito.yutengfei.RIIF2.mysql.SQLConnector;
 
 import java.io.*;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 
 public class RIIF2Recorder implements Recorder, Serializable {
@@ -36,7 +33,7 @@ public class RIIF2Recorder implements Recorder, Serializable {
         this.definition = definition;
     }
 
-    public String getDefinition() {
+    String getDefinition() {
         return this.definition;
     }
 
@@ -72,13 +69,75 @@ public class RIIF2Recorder implements Recorder, Serializable {
         return this.exRecorderMap.get(key);
     }
 
-    public boolean containsImplRecorder(String implNameRecorderName ){
+    public boolean containsImplRecorder(String implNameRecorderName ) {
         return this.implRecorderMap.containsKey(implNameRecorderName);
     }
 
     public boolean containsExRecorder(String exNameRecorderName){
         return this.exRecorderMap.containsKey(exNameRecorderName);
     }
+
+    public List<Parameter> getParameters() {
+        return this.parameters;
+    }
+
+    public List<Constant> getConstants() {
+        return this.constants;
+    }
+
+    public List<Parameter> getAllParameters() {
+        List<Parameter> parameterList = new LinkedList<>();
+
+        this.exRecorderMap.forEach((s, recorder) -> parameterList.addAll(recorder.getAllParameters()));
+        this.implRecorderMap.forEach((s, recorder) -> parameterList.addAll(recorder.getAllParameters()));
+
+        parameterList.addAll(this.getParameters());
+
+        return parameterList;
+    }
+
+    public List<Constant> getAllConstants() {
+        List<Constant> constantList = new LinkedList<>();
+
+        this.exRecorderMap.forEach((s, recorder) -> constantList.addAll(recorder.getAllConstants()));
+        this.implRecorderMap.forEach((s, recorder) -> constantList.addAll(recorder.getAllConstants()));
+
+        constantList.addAll(this.getConstants());
+
+        return constantList;
+    }
+
+
+    public List<ChildComponent> getChildComponents() {
+        return childComponents;
+    }
+
+    public List<FailMode> getFailModes() {
+        return this.failModes;
+    }
+
+    public List<FailMode> getAllFailModes() {
+        List<FailMode> failModeList = new LinkedList<>();
+
+        this.exRecorderMap.forEach((s, recorder) -> failModeList.addAll(recorder.getAllFailModes()));
+        this.implRecorderMap.forEach((s, recorder) -> failModeList.addAll(recorder.getAllFailModes()));
+
+        failModeList.addAll(this.getFailModes());
+
+        return failModeList;
+    }
+
+    public List<ChildComponent> getAllChildComponents() {
+        List<ChildComponent> childComponentList = new LinkedList<>();
+
+        this.exRecorderMap.forEach((s, recorder) -> childComponentList.addAll(recorder.getAllChildComponents()));
+        this.implRecorderMap.forEach((s, recorder) -> childComponentList.addAll(recorder.getAllChildComponents()));
+
+        childComponentList.addAll(this.getChildComponents());
+
+        return childComponentList;
+    }
+
 
     public List<String> getImplementsRecorder(){
         List<String> list = new LinkedList<>();
@@ -320,17 +379,18 @@ public class RIIF2Recorder implements Recorder, Serializable {
     @Override // stores into parameters table, and remember to get the recorder id according to the recorder that it exists.
     public void generateDB(SQLConnector connector) {
 
-        // first generate the Definition table
-        int indexOfDefinition = this.generateDefinitionDB(connector);
-        System.out.println(" index of definitions " + indexOfDefinition);
+        DBGenerator generator = new DBGenerator(connector,this);
+        generator.generate();
 
-
+       // generator.readDefinition();
+/*
         this.implRecorderMap.forEach((s, recorder) -> recorder.generateDB(connector));
         this.exRecorderMap.forEach((s, recorder) -> recorder.generateDB(connector));
 
         List<String> selectLabels = new LinkedList<String>(){{
             add("id");
         }};
+
 
         String where = "name = " + "\"" + this.identifier +   "\"" + ";";
         //first I need to retrieve the recorder id from recorder table
@@ -345,18 +405,8 @@ public class RIIF2Recorder implements Recorder, Serializable {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
 
-    private int generateDefinitionDB(SQLConnector connector) {
-        List<String> labels = new LinkedList<String>(){{
-            add("name"); add("definition");
-        }};
-
-        List<Object> values = new LinkedList<Object>(){{
-            add(RIIF2Recorder.this.identifier); add(RIIF2Recorder.this.getDefinition().getBytes());
-        }};
-
-        return connector.insert("definitions", labels, values);
+        */
     }
 
 
@@ -377,15 +427,13 @@ public class RIIF2Recorder implements Recorder, Serializable {
 
             String name = parameter.getName();
             String type = parameter.getType();
-            Object value = parameter.getValue();
-            int recorder = recorderNumber;
 
             // prepare the parameter values
             List<Object> listValues = new LinkedList<Object>() {{
                 add(name);
                 add(type);
                 add(parameter.getLiteral());
-                add(recorder);
+                add(recorderNumber);
             }};
             System.out.println(listValues);
             connector.insert("parameters", listName, listValues);
@@ -407,15 +455,13 @@ public class RIIF2Recorder implements Recorder, Serializable {
 
             String name = constant.getName();
             String type = constant.getType();
-            Object value = constant.getValue();
-            int recorder = recorderNumber;
 
             // prepare the parameter values
             List<Object> listValues = new LinkedList<Object>() {{
                 add(name);
                 add(type);
                 add(constant.getLiteral());
-                add(recorder);
+                add(recorderNumber);
             }};
             System.out.println(listValues);
             connector.insert("constants", listName, listValues);
@@ -437,4 +483,5 @@ public class RIIF2Recorder implements Recorder, Serializable {
         this.childComponents.forEach(ChildComponent::print);
         this.platforms.forEach(Platform::print);
     }
+
 }

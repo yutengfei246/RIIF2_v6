@@ -4,6 +4,7 @@ import it.polito.yutengfei.RIIF2.RIIF2Lexer;
 import it.polito.yutengfei.RIIF2.RIIF2Parser;
 import it.polito.yutengfei.RIIF2.mysql.MysqlBuilder;
 import it.polito.yutengfei.RIIF2.mysql.SQLConnector;
+import it.polito.yutengfei.RIIF2.recoder.DBReader;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.recoder.Repository;
 import it.polito.yutengfei.RIIF2.visitor.SLV;
@@ -14,6 +15,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedList;
+import java.util.List;
 
 
 // once the parse success,pass the RIIF2 definition into the DB
@@ -65,28 +68,64 @@ public class RIIF2 {
 
         } while (true);
 
-        while (i< this.inputs.length && this.inputs[i].startsWith("-")){
-            switch (this.inputs[i++]){
-                case "-s":
-                    this.toDB();
-                    break;
-                case "-p":
-                    this.print();
-                    break;
-                case "-ps":
-                    this.print();
-                    this.toDB();
-                    break;
-                case "-sp":
-                    this.toDB();
-                    this.print();
-                    break;
-                case "-h":
-                    this.help();
-                    break;
-                default: break;
+
+        while (i < this.inputs.length ){
+
+            if (this.inputs[i].startsWith("-")) {
+                List<String> parameters = new LinkedList<>();
+                String command = this.inputs[i];
+
+                if (command.equals("-lib")) {
+
+                    while( ++i < this.inputs.length && !this.inputs[i].startsWith("-"))  parameters.add(this.inputs[i]);
+
+                    if (parameters.size() == 0){
+                        System.err.println("Err: invalid command");
+                        System.exit(1);
+                    }
+                }
+
+                this.executeCommand(command, parameters);
             }
+
+            i++;
         }
+    }
+
+    private void executeCommand(String command, List<String> parameters) {
+
+
+        switch (command){
+            case "-lib":
+                this.libratory(parameters);
+                break;
+            case "-s":
+                this.toDB();
+                break;
+            case "-p":
+                this.print();
+                break;
+            case "-ps":
+                this.print();
+                this.toDB();
+                break;
+            case "-sp":
+                this.toDB();
+                this.print();
+                break;
+            case "-h":
+                this.help();
+                break;
+            default: break;
+        }
+
+    }
+
+    private void libratory(List<String> parameters) {
+        SQLConnector connector =  MysqlBuilder.getNewSQLConnector();
+        DBReader reader = new DBReader(connector);
+
+        parameters.forEach(reader::readDefinition);
     }
 
     private void help() {

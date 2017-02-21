@@ -3,9 +3,10 @@ package it.polito.yutengfei.RIIF2.RIIF2Modules.parts;
 import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Vector<T extends Label> {
+public class Vector<T extends Label> implements Serializable {
 
     private int length;
 
@@ -74,5 +75,10 @@ public class Vector<T extends Label> {
             Label label = this.arrayList.get(left+i);
             label.setValue(value);
         }
+    }
+
+    public ArrayList<T> getArrayList() {
+
+        return this.arrayList;
     }
 }

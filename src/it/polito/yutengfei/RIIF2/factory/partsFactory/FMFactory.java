@@ -59,7 +59,7 @@ public class FMFactory implements Factory {
                         this.declaratorId.getLine(), this.declaratorId.getColumn());
         }
 
-        if (declaratorId.hasAssociativeIndex() && declaratorId.hasAttributeIndex())
+        if (declaratorId.hasAssociativeIndex() )
             this.positionFmForFailModeDeclarator2();
         else
             this.positionFmForFailModeDeclarator1();
@@ -95,24 +95,28 @@ public class FMFactory implements Factory {
             Label<Label> associative = this.createLabel(associativeIndex,RIIF2Grammar.FAIL_MODE,null);
             this.fm.putAssociative(associativeIndex,associative);
             this.fm = associative;
+
         }else
             this.fm = this.fm.getAssociative(associativeIndex);
 
         if ( !this.declaratorId.hasAssociativeIndex() )
             return;
 
-        String attributeIndex = this.declaratorId.getAttributeIndex().getId();
+        if (this.declaratorId.hasAttributeIndex()) {
 
-        // if it is pre-defined attribute, then return other wise
-        if (attributeIndex.equals(RIIF2Grammar.RATE)
-                || associativeIndex.equals(RIIF2Grammar.UNIT))
-            return;
+            String attributeIndex = this.declaratorId.getAttributeIndex().getId();
 
-        // otherwise create an attribute with type Object....
-        Attribute attribute
-                = PreDefinedAttribute.createAttribute(attributeIndex,RIIF2Grammar.OBJECT,null,this.recorder);
-        this.fm.putAttribute(attributeIndex,attribute);
-        this.fm = attribute;
+            // if it is pre-defined attribute, then return other wise
+            if (attributeIndex.equals(RIIF2Grammar.RATE)
+                    || associativeIndex.equals(RIIF2Grammar.UNIT))
+                return;
+
+            // otherwise create an attribute with type Object....
+            Attribute attribute
+                    = PreDefinedAttribute.createAttribute(attributeIndex, RIIF2Grammar.OBJECT, null, this.recorder);
+            this.fm.putAttribute(attributeIndex, attribute);
+            this.fm = attribute;
+        }
     }
 
     private Label<Label> createLabel(String associativeIndex, String string, Object o) throws FieldTypeNotMarchException {

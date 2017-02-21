@@ -37,6 +37,8 @@ public class CCFactory implements Factory {
     }
 
     private void positionCC() throws SomeVariableMissingException, FieldTypeNotMarchException {
+
+        // get the values recorder and store the recorder into a local variables
         String typeCcId = this.ccType.getValue().toLowerCase();
 
         if ( !Repository.containsComponent(typeCcId))
@@ -46,28 +48,29 @@ public class CCFactory implements Factory {
         RIIF2Recorder recorder
                 = (RIIF2Recorder) Repository.getDeepCopedRecorderFromComponentRepository( typeCcId );
 
+        // position child component
         String id = this.declaratorId.getId();
 
-        if ( !this.declaratorId.hasAssociativeIndex()  ) {
+        // pure child_component declaration
+        if ( !this.declaratorId.hasAssociativeIndex() )
             this.createCCLabel(id, recorder);
 
-        } else{
+
+        // associative index
+        else {
             if ( !this.recorder.containsChildComponent(id))
-                throw new SomeVariableMissingException(id,
-                        this.declaratorId.getLine(), this.declaratorId.getColumn());
+                throw new SomeVariableMissingException(id, this.declaratorId.getLine(), this.declaratorId.getColumn());
 
             this.ccLabel = this.recorder.getChildComponent(id);
 
             String associativeIndex = this.declaratorId.getAssociativeIndex().getId();
-            if ( !this.ccLabel.isAssociative()
-                    || this.ccLabel.containsAssociative(associativeIndex) )
-                throw new FieldTypeNotMarchException(id,
-                        this.declaratorId.getLine(), this.declaratorId.getColumn());
+            if ( !this.ccLabel.isAssociative() || this.ccLabel.containsAssociative(associativeIndex) )
+                throw new FieldTypeNotMarchException(id, this.declaratorId.getLine(), this.declaratorId.getColumn());
 
-            Label<Label> associativeLabel
-                    = this.createCCLabel1(associativeIndex,recorder);
+            Label<Label> associativeLabel = this.createCCLabel1(associativeIndex,recorder);
 
             this.ccLabel.putAssociative(associativeIndex,associativeLabel);
+            this.ccLabel = associativeLabel;
         }
     }
 
@@ -86,9 +89,8 @@ public class CCFactory implements Factory {
 
         this.ccLabel.setName(id);
         this.ccLabel.setType(RIIF2Grammar.TYPE_CC);
-        this.ccLabel.setValue(recorder);
 
-        if ( this.declaratorId.hasTypeType() ){
+        if ( this.declaratorId.hasTypeType() ) {
 
             RIIF2Type TypeType = this.declaratorId.getTypeType();
             String typeType = TypeType.getType();
@@ -105,6 +107,9 @@ public class CCFactory implements Factory {
                 this.ccLabel.vectorInitializer(RIIF2Grammar.ARRAY_ITEM, this.ccType.getType(), null);
             }
         }
+
+        else this.ccLabel.setValue(recorder);
+
         this.recorder.addLabel(this.ccLabel);
     }
 
