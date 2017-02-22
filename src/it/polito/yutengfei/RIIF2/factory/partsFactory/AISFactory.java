@@ -231,6 +231,10 @@ public class AISFactory implements Factory{
 
                 RIIF2Recorder ccRecorder = (RIIF2Recorder) (label).getValue();
 
+                if (ccRecorder == null)
+                    System.out.println("the ccRecorder is null ");
+
+
                 label = ccRecorder.getAssignmentLabel(hierPostfixName) != null
                         ? ccRecorder.getAssignmentLabel(hierPostfixName)
                         : ccRecorder.getImposeLabel(hierPostfixName) != null

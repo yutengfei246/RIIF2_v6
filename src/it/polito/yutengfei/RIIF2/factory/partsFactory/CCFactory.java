@@ -104,7 +104,7 @@ public class CCFactory implements Factory {
                 this.verifyVector(TypeType);
 
                 this.ccLabel.setVectorLength(TypeType.getVector().getLength());
-                this.ccLabel.vectorInitializer(RIIF2Grammar.ARRAY_ITEM, this.ccType.getType(), null);
+                this.ccLabel.vectorInitializer(RIIF2Grammar.ARRAY_ITEM, this.ccType.getType(), recorder);
             }
         }
 

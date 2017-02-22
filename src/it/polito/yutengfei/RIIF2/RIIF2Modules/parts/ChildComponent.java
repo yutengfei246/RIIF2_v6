@@ -14,18 +14,19 @@ public class ChildComponent extends Label<Label> {
     @Override
     public void vectorInitializer(String name, String type, Object value) {
         int length = super.getVectorLength();
+        try {
+            for (int i = 0; i < length; i++) {
+                ChildComponent cc = new ChildComponent(super.getRecorder());
+                cc.setName(RIIF2Grammar.ARRAY_ITEM);
+                cc.setType(type);
+                cc.setValue(value);
 
-        for ( int i =0 ; i< length ; i++) {
-            ChildComponent cc = new ChildComponent(super.getRecorder());
-            cc.setName(RIIF2Grammar.ARRAY_ITEM);
-            cc.setType(type);
-            super.assignVectorItem(i,cc);
-            try {
-                super.assignVectorValue(i,i,super.getValue());
-            } catch (FieldTypeNotMarchException e) {
-                e.printStackTrace();
+                super.assignVectorItem(i, cc);
+                super.assignVectorValue(i, i, super.getValue());
             }
-
+        }
+        catch (FieldTypeNotMarchException e) {
+            e.printStackTrace();
         }
     }
 
