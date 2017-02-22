@@ -76,7 +76,6 @@ public class RIIF2 {
                 String command = this.inputs[i];
 
                 if (command.equals("-lib")) {
-
                     while( ++i < this.inputs.length && !this.inputs[i].startsWith("-"))  parameters.add(this.inputs[i]);
 
                     if (parameters.size() == 0){
@@ -84,10 +83,8 @@ public class RIIF2 {
                         System.exit(1);
                     }
                 }
-
                 this.executeCommand(command, parameters);
             }
-
             i++;
         }
     }
@@ -96,8 +93,9 @@ public class RIIF2 {
 
 
         switch (command){
+
             case "-lib":
-                this.libratory(parameters);
+                this.library(parameters);
                 break;
             case "-s":
                 this.toDB();
@@ -121,14 +119,18 @@ public class RIIF2 {
 
     }
 
-    private void libratory(List<String> parameters) {
+    private void library(List<String> parameters) {
         SQLConnector connector =  MysqlBuilder.getNewSQLConnector();
         DBReader reader = new DBReader(connector);
 
-        parameters.forEach(reader::readDefinition);
+        parameters.forEach(reader::read);
+
+
     }
 
     private void help() {
+
+        System.out.println(" -lib  (<name>| component | template | all ) (parameter | constant | failMode | childComponent)?  : get the specified modular from the library.");
         System.out.println(" -s: store template/component into Database, if success.");
         System.out.println(" -p: literally print out the parse result.");
         System.out.println(" -h: show help.");

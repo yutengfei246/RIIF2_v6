@@ -6,6 +6,7 @@ import it.polito.yutengfei.RIIF2.mysql.MysqlBuilder;
 import it.polito.yutengfei.RIIF2.mysql.SQLConnector;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -31,23 +32,41 @@ class DBGenerator {
             generatedId = this.generateRIIF2Definition();
 
             // generates RIIF2's indexes into recorders table in DB
-            generatedId = this.generateRIIF2Index(generatedId);
+            this.generateRIIF2Index(generatedId);
+
+            // generates the RIIF2 recorder
+            this.generateRIIF2recorder(generatedId);
 
             // generates the RIIF2's variable parameters into the parameters table in DB
-            this.generateRIIF2Parameters(generatedId);
+           // this.generateRIIF2Parameters(generatedId);
 
             // generate the RIIF2's variable constants into the constants table in the DB
-            this.generateRIIF2Constants(generatedId);
+          //  this.generateRIIF2Constants(generatedId);
 
             // generate the RIIF2's variable childComponent into the childComponents tables in the DB
-            this.generateRIIF2ChildComponent(generatedId);
+          //  this.generateRIIF2ChildComponent(generatedId);
 
             // generate the RIIF2's variable failMode into the failMode table in the DB
-            this.generateRIIF2FailMode(generatedId);
+         //   this.generateRIIF2FailMode(generatedId);
 
-        } catch (SQLException e) {
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void generateRIIF2recorder(int generatedId) throws IOException {
+
+        List<String> labels = new LinkedList<String>() {{
+            add("value"); add("recorder");
+        }};
+
+        String recorder = Base64.encodeObject(this.recorder);
+
+        List<Object> values = new LinkedList<Object>() {{
+            add(recorder); add(generatedId);
+        }};
+
+        this.connector.insert("RIIF2Recorder", labels, values );
     }
 
     // two possibilities, one for associativeArray , one for pure
@@ -56,7 +75,7 @@ class DBGenerator {
         List<FailMode> failModes = this.recorder.getAllFailModes();
 
         List<String> labels = new LinkedList<String>(){{
-            add("name"); add("recorder"); add("isAssociative"); add("associativeIds"); add("attributeIds");
+            add("name"); add("recorder"); add("isAssociative"); add("associativeIds"); add("attributeIds");add("arrayLength");
         }};
 
         for (FailMode failMode : failModes) {
@@ -171,7 +190,6 @@ class DBGenerator {
 
                     resultSet.close();
 
-
                     int finalValue = value;
                     int finalLength = length;
                     List<Object> associativeValues = new LinkedList<Object>() {{
@@ -231,6 +249,7 @@ class DBGenerator {
                 this.connector.insert("childComponents", labels, values);
             }
         }
+
         return true;
     }
 
@@ -470,6 +489,7 @@ class DBGenerator {
         List<String> labels = new LinkedList<String>() {{
             add("name");
             add("definition");
+            add("type");
         }};
 
         List<Object> values = new LinkedList<>();
@@ -478,10 +498,19 @@ class DBGenerator {
         String definition = this.recorder.getDefinition();
         definition = MysqlBuilder.stringToBinary(definition);
 
-        values.add(name); values.add(definition);
+        String type ;
+
+        if (this.recorder.isTemplate() ){
+            type = "template";
+        }else
+            type = "component";
+
+        values.add(name); values.add(definition); values.add(type);
 
         return connector.insert("definitions", labels, values);
     }
+
+
 
     // generate attributes for each label and store the attribute into attribtues table in DB and return back the generated I
     private List<Integer> generateAttribute(Label theLabel){
