@@ -18,7 +18,7 @@ component SIMPLE_SRAM;
   assign SBE'unit = FITS;
   assign SBE'rate = A_DIFF * EXP( ( - VOLTAGE / Q_COL_EFF ) ) ;
 
-  assert SBE'rate < 1000;
+//  assert SBE'rate < 1000;
 
 // In this example, MBE is fixed ratio of SBE
   fail_mode MBE;

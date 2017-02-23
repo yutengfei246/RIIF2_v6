@@ -375,100 +375,12 @@ public class RIIF2Recorder implements Recorder, Serializable {
         return new RIIF2Recorder();
     }
 
-
     @Override // stores into parameters table, and remember to get the recorder id according to the recorder that it exists.
     public void generateDB(SQLConnector connector) {
 
         DBGenerator generator = new DBGenerator(connector,this);
         generator.generate();
-
-       // generator.readDefinition();
-/*
-        this.implRecorderMap.forEach((s, recorder) -> recorder.generateDB(connector));
-        this.exRecorderMap.forEach((s, recorder) -> recorder.generateDB(connector));
-
-        List<String> selectLabels = new LinkedList<String>(){{
-            add("id");
-        }};
-
-
-        String where = "name = " + "\"" + this.identifier +   "\"" + ";";
-        //first I need to retrieve the recorder id from recorder table
-        ResultSet resultSet = connector.select("recorder",selectLabels,where);
-        try {
-            if (resultSet.next()) {
-                int recorderNumber= resultSet.getInt("id");
-                this.generateParameterDB(connector,recorderNumber);
-                this.generateConstantDB(connector,recorderNumber);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        */
     }
-
-
-
-    // this method responsible for storing the parameters into parameters table
-    private void generateParameterDB(SQLConnector connector, int recorderNumber) {
-
-        // prepare the list name
-        List<String> listName = new LinkedList<String>() {{
-            add("name");
-            add("type");
-            add("value");
-            add("recorder");
-        }};
-
-        // for each parameter
-        this.parameters.forEach(parameter -> {
-
-            String name = parameter.getName();
-            String type = parameter.getType();
-
-            // prepare the parameter values
-            List<Object> listValues = new LinkedList<Object>() {{
-                add(name);
-                add(type);
-                add(parameter.getLiteral());
-                add(recorderNumber);
-            }};
-            System.out.println(listValues);
-            connector.insert("parameters", listName, listValues);
-        });
-    }
-
-
-    private void generateConstantDB(SQLConnector connector, int recorderNumber) {
-        // prepare the list name
-        List<String> listName = new LinkedList<String>() {{
-            add("name");
-            add("type");
-            add("value");
-            add("recorder");
-        }};
-
-        // for each parameter
-        this.constants.forEach(constant -> {
-
-            String name = constant.getName();
-            String type = constant.getType();
-
-            // prepare the parameter values
-            List<Object> listValues = new LinkedList<Object>() {{
-                add(name);
-                add(type);
-                add(constant.getLiteral());
-                add(recorderNumber);
-            }};
-            System.out.println(listValues);
-            connector.insert("constants", listName, listValues);
-        });
-    }
-
-
 
     public void print8(){
         this.implRecorderMap.forEach((s, riif2Recorder) -> riif2Recorder.print8());

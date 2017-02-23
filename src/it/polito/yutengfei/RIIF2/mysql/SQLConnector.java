@@ -23,17 +23,8 @@ public class SQLConnector {
 
     private Connection sql;
 
-    SQLConnector(){
-
-        try {
-            String url = "jdbc:mysql://127.0.0.1:3306/RIIF2";
-            String user = "root";
-            String password = "qwoshixiao123";
-            this.sql = DriverManager.getConnection(url, user, password);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
+    SQLConnector(Connection sql){
+        this.sql = sql;
     }
 
     /*return generated Key */
@@ -43,11 +34,18 @@ public class SQLConnector {
         return this.queryUpdate(update);
     }
 
-
+    /*return the information */
     public ResultSet select(String tableName, List<String> labels, String where){
         String select = this.generateValidSelectString(tableName,labels,where);
 
         return this.querySelect(select);
+    }
+
+    /*delete from the table */
+    public int delete(String tableName, String where) {
+        String mes = "delete from " + tableName + " where " + where;
+
+        return this.queryUpdate(mes);
     }
 
     private ResultSet querySelect(String s) {
@@ -56,7 +54,7 @@ public class SQLConnector {
 
         try {
             if( this.sql!= null) {
-               // System.out.println("the string buffer " + s);
+                // System.out.println("the string buffer " + s);
                 Statement statement = this.sql.createStatement();
                 resultSet = statement.executeQuery(s);
             }
@@ -67,14 +65,13 @@ public class SQLConnector {
         return resultSet;
     }
 
-
-    private int  queryUpdate(String meg){
+    private int queryUpdate(String meg){
 
         int result = -1 ;
 
         try {
             if( this.sql!= null) {
-                // System.out.println("the string buffer " + meg );
+                //System.out.println("the string buffer " + meg );
                 Statement statement = this.sql.createStatement();
                 result = statement.executeUpdate(meg, Statement.RETURN_GENERATED_KEYS);
                 ResultSet resultSet = statement.getGeneratedKeys();
@@ -92,6 +89,8 @@ public class SQLConnector {
 
         return result;
     }
+
+
 
 
     private String generateValidSelectString(String tableName, List<String> labels, String where) {
@@ -113,6 +112,8 @@ public class SQLConnector {
 
         return stringBuilder.toString();
     }
+
+
 
 
     private String generateValidUpdateString(String tableName, List<String> columnLabels, List<Object> values){

@@ -43,8 +43,10 @@ public class ImplExFactory  implements Factory{
 
             if (eXIdentifiers != null) {
                 this.eXIdentifiers.forEach(s -> {
-                    if (!Repository.containsComponent(s))
+                    if (!Repository.containsComponent(s)) {
+                        System.err.println("the extended component <" + s + ">  does not exit");
                         throw new IllegalArgumentException();
+                    }
 
                     RIIF2Recorder recorder
                             = (RIIF2Recorder) Repository.getDeepCopedRecorderFromComponentRepository(s);
@@ -54,8 +56,10 @@ public class ImplExFactory  implements Factory{
 
             if (implIdentifiers != null) {
                 this.implIdentifiers.forEach(s -> {
-                    if (!Repository.containsTemplate(s))
+                    if (!Repository.containsTemplate(s)) {
+                        System.err.println("the implemented template <" + s + ">  does not exit");
                         throw new IllegalArgumentException();
+                    }
 
                     RIIF2Recorder recorder
                             = (RIIF2Recorder) Repository.getDeepCopedRecorderFromTemplateRepository(s);
@@ -69,8 +73,10 @@ public class ImplExFactory  implements Factory{
             if (eXIdentifiers != null){
 
                 this.eXIdentifiers.forEach(s -> {
-                    if (!Repository.containsTemplate(s))
+                    if (!Repository.containsTemplate(s)) {
+                        System.out.println("the extended template <" + s  + "> does not exits" );
                         throw new IllegalArgumentException();
+                    }
 
                     RIIF2Recorder recorder
                             = (RIIF2Recorder) Repository.getDeepCopedRecorderFromTemplateRepository(s);
@@ -80,6 +86,4 @@ public class ImplExFactory  implements Factory{
             }
         }
     }
-
-
 }

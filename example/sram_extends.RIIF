@@ -10,7 +10,7 @@ component SRAM_MEMORY extends SRAM_MEMORY_TEMPLATE;
 
   // --------------------- Specify Failure Rates  -----------------------------
   assign SBE'unit = FITS;
-  assign SBE'rate = NEUTRON_ENV'REL_FLUX * A_DIFF * EXP( - VOLTAGE / Q_COL_EFF) ;
+ // assign SBE'rate = NEUTRON_ENV'REL_FLUX * A_DIFF * EXP( - VOLTAGE / Q_COL_EFF) ;
 
   assign MBE'unit = FITS;
   assign MBE'rate = SBE'RATE * MBE_RATIO;

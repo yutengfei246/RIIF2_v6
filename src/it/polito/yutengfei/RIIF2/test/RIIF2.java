@@ -83,17 +83,43 @@ public class RIIF2 {
                         System.exit(1);
                     }
                 }
+
+                if (command.equals("-libie")) {
+                    while( ++i < this.inputs.length && !this.inputs[i].startsWith("-"))  parameters.add(this.inputs[i]);
+
+                    if (parameters.size() == 0){
+                        System.err.println("Err: invalid command");
+                        System.exit(1);
+                    }
+                }
+
+                if (command.equals("-delete")) {
+
+                    while( ++i < this.inputs.length && !this.inputs[i].startsWith("-"))  parameters.add(this.inputs[i]);
+
+                    if (parameters.size() == 0){
+                        System.err.println("Err: invalid command");
+                        System.exit(1);
+                    }
+                }
+
                 this.executeCommand(command, parameters);
             }
+
             i++;
         }
     }
 
     private void executeCommand(String command, List<String> parameters) {
 
-
         switch (command){
 
+            case "-delete":
+                this.delete(parameters);
+                break;
+            case "-libie":
+                this.libraryIE(parameters);
+                break;
             case "-lib":
                 this.library(parameters);
                 break;
@@ -116,7 +142,21 @@ public class RIIF2 {
                 break;
             default: break;
         }
+    }
 
+    private void delete(List<String> parameters) {
+        SQLConnector connector = MysqlBuilder.getNewSQLConnector();
+        DBReader reader = new DBReader(connector);
+
+        parameters.forEach(reader::delete);
+
+    }
+
+    private void libraryIE(List<String> parameters) {
+        SQLConnector connector = MysqlBuilder.getNewSQLConnector();
+        DBReader reader = new DBReader(connector);
+
+        parameters.forEach(reader::readHier);
     }
 
     private void library(List<String> parameters) {
@@ -124,16 +164,22 @@ public class RIIF2 {
         DBReader reader = new DBReader(connector);
 
         parameters.forEach(reader::read);
-
-
     }
 
     private void help() {
 
-        System.out.println(" -lib  (<name>| component | template | all ) (parameter | constant | failMode | childComponent)?  : get the specified modular from the library.");
+        System.out.println(" -delete (<name> | all) : delete a named modular or all modular");
+        System.out.println(" -libie <name>: show all hierarchy ");
+        System.out.println(" -lib  (<name>| component | template | all ) : (parameter | constant | failMode | childComponent)? : (<name>)?  : get the specified modular from the library.");
         System.out.println(" -s: store template/component into Database, if success.");
         System.out.println(" -p: literally print out the parse result.");
         System.out.println(" -h: show help.");
+    }
+
+    // storing into everything into db
+    private void toDB(){
+        SQLConnector sqlConnector = MysqlBuilder.getNewSQLConnector();
+        Repository.generateDB(sqlConnector);
     }
 
     //print all the information into stdout in repository.
@@ -156,8 +202,4 @@ public class RIIF2 {
                 });
     }
 
-    private void toDB(){
-        SQLConnector sqlConnector = MysqlBuilder.getNewSQLConnector();
-        Repository.generateDB(sqlConnector);
-    }
 }
