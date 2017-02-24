@@ -688,6 +688,18 @@ public class RIIF2BaseListener implements RIIF2Listener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterPrimaryNULL(RIIF2Parser.PrimaryNULLContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPrimaryNULL(RIIF2Parser.PrimaryNULLContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterAssociativeId(RIIF2Parser.AssociativeIdContext ctx) { }
 	/**
 	 * {@inheritDoc}

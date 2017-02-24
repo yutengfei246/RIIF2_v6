@@ -215,7 +215,7 @@ public class FieldFactory implements Factory{
                 this.fieldLabel.setValue(expInitializer);
             }
 
-            else throw new FieldTypeNotMarchException(FieldTypeNotMarchException.MARCHED, this.fieldLabel.getName(), expInitializer.getLine(), expInitializer.getColumn());
+            else throw new FieldTypeNotMarchException(FieldTypeNotMarchException.MARCHED, this.fieldLabel.getName(), expInitializer.toString(), expInitializer.getLine(), expInitializer.getColumn());
 
         }
 

@@ -14,6 +14,6 @@ public class SomeVariableMissingException extends Throwable {
     }
 
     public void print(){
-        System.out.println("<" + id + ">" + " can not be resolved in the line:column" + line + ":"+ column );
+        System.err.println("<" + id + ">" + " can not be resolved in the line:column" + line + ":"+ column );
     }
 }

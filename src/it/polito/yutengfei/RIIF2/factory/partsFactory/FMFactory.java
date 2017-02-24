@@ -163,10 +163,10 @@ public class FMFactory implements Factory {
 
                 if ((int)left.getValue()<0 || (int)left.getValue() > (int)right.getValue())
                     throw new FieldTypeNotMarchException(FieldTypeNotMarchException.MESSAGE, left.getLine(),left.getLine());
-
+/*
                 if ((int)right.getValue()> this.fm.getVectorLength())
                     throw new FieldTypeNotMarchException(FieldTypeNotMarchException.MESSAGE,right.getLine(), right.getColumn());
-
+*/
                 this.fm.setVector(true);
                 this.fm.setVectorLength(vector.getLength());
             }

@@ -73,6 +73,7 @@ public class AISFactory implements Factory{
 
         String labelName = primitiveId.getId();
 
+
         // if the primitiveId is simple type without hierPostfix
         if (Objects.equals(primitiveId.getType(), RIIF2Grammar.TYPE_PRIMITIVE)) {
 

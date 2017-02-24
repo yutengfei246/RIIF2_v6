@@ -360,6 +360,13 @@ public interface RIIF2Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitPrimitiveIdIdentifier(RIIF2Parser.PrimitiveIdIdentifierContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code primaryNULL}
+	 * labeled alternative in {@link RIIF2Parser#primitiveId}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPrimaryNULL(RIIF2Parser.PrimaryNULLContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link RIIF2Parser#associativeId}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

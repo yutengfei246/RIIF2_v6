@@ -166,8 +166,7 @@ failModeDeclarator
     ;
 
 aisDeclarator
-    : aisDeclaratorId
-      '=' aisInitializer
+    : aisDeclaratorId '=' aisInitializer
     ;
 
 // §RIIF-2 initializer
@@ -263,6 +262,7 @@ aisDeclaratorId
 primitiveId
     : Identifier #primitiveIdIdentifier
     | primitiveId ( hierPostfix ) #primitiveIdId
+    | NULL #primaryNULL
     ;
 
 associativeId
@@ -311,7 +311,6 @@ extendsList
 implementsList
     : IMPLEMENTS Identifier ( ',' Identifier )*
     ;
-
 
 // §RIIF-2 type
 
@@ -420,7 +419,6 @@ literal
 // Lexer
 
 // §RIIF-2-v4 Keywords
-
 COMPONENT: 'component';
 END_COMPONENT: 'endcomponent';
 ENVIRONMENT: 'environment';
@@ -469,7 +467,6 @@ StringLiteral
     : '"' ( ~('\\' | '"') )* '"'
     ;
 
-//TODO: chang the digit*
 FloatingPointLiteral
     : DIGIT+ '.' DIGIT+ Exponent? FloatTypeSuffix?
     | '.' DIGIT+ Exponent? FloatTypeSuffix?

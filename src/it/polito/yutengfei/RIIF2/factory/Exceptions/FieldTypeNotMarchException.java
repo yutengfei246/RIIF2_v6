@@ -11,16 +11,24 @@ public class FieldTypeNotMarchException extends Throwable {
     private final int line;
     private final int column;
     private final String type;
+    private final String value;
 
     public FieldTypeNotMarchException(String id, int line, int column) {
         this(RESOLVED,id,line,column);
     }
 
     public FieldTypeNotMarchException(String type, String name, int line, int column) {
+        this(type,name,null,line,column);
+
+    }
+
+    public FieldTypeNotMarchException(String type, String name, String s, int line, int column) {
         this.type = type;
         this.id = name;
         this.line = line;
+        this.value = s;
         this.column = column;
+
     }
 
     public void print(){

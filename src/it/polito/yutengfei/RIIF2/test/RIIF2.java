@@ -18,14 +18,15 @@ import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
-
 // once the parse success,pass the RIIF2 definition into the DB
 public class RIIF2 {
 
     private final String[] inputs;
+    private final SQLConnector connector;
 
     public RIIF2(String[] args) {
         this.inputs = args;
+        this.connector = MysqlBuilder.getNewSQLConnector();
     }
 
     public static void main(String[] args) {
@@ -79,17 +80,8 @@ public class RIIF2 {
                     while( ++i < this.inputs.length && !this.inputs[i].startsWith("-"))  parameters.add(this.inputs[i]);
 
                     if (parameters.size() == 0){
-                        System.err.println("Err: invalid command");
-                        System.exit(1);
-                    }
-                }
-
-                if (command.equals("-libie")) {
-                    while( ++i < this.inputs.length && !this.inputs[i].startsWith("-"))  parameters.add(this.inputs[i]);
-
-                    if (parameters.size() == 0){
-                        System.err.println("Err: invalid command");
-                        System.exit(1);
+                        System.err.println("Error: invalid command");
+                        this.help();
                     }
                 }
 
@@ -98,8 +90,8 @@ public class RIIF2 {
                     while( ++i < this.inputs.length && !this.inputs[i].startsWith("-"))  parameters.add(this.inputs[i]);
 
                     if (parameters.size() == 0){
-                        System.err.println("Err: invalid command");
-                        System.exit(1);
+                        System.err.println("Error: invalid command");
+                        this.help();
                     }
                 }
 
@@ -115,14 +107,15 @@ public class RIIF2 {
         switch (command){
 
             case "-delete":
-                this.delete(parameters);
+                if (parameters == null || parameters.size() == 0) this.help();
+                else this.delete(parameters);
                 break;
-            case "-libie":
-                this.libraryIE(parameters);
-                break;
+
             case "-lib":
-                this.library(parameters);
+                if (parameters == null || parameters.size() == 0) this.help();
+                else this.library(parameters);
                 break;
+
             case "-s":
                 this.toDB();
                 break;
@@ -140,27 +133,20 @@ public class RIIF2 {
             case "-h":
                 this.help();
                 break;
-            default: break;
+            default:
+                System.err.println("Invalid command: go to help");
+                this.help();
         }
     }
 
     private void delete(List<String> parameters) {
-        SQLConnector connector = MysqlBuilder.getNewSQLConnector();
         DBReader reader = new DBReader(connector);
 
         parameters.forEach(reader::delete);
 
     }
 
-    private void libraryIE(List<String> parameters) {
-        SQLConnector connector = MysqlBuilder.getNewSQLConnector();
-        DBReader reader = new DBReader(connector);
-
-        parameters.forEach(reader::readHier);
-    }
-
     private void library(List<String> parameters) {
-        SQLConnector connector =  MysqlBuilder.getNewSQLConnector();
         DBReader reader = new DBReader(connector);
 
         parameters.forEach(reader::read);
@@ -169,11 +155,15 @@ public class RIIF2 {
     private void help() {
 
         System.out.println(" -delete (<name> | all) : delete a named modular or all modular");
+        System.out.println(" -lib ((<command>) | (<command>: (<Label>|<command>) ))\n"
+                            + " eg. -lib all|templates|components : shows all|templates|components 's names that has already stored in the database\n"
+                            + " eg. -lib def:<Label>|all|templates|components : show all|<label>|template|component 's definitions that has already stored in the database \n"
+                            + " eg. -lib parameters|components|childComponents|failModes:<Label>|all|templates|components : show all|<Label>|all|templates|components 's parameters|components|childComponents|failModes that has already stored in the database \n");
         System.out.println(" -libie <name>: show all hierarchy ");
-        System.out.println(" -lib  (<name>| component | template | all ) : (parameter | constant | failMode | childComponent)? : (<name>)?  : get the specified modular from the library.");
         System.out.println(" -s: store template/component into Database, if success.");
         System.out.println(" -p: literally print out the parse result.");
         System.out.println(" -h: show help.");
+        System.exit(1);
     }
 
     // storing into everything into db

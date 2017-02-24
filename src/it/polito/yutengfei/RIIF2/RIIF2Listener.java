@@ -594,6 +594,18 @@ public interface RIIF2Listener extends ParseTreeListener {
 	 */
 	void exitPrimitiveIdIdentifier(RIIF2Parser.PrimitiveIdIdentifierContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code primaryNULL}
+	 * labeled alternative in {@link RIIF2Parser#primitiveId}.
+	 * @param ctx the parse tree
+	 */
+	void enterPrimaryNULL(RIIF2Parser.PrimaryNULLContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code primaryNULL}
+	 * labeled alternative in {@link RIIF2Parser#primitiveId}.
+	 * @param ctx the parse tree
+	 */
+	void exitPrimaryNULL(RIIF2Parser.PrimaryNULLContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link RIIF2Parser#associativeId}.
 	 * @param ctx the parse tree
 	 */

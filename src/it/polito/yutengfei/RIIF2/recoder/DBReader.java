@@ -1,18 +1,15 @@
 package it.polito.yutengfei.RIIF2.recoder;
 
-
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Label;
 import it.polito.yutengfei.RIIF2.mysql.MysqlBuilder;
 import it.polito.yutengfei.RIIF2.mysql.SQLConnector;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
 
 public class DBReader {
 
@@ -23,7 +20,18 @@ public class DBReader {
     }
 
     boolean hasDefinitionInDB(String s) {
-        return this.readDefinition(false, s) != -1;
+        ResultSet resultSet = this.queryDefinition(" name = '" + s + "'");
+
+        try {
+            if (resultSet.next() ) {
+                resultSet.close();
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     public void read(String s) {
@@ -33,332 +41,458 @@ public class DBReader {
 
             if ((content.length == 2)) {
 
-                String modularName = content[0].toLowerCase();
-                String modularVariable = content[1].toLowerCase();
+                String command = content[0].toLowerCase();
+                String parameter = content[1].toLowerCase();
 
-                this.library(modularName,modularVariable,true);
-            }
+                // first level command
+                switch (command) {
+                    case "def":
+                        // second level command
+                        System.out.format("%-35s%s \n", "<Type>", "<Name>");
+                        switch (parameter) {
+                            case "all":
+                                ResultSet allResult = this.queryDefinition("1");
+                                List<Integer> allIds = this.readDefinitionResult(allResult, "definition");
+                                if (allIds == null)
+                                    System.err.println("Warning : Database currently is empty. (no data) ");
+                                break;
+                            case "templates" :
+                                ResultSet templatesResult = this.queryDefinition(" type='template'" );
+                                List<Integer> templatesIds = this.readDefinitionResult(templatesResult, "definition");
+                                if (templatesIds == null)
+                                    System.err.println("Warning : Database currently not contains templates ");
+                                break;
 
-            else if (content.length == 3) {
-                String name = content[0].toLowerCase();
-                String type = content[1].toLowerCase();
-                String variable = content[2].toLowerCase();
+                            case "components" :
+                                ResultSet componentTemplate = this.queryDefinition(" type='component'" );
+                                List<Integer> componentIds= this.readDefinitionResult(componentTemplate, "definition");
+                                if (componentIds == null)
+                                    System.err.println("Warning : Database currently not contains templates ");
+                                break;
 
-                this.library(name,type,variable);
+                            default: {
+                                ResultSet resultSet = this.queryDefinition("name ='" + parameter + "'");
+                                List<Integer> ids = this.readDefinitionResult(resultSet, "definition");
+                                if (ids == null)
+                                    System.err.println("Warning : Can not find the definition. ");
+                            }
+                        }
+                        break;
+
+                    default:
+                        System.out.format("%-35s%s \n", "<Type>", "<Name>");
+                        this.library(command,parameter);
+                }
             }
 
             else {
                 System.err.println("Syntax: error at " + s);
+                System.err.println("Type : -h go to help");
                 System.exit(0);
             }
         }
 
-        else this.readDefinition(true,s);
+        else {
+            switch (s) {
+                case "list":
+                    System.out.format("%-35s%s \n", "<Type>", "<Name>");
+                    this.readDefinitionResult( this.queryDefinition("1"), "type" ,"name" );
+                    break;
+
+                case "templates":
+                    System.out.println("<Template>");
+                    this.readDefinitionResult( this.queryDefinition("type = '" +  "template" + "'") , "name" );
+                    break;
+
+                case "components":
+                    System.out.println("<Component>");
+                    this.readDefinitionResult( this.queryDefinition("type = '" + "component" + "'") , "name" );
+                    break;
+
+                default:
+                    System.err.println("Invalid command : Type -h go to help");
+                    System.exit(1);
+                    //this.readDefinitionResult( this.queryDefinition("name ='" + s + "'" ) );
+            }
+        }
+    }
+
+    public void delete(String s) {
+
+        switch (s){
+            case "all":
+                this.connector.delete("definitions","1");
+                break;
+            default:
+                this.connector.delete("definitions", " name = '" + s + "'");
+        }
     }
 
 
-    private List<Label> library(String modularName, String modularVariable , Boolean print) {
+    private List<Label> library(String command,String parameter ) {
         List<Label> rtnList = new LinkedList<>();
 
         List<Integer> recorderIdList  = new LinkedList<>();
 
-        if (modularName.equals("template") || modularName.equals("component")) {
-            List<Integer> allDefinitionId = this.readAllDefinitions(false);
-            recorderIdList.addAll(allDefinitionId);
-        }
-        else {
-            int definitionId = this.readDefinition(false, modularName);
-            recorderIdList.add(definitionId);
+        switch (parameter) {
+
+            case "all" : {
+                List<Integer> allDefinitionId = this.readDefinitionResult(this.queryDefinition("1"));
+                assert allDefinitionId != null;
+                recorderIdList.addAll(allDefinitionId);
+                break;
+            }
+
+            case "templates": {
+                List<Integer> allDefinitionId = this.readDefinitionResult(this.queryDefinition("type = '" + "template" + "'"));
+                assert allDefinitionId != null;
+                recorderIdList.addAll(allDefinitionId);
+                break;
+            }
+
+            case "components": {
+                List<Integer> allDefinitionId = this.readDefinitionResult(this.queryDefinition("type = '" + "component" + "'"));
+                this.readDefinitionResult(this.queryDefinition("type = '" + "component" + "'"));
+                assert allDefinitionId != null;
+                recorderIdList.addAll(allDefinitionId);
+                break;
+            }
+
+            default:
+                ResultSet resultSet = this.queryDefinition(" name = '" + parameter + "'");
+                List<Integer> definitionIds = this.readDefinitionResult(resultSet);
+
+                if (definitionIds == null || definitionIds.size() == 0){
+                    System.err.println("Invalid label name: " + parameter );
+                    System.exit(1);
+                }
+
+                recorderIdList.addAll(definitionIds);
+                break;
         }
 
         for (Integer integer : recorderIdList) {
 
-            RIIF2Recorder recorder = this.readRecorder(integer);
-
-            if (recorder == null) {
-                System.out.println("can not found the RIIF2Recorder");
-                System.exit(1);
-            }
-
-            switch (modularVariable) {
-                case "parameter":
-                    rtnList.addAll(recorder.getAllParameters());
-                    if (print) this.print(recorder.getAllParameters());
+            ResultSet resultSet;
+            switch (command) {
+                case "parameters":
+                    resultSet = this.queryParameterConstant(MysqlBuilder.PARAMETER,"definitionId = " + integer);
+                    this.readParameterConstantResult(false,MysqlBuilder.PARAMETER,resultSet, "type" ,"name");
                     break;
-                case "constant":
-                    rtnList.addAll(recorder.getAllConstants());
-                    if (print) this.print(recorder.getAllConstants());
+                case "constants":
+                    resultSet = this.queryParameterConstant(MysqlBuilder.CONSTANTS,"definitionId = " + integer);
+                    this.readParameterConstantResult(false,MysqlBuilder.PARAMETER,resultSet, "type" ,"name");
                     break;
-                case "failMode":
-                    rtnList.addAll(recorder.getAllFailModes());
-                    if (print) this.print(recorder.getAllFailModes());
+                case "failmodes":
+                    resultSet = this.queryFM(MysqlBuilder.FAILMODE,"definitionId = " + integer);
+                    this.readFMResult(false,MysqlBuilder.FAILMODE,resultSet, "type" ,"name" );
                     break;
-                case "childComponent":
-                    rtnList.addAll(recorder.getAllChildComponents());
-                    if (print) this.print(recorder.getAllChildComponents());
+                case "childcomponents":
+                    resultSet = this.queryChildComponent(MysqlBuilder.CHILDCOMPONENT, "definitionId = " + integer );
+                    this.readCCResult(false,MysqlBuilder.CHILDCOMPONENT,resultSet, "type", "name");
                     break;
                 default:
+                    System.err.println("Error: invalid command. ");
+                    System.err.println("Type -h to go to help page");
                     break;
             }
         }
-
         return rtnList;
     }
 
-    private void library(String name, String type, String variable) {
+    private List<Integer> readDefinitionResult(ResultSet resultSet, String... print) {
 
-        List<Label> labels = this.library(name,type,false);
+        List<Integer> definitionIds = new LinkedList<>();
 
-        if (labels == null || labels.size() == 0){
-            System.out.println(">> " + name + ":" + type + ":" + variable + "can not be found !" );
-            System.exit(1);
+        int i = 0;
+
+        try {
+
+            while (resultSet.next()) {
+                i++;
+                int id = resultSet.getInt("id");
+                byte[] bytes = Hex.decodeHex(resultSet.getString("definition").toCharArray());
+                String definition = new String(bytes);
+                String type = resultSet.getString("type");
+                String name = resultSet.getString("name");
+
+                // definitions
+                definitionIds.add(id);
+
+                for (String s : print) {
+
+                    switch (s) {
+                        case "name":
+                            System.out.format("%s", name);
+                            break;
+                        case "type":
+                            System.out.format("%-35s", type);
+                            break;
+                        case "definition":
+                            System.out.println(definition);
+                            break;
+                    }
+                }
+
+                if (print.length != 0)
+                    System.out.format("%n");
+            }
+
+            resultSet.close();
+
+        } catch (SQLException|DecoderException e) {
+            e.printStackTrace();
         }
 
-        List<String> selectedRecorder = new LinkedList<>();
-
-        labels.forEach(label -> {
-
-            if (label.getName().equals(variable)){
-                if (!selectedRecorder.contains(label.getRecorder().getIdentifier())) selectedRecorder.add(label.getRecorder().getIdentifier());
-            }
-        });
-
-        if (selectedRecorder.size() != 0)  selectedRecorder.forEach(System.out::println);
+        if ( i == 0){
+            return null;
+        }
+        return definitionIds;
     }
 
-    private List<Integer> readAllDefinitions(boolean b) {
+    private List<Integer> readParameterConstantResult(Boolean isAssociativeLevel, String tableName, ResultSet resultSet, String... print) {
 
-        List<Integer> definitionId = new LinkedList<>();
-
-        List<String> label = new LinkedList<String>() {{
-            add("id"); add("definition");
-        }};
-
-        ResultSet resultSet  = this.connector.select("definitions",label,"1");
+        List<Integer> Ids = new LinkedList<>();
 
         try {
             while (resultSet.next()) {
-                String definition = resultSet.getString("definition");
-                definition = new String (Hex.decodeHex(definition.toCharArray()) );
-                if (b){
-                    System.out.println(definition);
-                    System.out.println("");
+                int id = resultSet.getInt("id");
+                String type = resultSet.getString("type");
+                String name = resultSet.getString("name");
+                String value = resultSet.getString("value");
+                int isAssociative = resultSet.getInt("isAssociative");
+                int associativeId = resultSet.getInt("associativeId");
+                int arrayLength = resultSet.getInt("arrayLength");
+               // int definitionId = resultSet.getInt("definitionId");
+
+                // definitions
+                Ids.add(id);
+
+                if (associativeId != 0 && !isAssociativeLevel)
+                    continue;
+
+
+                for (String s : print) {
+
+                    switch (s) {
+
+                        case "name" :
+                            if (isAssociativeLevel)
+                                System.out.print(name + "]");
+                            else
+                                System.out.format("%s " ,  name );
+                            break;
+
+                        case "type" :
+                            if (isAssociative == 1) {
+                                System.out.format("%-35s",  type+ "[]");
+                            }
+
+                            else if (arrayLength != 0)
+                                System.out.format( "%-35s",  type + "[1:" + arrayLength +"]");
+
+                            else {
+                                if (isAssociativeLevel)
+                                    System.out.print("[" );
+                                else System.out.format( "%-35s",type);
+                            }
+                            break;
+
+                        case "value" :
+                            System.out.print("  " + value );
+                            break;
+
+                        default:break;
+                    }
                 }
-                definitionId.add( resultSet.getInt("id") );
+
+                if (isAssociative == 1 ){
+                    ResultSet resultSet1 = this.queryParameterConstant(tableName, " associativeId = " + id);
+                    this.readParameterConstantResult(true, tableName,resultSet1,print);
+                }
+
+                if (print.length != 0 && !isAssociativeLevel )
+                    System.out.println(" ");
             }
             resultSet.close();
-
-        } catch (SQLException | DecoderException e) {
-            e.printStackTrace();
-        }
-
-        return definitionId;
-    }
-
-    private void print(List labels) {
-
-        if (labels == null || labels.size() == 0 ) {
-            return;
-        }
-
-        labels.forEach(o -> ((Label)o).print() ) ;
-    }
-
-
-    private RIIF2Recorder readRecorder(int id ){
-        RIIF2Recorder recorder = null;
-
-        List<String> labels = new LinkedList<String>() {{
-            add("value");
-        }};
-
-        String where = "recorder = " + id;
-
-        //System.out.println(" " + where);
-        ResultSet resultSet = this.connector.select("RIIF2Recorder", labels, where);
-
-        try {
-            if (resultSet.next()){
-
-                String recorderString  = resultSet.getString("value");
-
-                recorder = (RIIF2Recorder) Base64.decodeToObject(recorderString);
-            }
-        } catch (SQLException | IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return recorder;
-    }
-
-
-
-    // read the stored definition
-    private int readDefinition(Boolean b ,String name) {
-
-        switch (name) {
-            case "all":
-                return this.queryDefinition(b,"1");
-            case "template":
-                return this.queryDefinition(b, "type = '" +  "template" + "'");
-            case "component":
-                return this.queryDefinition(b, "type = '" + "component" + "'");
-            default:
-                return this.queryDefinition(b, "name ='" + name + "'" );
-        }
-    }
-
-
-    public void readHier(String s) {
-
-        try {
-
-            Stack<Integer> stackEx = new Stack<>();
-            int exIndex = 0;
-            Stack<Integer> stackImpl = new Stack<>();
-            int implIndex = 0;
-
-            List<Integer> tempList = new LinkedList<>();
-            int definitionId = this.queryDefinition(false," name = '" +s + "'");
-
-            stackEx.add(definitionId); exIndex++;
-            tempList.add(definitionId);
-
-            for (int i = 0 ; i < tempList.size() ; i ++) {
-                List<String> exImp = this.queryExImpIds(tempList.get(i));
-
-                String ex = exImp.get(0);
-                String imp =  exImp.get(1);
-
-                if (ex != null  ) {
-                    String[] exA = ex.split(",");
-                    for (String s1 : exA) {
-                        if (!s1.equals("")) {
-                            stackEx.add(Integer.parseInt(s1));
-                            exIndex++;
-                            tempList.add(Integer.parseInt(s1));
-                        }
-                    }
-                }
-
-                if (imp != null ) {
-                    String[] impA = imp.split(",");
-                    for (String s1 : impA) {
-                        if (!s1.equals("")) {
-                            stackImpl.add(Integer.parseInt(s1));
-                            implIndex++;
-                            tempList.add(Integer.parseInt(s1));
-                        }
-                    }
-                }
-            }
-
-            while ( --implIndex > -1  ) {
-                int implId = stackImpl.pop();
-                this.queryDefinition(true," id = " + implId);
-            }
-
-            while ( --exIndex > -1 ) {
-                int exId = stackEx.pop();
-                this.queryDefinition(true," id = " + exId);
-            }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
+        return Ids;
     }
 
-    private List<String> queryExImpIds(int definitionIds) throws SQLException {
-        List<String> labels = new LinkedList<String>() {{
-            add("extendsIds"); add("implementsIds");
-        }};
-
-        String where = " definitionId = " + definitionIds ;
-
-        ResultSet resultSet = this.connector.select("recorders", labels, where);
-
-        List<String> vector = new LinkedList<>();
-
-        while (resultSet.next()){
-            String exString = resultSet.getString("extendsIds");
-            String implString = resultSet.getString("implementsIds");
-
-            vector.add(exString);
-            vector.add(implString);
-        }
-
-        return vector;
-    }
-
-
-    private int queryDefinition(Boolean print,String where) {
-
-        int id = -1 ;
-
-        List<String> label = new LinkedList<String>() {{
-            add("id"); add("definition");
-        }};
-
-        ResultSet resultSet  = this.connector.select("definitions",label,where);
+    private List<Integer> readCCResult (Boolean isAssociativeLevel,String tableName,ResultSet resultSet, String... print) {
+        List<Integer> Ids = new LinkedList<>();
 
         try {
-
             while (resultSet.next()) {
-                String definition = resultSet.getString("definition");
-                byte[] bytes = Hex.decodeHex(definition.toCharArray());
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                int type = resultSet.getInt("type");
+                ResultSet definition = this.queryDefinition(" id = " +  type);
 
-                if (print){
-                    System.out.println(new String (bytes) );
-                    System.out.println("");
+                String componentType = null;
+                if (definition.next()){
+                    componentType = definition.getString("name");
                 }
-                id = resultSet.getInt("id");
+
+                int isAssociative = resultSet.getInt("isAssociative");
+                int associativeId = resultSet.getInt("associativeId");
+                int arrayLength = resultSet.getInt("arrayLength");
+               // int definitionId = resultSet.getInt("definitionId");
+
+                // definitions
+                Ids.add(id);
+
+                if (associativeId != 0 && !isAssociativeLevel)
+                    continue;
+
+                for (String s : print) {
+
+                    switch (s) {
+
+                        case "name" :
+                            System.out.format(" %s " ,  name );
+                            break;
+
+                        case "type" :
+
+                            if (isAssociative == 1) {
+                                System.out.print("Associative_Array Child_Component " + componentType);
+                            }
+
+                            else if (arrayLength != 0)
+                                System.out.print( "Child_Components [1:" + arrayLength +"]");
+
+                            else {
+                                if (isAssociativeLevel)
+                                    System.out.print("--" );
+                                else System.out.print("Child_Component " + componentType);
+                            }
+                            break;
+
+                        default:break;
+                    }
+                }
+
+                if (isAssociative == 1 ){
+                    ResultSet resultSet1 = this.queryChildComponent(tableName, " associativeId = " + id);
+                    this.readCCResult(true, tableName,resultSet1,print);
+                }
+
+                if (print.length != 0 && !isAssociativeLevel )
+                    System.out.println(" ");
             }
             resultSet.close();
 
-        } catch (SQLException | DecoderException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return id;
+        return Ids;
     }
 
-    public void delete(String s) {
+    private List<Integer> readFMResult(Boolean isAssociativeLevel,String tableName,ResultSet resultSet, String... print) {
 
-        // delete all modulars in the database
-        if (s.equals("all")) {
-            this.connector.delete("definitions", "1");
-            this.connector.delete("recorders", "1");
-            this.connector.delete("RIIF2Recorder", "1");
-        }
+        List<Integer> Ids = new LinkedList<>();
 
-        // delete specific modular in the database
-        else {
+        try {
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                int isAssociative = resultSet.getInt("isAssociative");
+                int associativeId = resultSet.getInt("associativeId");
+                int arrayLength = resultSet.getInt("arrayLength");
+             //   int definitionId = resultSet.getInt("definitionId");
 
-            // first read the id from definitions and then delete it from recorders and RIIF2Recorder
+                // definitions
+                Ids.add(id);
 
-            int definitionId ;
+                if (associativeId != 0 && !isAssociativeLevel)
+                    continue;
 
-            List<String> labels = new LinkedList<String>(){{
-                add("id");
-            }};
+                for (String s : print) {
 
-            ResultSet resultSet = this.connector.select("definitions", labels, " name = '" + s +"'" );
+                    switch (s) {
 
-            try {
-                while (resultSet.next()){
-                    definitionId = resultSet.getInt("id");
+                        case "name" :
+                            System.out.format(" %s " ,  name );
+                            break;
 
-                    this.connector.delete("definitions", " id = " + definitionId);
-                    this.connector.delete("recorders" , " definitionId = " + definitionId);
-                    this.connector.delete("RIIF2Recorder" , " definitionId = " + definitionId);
+                        case "type" :
+
+                            if (isAssociative == 1) {
+                                System.out.print("Associative_Array Fail_Mode");
+                            }
+
+                            else if (arrayLength != 0)
+                                System.out.print( "Fail_Mode[1:" + arrayLength +"]");
+
+                            else {
+                                if (isAssociativeLevel)
+                                    System.out.print("--" );
+                                else System.out.print("Fail_Mode");
+                            }
+                            break;
+
+                        default:break;
+                    }
                 }
 
+                if (isAssociative == 1 ){
+                    ResultSet resultSet1 = this.queryFM(tableName, " associativeId = " + id);
+                    this.readFMResult(true, tableName,resultSet1,print);
+                }
 
-            } catch (SQLException e) {
-                e.printStackTrace();
+                if (print.length != 0 && !isAssociativeLevel )
+                    System.out.println(" ");
             }
+            resultSet.close();
 
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+
+        return Ids;
+
+    }
+
+
+    private ResultSet queryChildComponent(String tableName, String s) {
+
+        List<String> label = new LinkedList<String>() {{
+            add("id"); add("name"); add("type"); add("isAssociative"); add("associativeId"); add("arrayLength");add("definitionId");
+        }};
+
+        return this.connector.select(tableName,label,s);
+    }
+    private ResultSet queryFM(String tableName, String s) {
+
+        List<String> label = new LinkedList<String>() {{
+            add("id"); add("name"); add("isAssociative"); add("associativeId"); add("arrayLength");add("definitionId");
+        }};
+
+        return this.connector.select(tableName,label,s);
+    }
+
+    private ResultSet queryDefinition(String where) {
+
+        List<String> label = new LinkedList<String>() {{
+            add("id"); add("name"); add("definition"); add("type");
+        }};
+
+        return this.connector.select("definitions",label,where);
+    }
+
+    private ResultSet queryParameterConstant(String tableName, String s) {
+
+        List<String> label = new LinkedList<String>() {{
+            add("id"); add("name");add("type"); add("value"); add("isAssociative"); add("associativeId"); add("arrayLength");add("definitionId");
+        }};
+
+        return this.connector.select(tableName,label,s);
+
     }
 }

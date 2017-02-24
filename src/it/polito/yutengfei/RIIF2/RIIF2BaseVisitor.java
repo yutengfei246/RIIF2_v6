@@ -409,6 +409,13 @@ public class RIIF2BaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitPrimaryNULL(RIIF2Parser.PrimaryNULLContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitAssociativeId(RIIF2Parser.AssociativeIdContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}

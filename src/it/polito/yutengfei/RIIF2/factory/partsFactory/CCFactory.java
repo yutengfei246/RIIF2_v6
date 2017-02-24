@@ -89,6 +89,7 @@ public class CCFactory implements Factory {
 
         this.ccLabel.setName(id);
         this.ccLabel.setType(RIIF2Grammar.TYPE_CC);
+        this.ccLabel.setValue(recorder);
 
         if ( this.declaratorId.hasTypeType() ) {
 

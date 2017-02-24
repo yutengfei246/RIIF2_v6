@@ -9,7 +9,6 @@ import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 
 import org.apache.commons.codec.binary.Hex;
 
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -52,7 +51,7 @@ class DBGenerator {
             this.generateRIIF2Constants(generatedId);
 
             // generate the RIIF2's variable childComponent into the childComponents tables in the DB
-           // this.generateRIIF2ChildComponent(generatedId);
+            this.generateRIIF2ChildComponent(generatedId);
 
             // generate the RIIF2's variable failMode into the failMode table in the DB
             this.generateRIIF2FailMode(generatedId);
@@ -60,21 +59,6 @@ class DBGenerator {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    private void generateRIIF2recorder(int generatedId) throws IOException {
-
-        List<String> labels = new LinkedList<String>() {{
-            add("value"); add("definitionId");
-        }};
-
-        String recorder = Base64.encodeObject(this.recorder);
-
-        List<Object> values = new LinkedList<Object>() {{
-            add(recorder); add(generatedId);
-        }};
-
-        this.connector.insert("RIIF2Recorder", labels, values );
     }
 
     // two possibilities, one for associativeArray , one for pure
@@ -87,8 +71,6 @@ class DBGenerator {
         failModes.forEach(failMode -> this.fmGenerator(failMode,definitionId));
         return true;
     }
-
-
 
     // this method has two possibilities and has same situation with the method that precedes this
     private Boolean generateRIIF2ChildComponent(int definitionId) throws SQLException {
@@ -116,7 +98,6 @@ class DBGenerator {
         return true;
     }
 
-
     // the given parameter is the generatedId for the recorder
     private boolean generateRIIF2Parameters(int definitionId) {
 
@@ -130,6 +111,7 @@ class DBGenerator {
         return true;
     }
 
+
     private void fmGenerator(FailMode fm , int definitionId ){
 
         List<String> labels = new LinkedList<String>() {{
@@ -141,15 +123,20 @@ class DBGenerator {
                 add(fm.getName()); add(1); add(0); add(0); add(definitionId);
             }});
 
-            if (fm.getAssociatives() == null)
-                System.out.println("fm associative is null " + fm.getName());
-
-            fm.getAssociatives().forEach(label -> {
-
-                this.connector.insert(MysqlBuilder.FAILMODE,labels, new LinkedList<Object>() {{
-                    add(label.getName()); add(0); add(associativeId); add(0); add(definitionId);
-                }});
-            });
+            if (fm.getAssociatives() != null) {
+                fm.getAssociatives().forEach(label -> {
+                   int attributeId =  this.connector.insert(MysqlBuilder.FAILMODE, labels, new LinkedList<Object>() {
+                       {
+                        add(label.getName());
+                        add(0);
+                        add(associativeId);
+                        add(0);
+                        add(definitionId);
+                    }
+                   });
+                 this.generateAttribute(label, MysqlBuilder.FAILMODE, attributeId,definitionId);
+                });
+            }
         }
 
         else if ( fm.isVector() )
@@ -157,10 +144,19 @@ class DBGenerator {
                 add(fm.getName()); add(0); add(0); add(fm.getVectorLength()); add(definitionId);
             }});
 
-        else
-            this.connector.insert(MysqlBuilder.FAILMODE, labels, new LinkedList<Object>() {{
-                add(fm.getName()); add(0); add(0); add(0); add(definitionId);
-            }});
+        else {
+            int attributeId = this.connector.insert(MysqlBuilder.FAILMODE, labels, new LinkedList<Object>() {
+                {
+                    add(fm.getName());
+                    add(0);
+                    add(0);
+                    add(0);
+                    add(definitionId);
+                }
+            });
+
+            this.generateAttribute(fm, MysqlBuilder.FAILMODE, attributeId,definitionId);
+        }
     }
 
 
@@ -170,53 +166,73 @@ class DBGenerator {
             add("name"); add("type"); add("isAssociative"); add("associativeId"); add("arrayLength"); add("definitionId");
         }};
 
+
+        RIIF2Recorder riif2Recorder = (RIIF2Recorder) cc.getValue();
+        List<String> definitionIds = new LinkedList<String>() {{ add(riif2Recorder.getIdentifier()); }};
+        List<Integer> type = this.getDefinitionIds(definitionIds);
+
         if (cc.isAssociative()) {
-            final int[] associativeId = {-1};
 
-            for (Label label : cc.getAssociatives()) {
+            int associativeId = this.connector.insert(MysqlBuilder.CHILDCOMPONENT, labels,
+                    new LinkedList<Object>() {{
+                            add(cc.getName());
+                            addAll(type);
+                            add(1);
+                            add(0);
+                            add(0);
+                            add(definitionId);
+                        }});
 
-                List<Integer> type = null;
-                if (associativeId[0] == -1) {
-                    List<String> definitionIds = new LinkedList<String>() {{
-                        add(label.getRecorder().getIdentifier());
-                    }};
 
-                    type = this.getDefinitionIds(definitionIds);
-                    List<Integer> finalType = type;
-                    associativeId[0] = this.connector.insert(MysqlBuilder.CHILDCOMPONENT, labels, new LinkedList<Object>() {{
-                        add(cc.getName());
-                        addAll(finalType);
-                        add(1);
-                        add(0);
-                        add(0);
-                        add(definitionId);
-                    }});
+            if (cc.getAssociatives() != null) {
+
+                for (Label label : cc.getAssociatives()) {
+
+                    int attributeId = this.connector.insert(MysqlBuilder.CHILDCOMPONENT, labels, new LinkedList<Object>() {
+                        {
+                            add(label.getName());
+                            addAll(type);
+                            add(0);
+                            add(associativeId);
+                            add(0);
+                            add(definitionId);
+                        }
+                    });
+
+                    this.generateAttribute(label,MysqlBuilder.CHILDCOMPONENT,attributeId,definitionId);
                 }
-
-                List<Integer> finalType1 = type;
-                this.connector.insert(MysqlBuilder.CHILDCOMPONENT, labels, new LinkedList<Object>() {{
-                    add(label.getName());
-                    add(finalType1);
-                    add(0);
-                    add(associativeId[0]);
-                    add(0);
-                    add(definitionId);
-                }});
-
-                associativeId[0]++;
             }
         }
 
         else if ( cc.isVector() ) {
-            this.connector.insert(MysqlBuilder.CHILDCOMPONENT, labels, new LinkedList<Object>() {{
-                add(cc.getName()); add(cc.getVectorItem(1).getRecorder().getIdentifier()) ; add(0); add(0) ; add(cc.getVectorLength()) ; add(definitionId);
-            }});
+            this.connector.insert(MysqlBuilder.CHILDCOMPONENT, labels, new LinkedList<Object>() {
+                {
+                    add(cc.getName());
+                    addAll(type);
+                    add(0);
+                    add(0);
+                    add(cc.getVectorLength());
+                    add(definitionId);
+                }
+            });
+
+            //this.generateAttribute(cc,MysqlBuilder.CHILDCOMPONENT,attributeId,definitionId);
         }
 
-        else
-            this.connector.insert(MysqlBuilder.CHILDCOMPONENT, labels, new LinkedList<Object>() {{
-                add(cc.getName()); add(cc.getVectorItem(1).getRecorder().getIdentifier()) ; add(0); add(0) ; add(0) ; add(definitionId);
-            }});
+        else {
+            int attributeId = this.connector.insert(MysqlBuilder.CHILDCOMPONENT, labels, new LinkedList<Object>() {
+                {
+                    add(cc.getName());
+                    addAll(type);
+                    add(0);
+                    add(0);
+                    add(0);
+                    add(definitionId);
+                }
+            });
+
+            this.generateAttribute(cc, MysqlBuilder.CHILDCOMPONENT, attributeId, definitionId);
+        }
     }
 
     // first insert the labels and get the generated Id, if it is associative array, then generate all subsequnce element
@@ -226,32 +242,85 @@ class DBGenerator {
             add("name"); add("type"); add("value"); add("isAssociative"); add("associativeId");add("arrayLength");add("definitionId");
         }};
 
+
+
+        Object value = label.getValue();
+        if (value != null){
+            value = value.toString();
+        }
+
+        //TODO:
+        Object finalValue = null;
         if (label.isAssociative())  {
+
             int associativeId = this.connector.insert(tableName, labels, new LinkedList<Object>() {{
-                add(label.getName()); add(label.getType()); add(label.getValue()); add(1);add(0);add(0); add(definitionId);
+                add(label.getName()); add(label.getType()); add(finalValue); add(1);add(0);add(0); add(definitionId);
             }});
 
-            label.getAssociatives().forEach(o -> {
+            if (label.getAssociatives() != null ) {
 
-                if (o instanceof Label) {
-                    Label cvtLabel = (Label) o;
-                    this.connector.insert(tableName, labels, new LinkedList<Object>() {{
-                        add(cvtLabel.getName()); add(cvtLabel.getType()); add(cvtLabel.getValue()); add(0); add(associativeId); add(0); add(definitionId);
-                    }});
-                }
-            });
+                label.getAssociatives().forEach(o -> {
+                    if (o instanceof Label) {
+
+                        Label cvtLabel = (Label) o;
+
+                        Object value1 = cvtLabel.getValue();
+                        if (value1 != null) {
+                            value1 = value1.toString();
+                        }
+
+                        //TODO:
+                        Object finalValue1 = null;
+                        int refersId = this.connector.insert(tableName, labels, new LinkedList<Object>() {
+                            {
+                                add(cvtLabel.getName());
+                                add(cvtLabel.getType());
+                                add(finalValue1);
+                                add(0);
+                                add(associativeId);
+                                add(0);
+                                add(definitionId);
+                            }
+                        });
+
+                        this.generateAttribute(cvtLabel,tableName,refersId,definitionId);
+                    }
+
+                });
+            }
         }
 
         else if (label.isVector()) {
-             this.connector.insert(tableName, labels, new LinkedList<Object>() {{
-                add(label.getName()); add(label.getType()); add(label.getValue()); add(0);add(0);add(label.getVectorLength()); add(definitionId);
-            }});
+             this.connector.insert(tableName, labels, new LinkedList<Object>() {
+                 {
+                     add(label.getName());
+                     add(label.getType());
+                     add(finalValue);
+                     add(0);
+                     add(0);
+                     add(label.getVectorLength());
+                     add(definitionId);
+                 }
+             });
+
+          //  this.generateAttribute(label,tableName,refersId,definitionId);
         }
 
-        else
-            this.connector.insert(tableName, labels, new LinkedList<Object>() {{
-            add(label.getName()); add(label.getType()); add(label.getValue()); add(0);add(0);add(0); add(definitionId);
-        }});
+        else {
+            int refersId = this.connector.insert(tableName, labels, new LinkedList<Object>() {
+                {
+                    add(label.getName());
+                    add(label.getType());
+                    add(finalValue);
+                    add(0);
+                    add(0);
+                    add(0);
+                    add(definitionId);
+                }
+            });
+
+            this.generateAttribute(label, tableName, refersId, definitionId);
+        }
     }
 
     /*generating data into recorder table*/
@@ -314,6 +383,8 @@ class DBGenerator {
         String name = this.recorder.getIdentifier();
         String definition = this.recorder.getDefinition();
         definition = Hex.encodeHexString(definition.getBytes());
+        //definition = Base64.encodeBytes(definition.getBytes());
+
 
         String type ;
 
@@ -328,23 +399,24 @@ class DBGenerator {
     }
 
     // generate attributes for each label and store the attribute into attribtues table in DB and return back the generated I
-    private List<Integer> generateAttribute(Label theLabel){
+    private List<Integer> generateAttribute(Label targetLabel, String belongs, int refersId, int definitionId){
         List<Integer> integers = new LinkedList<>();
 
         List<String> labels = new LinkedList<String>() {{
-            add("name"); add("type"); add("value");
+            add("name"); add("type"); add("value"); add("belongs"); add("refersId"); add("definitionId");
         }};
 
-        Collection<Attribute> attributes = theLabel.getAttributes();
+        Collection<Attribute> attributes = targetLabel.getAttributes();
 
         if (attributes != null) {
 
             attributes.forEach(attribute -> {
                 String name = attribute.getName();
                 String type = attribute.getType();
-                Object value = attribute.getValue();
+                //Object value = attribute.getValue();
 
-                int id = this.connector.insert("attributes",labels, new LinkedList<Object>() {{add(name); add(type) ; add(value); }});
+                Object value = null;
+                int id = this.connector.insert("attributes",labels, new LinkedList<Object>() {{ add(name); add(type) ; add(value); add(belongs) ; add(refersId); add(definitionId); }});
 
                 integers.add(id);
             });

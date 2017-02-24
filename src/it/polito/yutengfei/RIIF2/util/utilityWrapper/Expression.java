@@ -338,9 +338,19 @@ public class Expression implements Initializer, Serializable {
 
             stringBuffer.append(" ) ");
         }
-
+        else if ( this.type().equals(RIIF2Grammar.FUNC_AGG_SINGLE)){
+            stringBuffer.append("AGG_SINGLE_FAIL(");
+            this.funcArguments.forEach(expression -> stringBuffer.append(expression.toString()));
+            stringBuffer.append(")");
+        }
+        else if (this.type().equals(RIIF2Grammar.FUNC_GT_N_FAIL)) {
+            stringBuffer.append("assign_gtn_fail(");
+            this.funcArguments.forEach(expression -> stringBuffer.append(expression.toString()));
+            stringBuffer.append(")");
+        }
         else
             stringBuffer.append(" ").append(this.value().toString()).append(" ");
+
         Iterator<Operation> iterator = this.getIterator();
 
         while (iterator.hasNext()) {
@@ -354,13 +364,14 @@ public class Expression implements Initializer, Serializable {
                 stringBuffer.append(" + ");
             if (operation.getOpr() == 19)
                 stringBuffer.append(" - ");
+
             Expression oprExpression = operation.getOprExpression();
             Expression targetExpression = operation.getOprTargetExpression();
 
             if (oprExpression != null ) {
                 oprExpression.setRecorder(this.recorder);
                 oprExpression.setCurrentLabel(this.currentLabel);
-                stringBuffer.append(operation.toString());
+                stringBuffer.append(oprExpression.toString());
             }
 
             if (targetExpression != null ) {
@@ -371,6 +382,8 @@ public class Expression implements Initializer, Serializable {
         }
         return stringBuffer.toString();
     }
+
+
 
     // get the literal when using expression to generate Database
     public String getLiteral() {
