@@ -28,6 +28,7 @@ public class RIIF2Recorder implements Recorder, Serializable {
     private List<FailMode> failModes = new LinkedList<>();
 
     private List<Platform> platforms = new LinkedList<>();
+    private boolean requirement;
 
     /***********************************Setters and Getters************************************/
 
@@ -405,5 +406,13 @@ public class RIIF2Recorder implements Recorder, Serializable {
 
     public boolean isEnvironment() {
         return environment;
+    }
+
+    public void setRequirement(boolean requirement) {
+        this.requirement = requirement;
+    }
+
+    public boolean isRequirement() {
+        return requirement;
     }
 }

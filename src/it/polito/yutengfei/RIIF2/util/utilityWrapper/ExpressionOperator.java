@@ -695,7 +695,6 @@ class ExpressionOperator implements Serializable{
     // the method return the given expression type, not store it into the expression
     private String typeResolver(List<Label<Label>> labelList, Expression expression) throws FieldTypeNotMarchException {
 
-
         if (labelList != null )
             System.out.println("the labelList is not null in this case --" + expression.type() + " " + expression.value().toString());
 

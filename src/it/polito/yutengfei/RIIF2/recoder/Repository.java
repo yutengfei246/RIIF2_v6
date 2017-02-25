@@ -13,6 +13,7 @@ public interface Repository {
     Map<String,Recorder> tempRecorderMap = new LinkedHashMap<>();
     Map<String,Recorder> componentRecorderMap = new LinkedHashMap<>();
     Map<String,Recorder> envRecorderMap = new LinkedHashMap<>();
+    Map<String,Recorder> requirementRecorderMap  = new LinkedHashMap<>();
 
     static void putTemp(String key, Recorder value){
         tempRecorderMap.put(key,value);
@@ -24,6 +25,10 @@ public interface Repository {
 
     static void putEnv(String identifier, Recorder recorder) {
         envRecorderMap.put(identifier, recorder);
+    }
+
+    static void putRequirement(String key, Recorder recorder ) {
+        requirementRecorderMap.put(key, recorder);
     }
 
     static Recorder getRecorderFromTemplateRepository(String key){
@@ -38,6 +43,10 @@ public interface Repository {
         return envRecorderMap.get(key);
     }
 
+    static Recorder getRecorderFormRequirementRepository(String key) {
+        return requirementRecorderMap.get(key);
+    }
+
     static Boolean containsComponent(String key){
         return componentRecorderMap.containsKey(key);
     }
@@ -48,6 +57,10 @@ public interface Repository {
 
     static Boolean containsEnvironment(String key ) {
         return envRecorderMap.containsKey(key);
+    }
+
+    static Boolean containsRequirement(String key) {
+        return requirementRecorderMap.containsKey(key);
     }
 
     static Recorder getDeepCopedRecorderFromTemplateRepository(String key) {
@@ -62,6 +75,10 @@ public interface Repository {
         return DeepCopy.copy(getRecorderFromEnvRepository(key));
     }
 
+    static Recorder getDeepCopedRecorderFromRequirementRepository(String key){
+        return DeepCopy.copy(getRecorderFormRequirementRepository(key));
+    }
+
     static Map<String,Recorder> getTemplateRepository(){
         return tempRecorderMap;
     }
@@ -72,6 +89,10 @@ public interface Repository {
 
     static Map<String,Recorder> getEnvRepository() {
         return envRecorderMap;
+    }
+
+    static Map<String,Recorder> getRequirementRepository() {
+        return requirementRecorderMap;
     }
 
     class DeepCopy{
