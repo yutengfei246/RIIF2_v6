@@ -4,6 +4,7 @@ import it.polito.yutengfei.RIIF2.RIIF2BaseVisitor;
 import it.polito.yutengfei.RIIF2.RIIF2Parser;
 import it.polito.yutengfei.RIIF2.mysql.SQLConnector;
 import it.polito.yutengfei.RIIF2.parser.ComponentParser;
+import it.polito.yutengfei.RIIF2.parser.EnvironmentParser;
 import it.polito.yutengfei.RIIF2.parser.TemplateParser;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.recoder.Recorder;
@@ -57,6 +58,24 @@ public class SLV extends RIIF2BaseVisitor<Boolean> implements Recorder{
         return true;
     }
 
+    @Override
+    public Boolean visitEnvironmentDeclaration(RIIF2Parser.EnvironmentDeclarationContext ctx) {
+        super.visitEnvironmentDeclaration(ctx);
+
+        this.recorder.setEnvironment(true);
+
+        this.environmentParser = new EnvironmentParser(this.recorder);
+
+        this.moduleCounter++;
+        ParseTree environmentTree = this.parseTree.getChild(this.moduleCounter);
+        walker.walk(this.environmentParser,environmentTree);
+
+        // set the RIIF2 definition
+        this.recorder.setDefinition(this.parser.getTokenStream().getText(ctx));
+        // replace the recorder
+        this.recorder = this.recorder.getRIIF2Recorder();
+        return true;
+    }
 
     // keeping the tree for listener
     private final ParseTree parseTree;
@@ -65,7 +84,7 @@ public class SLV extends RIIF2BaseVisitor<Boolean> implements Recorder{
     private final RIIF2Parser parser;
     private RIIF2Recorder recorder;
     private ComponentParser componentParser ;
-
+    private EnvironmentParser environmentParser;
     private TemplateParser templateParser ;
     private int moduleCounter = -1;
 

@@ -8,7 +8,9 @@ import java.util.*;
 
 public class RIIF2Recorder implements Recorder, Serializable {
 
-    private Boolean template ;
+    private boolean template  ;
+    private boolean environment;
+
     private String identifier ;
 
     /*RIIF2 definition*/
@@ -396,4 +398,12 @@ public class RIIF2Recorder implements Recorder, Serializable {
         this.platforms.forEach(Platform::print);
     }
 
+    public void setEnvironment(boolean environment) {
+        this.environment = environment;
+    }
+
+
+    public boolean isEnvironment() {
+        return environment;
+    }
 }

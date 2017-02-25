@@ -322,6 +322,8 @@ public class AISFactory implements Factory{
                 // the expInitializer type is USER_DEFINED
                 else if (expInitializer.getType().equals(RIIF2Grammar.USER_DEFINED)) {
 
+                    System.out.println("use defined " +expInitializer.toString());
+
                     Id primitiveId = ((DeclaratorId) expInitializer.value()).getPrimitiveId();
 
                     // the expInitializer is a enum element.

@@ -8,15 +8,8 @@ environment NEUTRON_ENV_DEF;
 // Ouput of the environment is the relative neutron flux
   output parameter REL_FLUX : float;
 
-  assign REL_FLUX = ( LOCATION == NYC ) ? 
-                      ( ( SUN_ACTIVE == AVG ) ? 1.0 :
-                        ( SUN_ACTIVE == LOW ) ? 0.927 : 1.073 ) :
-                    ( LOCATION == LOS_ALAMOS ) ?
-                      ( ( SUN_ACTIVE == AVG ) ? 5.60 :
-                        ( SUN_ACTIVE == LOW ) ? 5.15 : 5.60 ) :
-                    ( LOCATION == TOKYO ) ?
-                      ( ( SUN_ACTIVE == AVG ) ? 0.66 :
-                        ( SUN_ACTIVE == LOW ) ? 0.62 : 0.64 ) : 
-                        -1; // not defined
+  assign REL_FLUX = ( LOCATION == NYC )
+                    ? (  ( SUN_ACTIVE == AVG ) ?  1.0 : ( ( SUN_ACTIVE == LOWQKK) ?  (( SUN_ACTIVE == LOWQKK) ?  1.0: 1.0 ): 1.0 ) )
+                    : -1.0 ; // not defined
 
 endenvironment // NEUTRON_ENV_DEF

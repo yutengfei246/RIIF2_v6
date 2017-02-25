@@ -55,4 +55,7 @@ public class RIIF2Grammar {;
     public static final String LIST_DOUBLE = "list-double";
     public static final String _ROW = "row";
     public static final String ARRAY_ITEM = "array-item";
+    public static final String OUTPUT = "output";
+    public static final String INPUT = "input";
+    public static final String ENV = "environment";
 }

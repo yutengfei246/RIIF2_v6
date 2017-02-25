@@ -124,7 +124,8 @@ assignment
     ;
 
 envParameterDeclaration
-    : (INPUT|OUTPUT) PARAMETER variableId ':' primitiveType (':=' expression)? ';'
+    //: (INPUT|OUTPUT) PARAMETER variableId ':' primitiveType (':=' expression)? ';'
+    :  inputOutput fieldType primitiveFieldDeclarator  ';'
     ;
 
 // §RIIF-2 requirement
@@ -344,6 +345,11 @@ vector
 
 flatVector
     : '[' expression '..' expression ']'
+    ;
+
+inputOutput
+    : INPUT
+    | OUTPUT
     ;
 
 fieldType

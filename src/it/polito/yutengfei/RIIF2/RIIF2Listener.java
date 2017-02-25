@@ -780,6 +780,16 @@ public interface RIIF2Listener extends ParseTreeListener {
 	 */
 	void exitFlatVector(RIIF2Parser.FlatVectorContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link RIIF2Parser#inputOutput}.
+	 * @param ctx the parse tree
+	 */
+	void enterInputOutput(RIIF2Parser.InputOutputContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RIIF2Parser#inputOutput}.
+	 * @param ctx the parse tree
+	 */
+	void exitInputOutput(RIIF2Parser.InputOutputContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link RIIF2Parser#fieldType}.
 	 * @param ctx the parse tree
 	 */

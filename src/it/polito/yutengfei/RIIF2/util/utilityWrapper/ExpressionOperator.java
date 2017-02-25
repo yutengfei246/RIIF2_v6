@@ -680,6 +680,8 @@ class ExpressionOperator implements Serializable{
                 assert oprType != null;
                 assert targetType != null;
 
+                //System.out.println(" " +  "oprType : " + oprType  +" targetType " + targetType);
+
                 if (!oprType.equals(targetType))
                     throw new FieldTypeNotMarchException(targetType, targetExpression.getLine(), targetExpression.getColumn());
 
@@ -786,6 +788,7 @@ class ExpressionOperator implements Serializable{
 
         DeclaratorId declaratorId = (DeclaratorId) expression.value();
         String id = declaratorId.getPrimitiveId().getId();
+
 
         if ( this.currentLabel.isEnumType() ){
             EnumType enumType = this.currentLabel.getEnumType();

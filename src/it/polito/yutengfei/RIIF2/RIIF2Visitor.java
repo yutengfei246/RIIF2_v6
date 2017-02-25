@@ -471,6 +471,12 @@ public interface RIIF2Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFlatVector(RIIF2Parser.FlatVectorContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link RIIF2Parser#inputOutput}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInputOutput(RIIF2Parser.InputOutputContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link RIIF2Parser#fieldType}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

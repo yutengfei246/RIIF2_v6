@@ -93,6 +93,7 @@ public class LabelExtractor {
         return rtnLabel;
     }
 
+
     // ( aisType | associativeIndex ) ?
     private Label<Label> aisTypeAssociativeIndexExtractor(Label<Label> theLabel, DeclaratorId declaratorId) {
 
@@ -190,6 +191,13 @@ public class LabelExtractor {
         if ( declaratorId.hasAttributeIndex() ){
             Id attributeId = declaratorId.getAttributeIndex();
             String attributeIndex = attributeId.getId();
+
+
+            if (label3.getType().equals(RIIF2Grammar.ENV)){
+                RIIF2Recorder recorder = (RIIF2Recorder) label3.getValue();
+                return recorder.getLabel(attributeIndex);
+            }
+
 
             return label3.getAttribute(attributeIndex);
 

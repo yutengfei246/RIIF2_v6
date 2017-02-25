@@ -7,6 +7,7 @@ import it.polito.yutengfei.RIIF2.initializer.ListInitializer;
 import it.polito.yutengfei.RIIF2.initializer.TableInitializer;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
+import it.polito.yutengfei.RIIF2.test.RIIF2;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.TableValueOperator;
@@ -61,6 +62,10 @@ class ValueMember implements Serializable {
 
             if ( label instanceof ChildComponent )
                 this.value = recorder;
+
+            if (label.getType().equals(RIIF2Grammar.ENV))
+                this.value = recorder;
+
         }
 
         // if the given value is Expression

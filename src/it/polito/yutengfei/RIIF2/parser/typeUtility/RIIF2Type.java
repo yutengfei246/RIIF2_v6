@@ -80,7 +80,7 @@ public class RIIF2Type {
     }
 
     public static RIIF2Type primitiveTypeUserDefined(String identifier, int line, int charPositionInLine) {
-        return new RIIF2Type(RIIF2Grammar.USER_DEFINED, identifier,line,charPositionInLine);
+        return new RIIF2Type(RIIF2Grammar.ENV, identifier,line,charPositionInLine);
     }
 
     public static RIIF2Type enumType(EnumType enumType, int line, int charPositionInLine) {
@@ -111,6 +111,14 @@ public class RIIF2Type {
         return new RIIF2Type(RIIF2Grammar.TYPE_CC, identifier,line,charPositionInLine );
     }
 
+    public static RIIF2Type output(int line, int charPositionInLine) {
+        return new RIIF2Type(RIIF2Grammar.OUTPUT,line,charPositionInLine);
+    }
+
+    public static RIIF2Type input( int line, int charPositionInLine) {
+        return new RIIF2Type(RIIF2Grammar.INPUT, line, charPositionInLine);
+    }
+
     /*****************************************************************************************************************/
     public String getType() {
         return type;
@@ -135,4 +143,5 @@ public class RIIF2Type {
     public EnumType getEnumType() {
         return this.enumType;
     }
+
 }

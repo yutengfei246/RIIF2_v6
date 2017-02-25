@@ -16,6 +16,9 @@ import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.RIIF2Type;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
+import it.polito.yutengfei.RIIF2.recoder.Recorder;
+import it.polito.yutengfei.RIIF2.recoder.Repository;
+import it.polito.yutengfei.RIIF2.test.RIIF2;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 
@@ -33,6 +36,8 @@ public class FieldFactory implements Factory{
     private Initializer initializer;
     private RIIF2Type fieldType;
 
+    private RIIF2Type inputOutput;
+
 //    private ExpressionOperator eo;
 
     public FieldFactory(ComponentFactory componentFactory, RIIF2Recorder recorder) {
@@ -45,6 +50,9 @@ public class FieldFactory implements Factory{
         this.fieldType = this.componentFactory.getFieldType();
         this.declaratorId = this.declarator.getDeclaratorId();
         this.initializer = this.declarator.getInitializer();
+
+        if (this.componentFactory instanceof EnvironmentFactory)
+            this.inputOutput = ((EnvironmentFactory) this.componentFactory).getInputOutput();
 
         this.recorder.setDefinition(declarator.toString());
  //       this.eo = new ExpressionOperator(this.recorder);
@@ -275,10 +283,18 @@ public class FieldFactory implements Factory{
     private void createFieldLabel(String name) throws FieldTypeNotMarchException {
 
         // have a decision of the fieldType of the label.
-        if (this.fieldType.getType().equals(RIIF2Grammar.FIELD_PARAMETER) )
+        if (this.fieldType.getType().equals(RIIF2Grammar.FIELD_PARAMETER) ) {
             this.fieldLabel = new Parameter(this.recorder);
+
+            // for environment
+            if (this.inputOutput != null) {
+                ((Parameter)this.fieldLabel).setEnvironmentType(this.inputOutput.getType());
+            }
+
+        }
         if (this.fieldType.getType().equals(RIIF2Grammar.FIELD_CONSTANT) )
             fieldLabel = new Constant(this.recorder);
+
 
         assert this.fieldLabel != null;
         this.fieldLabel.setName(name); // set the name to the field
@@ -312,9 +328,21 @@ public class FieldFactory implements Factory{
 
             }
             // The user defined type
-            else if ( primitiveType.equals(RIIF2Grammar.USER_DEFINED)) {
+            else if ( primitiveType.equals(RIIF2Grammar.ENV)) {
                 String userDefinedTypeName = primitiveFieldDeclarator.getPrimitiveType().getValue();
-                this.fieldLabel.setType(userDefinedTypeName);
+                this.fieldLabel.setType(RIIF2Grammar.ENV);
+
+                Recorder recorder = Repository.getDeepCopedRecorderFromEnvRepository(userDefinedTypeName);
+
+                if(recorder == null )
+                    throw new FieldTypeNotMarchException(FieldTypeNotMarchException.NOT_FOUND, userDefinedTypeName,  primitiveFieldDeclarator.getPrimitiveType().getLine(), primitiveFieldDeclarator.getPrimitiveType().getColumn());
+
+                this.fieldLabel.setValue(recorder);
+
+                if(this.initializer != null ){
+                    throw new FieldTypeNotMarchException(FieldTypeNotMarchException.MARCHED, this.initializer.toString() , this.initializer.getLine(), this.initializer.getColumn());
+                }
+
             }
             // the primitive type
             else  this.fieldLabel.setType(primitiveType);

@@ -19,7 +19,7 @@ public class ComponentFactory {
     private RIIF2Type fieldType;
     private Declarator declarator;
 
-    ComponentFactory(Recorder recorder) {
+    protected ComponentFactory(Recorder recorder) {
         this.recorder = (RIIF2Recorder) recorder;
     }
 

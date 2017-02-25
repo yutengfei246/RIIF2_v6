@@ -11,6 +11,18 @@ public class Parameter extends Label<Label> {
         super(recorder);
     }
 
+    public String environmentType ;
+
+    public void setEnvironmentType(String environmentType) {
+        this.environmentType =environmentType ;
+    }
+
+    public String getEnvironmentType() {
+        return this.environmentType;
+    }
+
+
+
     @Override
     public void vectorInitializer(String name, String type, Object value ) {
         int length = super.getVectorLength();
@@ -62,6 +74,9 @@ public class Parameter extends Label<Label> {
     @Override
     public void print() {
 
+
+        if (this.getEnvironmentType() != null )
+            System.out.print(this.getEnvironmentType() + " ");
         // print field
         System.out.print("Parameter " + super.getName() );
 

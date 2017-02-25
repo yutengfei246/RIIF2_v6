@@ -7,6 +7,7 @@ public class FieldTypeNotMarchException extends Throwable {
     private static final String RESOLVED= "can not be resolved";
     public static final String OPERATION = "can not be operated in this type";
     public static final String MESSAGE = "print the message";
+    public static final String NOT_FOUND = "not find";
     private final String id;
     private final int line;
     private final int column;
@@ -46,6 +47,11 @@ public class FieldTypeNotMarchException extends Throwable {
             case MESSAGE:
                 System.err.println(this.id + " in the line:column [" + this.line + ":" +this.column + "]");
                 break;
+
+            case NOT_FOUND:
+                System.err.println("<" + this.id + ">"  + " can not be resolved in the line [" + line + ":" + column + "]" );
+                break;
+
             default: break;
         }
     }

@@ -94,6 +94,22 @@ abstract class TypeParser extends _RIIF2Parser{
         this.putRIIF2Type(ctx,type);
     }
 
+
+    @Override
+    public void enterInputOutput(RIIF2Parser.InputOutputContext ctx) {
+
+        RIIF2Type type = null;
+
+        if (ctx.OUTPUT() != null)
+            type = RIIF2Type.output(ctx.start.getLine(), ctx.start.getCharPositionInLine());
+
+        if (ctx.INPUT() != null)
+            type = RIIF2Type.input(ctx.start.getLine(), ctx.start.getCharPositionInLine());
+
+        this.putRIIF2Type(ctx,type);
+
+    }
+
     @Override
     public void exitVector(RIIF2Parser.VectorContext ctx) {
 

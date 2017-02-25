@@ -12,6 +12,7 @@ public interface Repository {
     /*Repository ...*/
     Map<String,Recorder> tempRecorderMap = new LinkedHashMap<>();
     Map<String,Recorder> componentRecorderMap = new LinkedHashMap<>();
+    Map<String,Recorder> envRecorderMap = new LinkedHashMap<>();
 
     static void putTemp(String key, Recorder value){
         tempRecorderMap.put(key,value);
@@ -19,6 +20,10 @@ public interface Repository {
 
     static void putComponent(String key, Recorder value){
         componentRecorderMap.put(key, value);
+    }
+
+    static void putEnv(String identifier, Recorder recorder) {
+        envRecorderMap.put(identifier, recorder);
     }
 
     static Recorder getRecorderFromTemplateRepository(String key){
@@ -29,12 +34,20 @@ public interface Repository {
         return componentRecorderMap.get(key);
     }
 
+    static Recorder getRecorderFromEnvRepository(String key) {
+        return envRecorderMap.get(key);
+    }
+
     static Boolean containsComponent(String key){
         return componentRecorderMap.containsKey(key);
     }
 
     static Boolean containsTemplate(String key){
         return tempRecorderMap.containsKey(key);
+    }
+
+    static Boolean containsEnvironment(String key ) {
+        return envRecorderMap.containsKey(key);
     }
 
     static Recorder getDeepCopedRecorderFromTemplateRepository(String key) {
@@ -45,12 +58,20 @@ public interface Repository {
         return DeepCopy.copy(getRecorderFromComponentRepository(key));
     }
 
+    static Recorder getDeepCopedRecorderFromEnvRepository(String key) {
+        return DeepCopy.copy(getRecorderFromEnvRepository(key));
+    }
+
     static Map<String,Recorder> getTemplateRepository(){
         return tempRecorderMap;
     }
 
     static Map<String,Recorder> getComponentRepository(){
         return componentRecorderMap;
+    }
+
+    static Map<String,Recorder> getEnvRepository() {
+        return envRecorderMap;
     }
 
     class DeepCopy{
