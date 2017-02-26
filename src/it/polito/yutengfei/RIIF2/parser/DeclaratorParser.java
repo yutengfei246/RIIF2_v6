@@ -3,8 +3,11 @@ package it.polito.yutengfei.RIIF2.parser;
 import it.polito.yutengfei.RIIF2.Declarator.*;
 import it.polito.yutengfei.RIIF2.RIIF2Parser;
 import it.polito.yutengfei.RIIF2.id.DeclaratorId;
+import it.polito.yutengfei.RIIF2.id.Id;
 import it.polito.yutengfei.RIIF2.initializer.Initializer;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.RIIF2Type;
+import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
+import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 
@@ -139,5 +142,25 @@ abstract class DeclaratorParser extends InitializerParser {
         aisDeclarator.setInitializer( initializer );
 
         this.putDeclarator(ctx, aisDeclarator );
+    }
+
+    @Override
+    public void exitAssertionDeclarator(RIIF2Parser.AssertionDeclaratorContext ctx) {
+
+        Id attributeId = getId(ctx.attributeId());
+        Expression expression = getExpression(ctx.expression());
+
+        AssertionDeclarator assertionDeclarator = new AssertionDeclarator();
+        assertionDeclarator.setExpression(expression);
+        assertionDeclarator.setAttributeId(attributeId);
+        assertionDeclarator.setUnit(ctx.Identifier().getText().toLowerCase());
+
+        if (ctx.op.getType() == RIIF2Parser.T__7 )
+            assertionDeclarator.setOper(RIIF2Grammar.ASSERTION_SM);
+
+        if (ctx.op.getType() == RIIF2Parser.T__8)
+            assertionDeclarator.setOper(RIIF2Grammar.ASSERTION_BIG);
+
+        this.putDeclarator(ctx,assertionDeclarator);
     }
 }

@@ -1,0 +1,15 @@
+requirement HIG;
+
+assert pl'rate < 100 FITS ;
+endrequirement
+
+component df;
+parameter mior_er :integer := 10;
+endcomponent
+
+
+bind HIG : df (
+    pl => mior_er;
+
+    );
+

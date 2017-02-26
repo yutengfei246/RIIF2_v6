@@ -11,7 +11,7 @@ import it.polito.yutengfei.RIIF2.factory.Factory;
 import it.polito.yutengfei.RIIF2.id.DeclaratorId;
 import it.polito.yutengfei.RIIF2.id.Id;
 import it.polito.yutengfei.RIIF2.initializer.*;
-import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
+import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Attribute;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.RIIF2Type;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;

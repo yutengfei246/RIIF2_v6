@@ -55,6 +55,11 @@ public class ComponentFactory {
         this.fieldType = fieldType;
     }
 
+    public void startAssertion () {
+        this.factory = new AssertionFactory(this, this.recorder);
+    }
+
+
     public RIIF2Type getFieldType() {
         return this.fieldType;
     }
@@ -98,10 +103,6 @@ public class ComponentFactory {
         this.productComponent();
     }
 
-    private void productComponent() {
-
-    }
-
-
+    private void productComponent() {}
 
 }

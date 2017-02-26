@@ -136,18 +136,6 @@ public class RIIF2BaseListener implements RIIF2Listener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAssertion(RIIF2Parser.AssertionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAssertion(RIIF2Parser.AssertionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterAisDeclaration(RIIF2Parser.AisDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -304,6 +292,66 @@ public class RIIF2BaseListener implements RIIF2Listener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterAssertion(RIIF2Parser.AssertionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAssertion(RIIF2Parser.AssertionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterBindDeclaration(RIIF2Parser.BindDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBindDeclaration(RIIF2Parser.BindDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterBindDeclarator(RIIF2Parser.BindDeclaratorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBindDeclarator(RIIF2Parser.BindDeclaratorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterBindDeclaratorId(RIIF2Parser.BindDeclaratorIdContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBindDeclaratorId(RIIF2Parser.BindDeclaratorIdContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterBindContract(RIIF2Parser.BindContractContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBindContract(RIIF2Parser.BindContractContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterPrimitiveFieldDeclarator(RIIF2Parser.PrimitiveFieldDeclaratorContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -383,6 +431,18 @@ public class RIIF2BaseListener implements RIIF2Listener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitAisDeclarator(RIIF2Parser.AisDeclaratorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterAssertionDeclarator(RIIF2Parser.AssertionDeclaratorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAssertionDeclarator(RIIF2Parser.AssertionDeclaratorContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -719,18 +779,6 @@ public class RIIF2BaseListener implements RIIF2Listener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitAttributePrimitiveIdIndex(RIIF2Parser.AttributePrimitiveIdIndexContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterAttributeAssociativeIdIndex(RIIF2Parser.AttributeAssociativeIdIndexContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAttributeAssociativeIdIndex(RIIF2Parser.AttributeAssociativeIdIndexContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

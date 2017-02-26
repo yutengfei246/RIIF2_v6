@@ -10,6 +10,7 @@ public class RIIF2Recorder implements Recorder, Serializable {
 
     private boolean template  ;
     private boolean environment;
+    private boolean requirement;
 
     private String identifier ;
 
@@ -26,18 +27,25 @@ public class RIIF2Recorder implements Recorder, Serializable {
 
     private List<ChildComponent> childComponents = new LinkedList<>();
     private List<FailMode> failModes = new LinkedList<>();
-
     private List<Platform> platforms = new LinkedList<>();
-    private boolean requirement;
+
+    /*RIIF2 assertion*/
+    private List<Assertion> assertions = new LinkedList<>();
+    private boolean bind;
+
 
     /***********************************Setters and Getters************************************/
+
+    public void addAssertions(Assertion assertion) {
+        this.assertions.add(assertion);
+    }
 
     public void setDefinition(String definition){
         this.definition = definition;
     }
 
-    String getDefinition() {
-        return this.definition;
+    public String getDefinition() {
+            return this.definition;
     }
 
     public void setIdentifier( String identifier ) {
@@ -191,6 +199,9 @@ public class RIIF2Recorder implements Recorder, Serializable {
 
         if (fieldLabel instanceof FailMode)
             this.addFailMode((FailMode) fieldLabel);
+
+        if (fieldLabel instanceof Assertion)
+            this.addAssertions((Assertion) fieldLabel);
     }
 
     public boolean containsParameter(String id) {
@@ -210,6 +221,16 @@ public class RIIF2Recorder implements Recorder, Serializable {
                 return true;
             }
         }
+        return false;
+    }
+
+    public boolean containsAssertion(String id) {
+        for (Assertion assertion : this.assertions) {
+            String name = assertion.getName();
+            if (Objects.equals(name,id))
+                return true;
+        }
+
         return false;
     }
 
@@ -280,6 +301,13 @@ public class RIIF2Recorder implements Recorder, Serializable {
                 .orElse(null);
     }
 
+    public Assertion getAssertion(String labelName ) {
+        return this.assertions.stream()
+                .filter(platform -> platform.getName().equals(labelName))
+                .findFirst()
+                .orElse(null);
+    }
+
     public Label<Label> getLabel(String labelName ){
         return this.getParameter(labelName) != null
                 ? this.getParameter(labelName)
@@ -291,6 +319,8 @@ public class RIIF2Recorder implements Recorder, Serializable {
                 ? this.getFailMode(labelName)
                 : this.getPlatform(labelName) != null
                 ? this.getPlatform(labelName)
+                : this.getAssertion(labelName) != null
+                ? this.getAssertion(labelName)
                 : null;
     }
 
@@ -397,6 +427,7 @@ public class RIIF2Recorder implements Recorder, Serializable {
         this.failModes.forEach(FailMode::print);
         this.childComponents.forEach(ChildComponent::print);
         this.platforms.forEach(Platform::print);
+        this.assertions.forEach(Assertion::print);
     }
 
     public void setEnvironment(boolean environment) {
@@ -414,5 +445,13 @@ public class RIIF2Recorder implements Recorder, Serializable {
 
     public boolean isRequirement() {
         return requirement;
+    }
+
+    public void setBind(boolean bind) {
+        this.bind = bind;
+    }
+
+    public boolean isBind() {
+        return bind;
     }
 }

@@ -1,6 +1,5 @@
-package it.polito.yutengfei.RIIF2.factory.partsFactory;
+package it.polito.yutengfei.RIIF2.factory;
 
-import it.polito.yutengfei.RIIF2.factory.ComponentFactory;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.RIIF2Type;
 import it.polito.yutengfei.RIIF2.recoder.Recorder;
 

@@ -14,6 +14,7 @@ public interface Repository {
     Map<String,Recorder> componentRecorderMap = new LinkedHashMap<>();
     Map<String,Recorder> envRecorderMap = new LinkedHashMap<>();
     Map<String,Recorder> requirementRecorderMap  = new LinkedHashMap<>();
+    Map<String,Recorder> bindRecorderMap = new LinkedHashMap<>();
 
     static void putTemp(String key, Recorder value){
         tempRecorderMap.put(key,value);
@@ -29,6 +30,10 @@ public interface Repository {
 
     static void putRequirement(String key, Recorder recorder ) {
         requirementRecorderMap.put(key, recorder);
+    }
+
+    static void putBind(String key, Recorder recorder) {
+        bindRecorderMap.put(key, recorder);
     }
 
     static Recorder getRecorderFromTemplateRepository(String key){
@@ -63,6 +68,10 @@ public interface Repository {
         return requirementRecorderMap.containsKey(key);
     }
 
+    static boolean containsBind(String key) {
+        return bindRecorderMap.containsKey(key);
+    }
+
     static Recorder getDeepCopedRecorderFromTemplateRepository(String key) {
         return DeepCopy.copy(getRecorderFromTemplateRepository(key));
     }
@@ -95,6 +104,9 @@ public interface Repository {
         return requirementRecorderMap;
     }
 
+    static Map<String,Recorder> getBindRepository() {
+        return bindRecorderMap;
+    }
     class DeepCopy{
 
         static Recorder copy(Recorder orig) {

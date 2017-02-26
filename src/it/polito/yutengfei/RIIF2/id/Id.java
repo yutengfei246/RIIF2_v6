@@ -137,7 +137,7 @@ public class Id implements Serializable {
         return this.hierPostfixIds;
     }
 
-    private Id getAttributeIndex() {
+    public Id getAttributeIndex() {
         return this.attributeIndex;
     }
 

@@ -3,6 +3,7 @@ package it.polito.yutengfei.RIIF2.factory.partsFactory;
 import it.polito.yutengfei.RIIF2.Declarator.*;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.*;
 import it.polito.yutengfei.RIIF2.factory.ComponentFactory;
+import it.polito.yutengfei.RIIF2.factory.EnvironmentFactory;
 import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
 import it.polito.yutengfei.RIIF2.factory.Exceptions.SomeVariableMissingException;
 import it.polito.yutengfei.RIIF2.factory.Exceptions.VeriableAlreadyExistException;
@@ -12,13 +13,12 @@ import it.polito.yutengfei.RIIF2.id.Id;
 import it.polito.yutengfei.RIIF2.initializer.ArrayInitializer;
 import it.polito.yutengfei.RIIF2.initializer.Initializer;
 import it.polito.yutengfei.RIIF2.initializer.ListInitializer;
-import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
+import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Attribute;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.RIIF2Type;
 import it.polito.yutengfei.RIIF2.parser.typeUtility.Vector;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.recoder.Recorder;
 import it.polito.yutengfei.RIIF2.recoder.Repository;
-import it.polito.yutengfei.RIIF2.test.RIIF2;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 
@@ -330,9 +330,10 @@ public class FieldFactory implements Factory{
             // The user defined type
             else if ( primitiveType.equals(RIIF2Grammar.ENV)) {
                 String userDefinedTypeName = primitiveFieldDeclarator.getPrimitiveType().getValue();
-                this.fieldLabel.setType(RIIF2Grammar.ENV);
 
                 Recorder recorder = Repository.getDeepCopedRecorderFromEnvRepository(userDefinedTypeName);
+                this.fieldLabel.setEnvironment(true);
+                this.fieldLabel.setType(userDefinedTypeName);
 
                 if(recorder == null )
                     throw new FieldTypeNotMarchException(FieldTypeNotMarchException.NOT_FOUND, userDefinedTypeName,  primitiveFieldDeclarator.getPrimitiveType().getLine(), primitiveFieldDeclarator.getPrimitiveType().getColumn());

@@ -8,6 +8,7 @@ public class FieldTypeNotMarchException extends Throwable {
     public static final String OPERATION = "can not be operated in this type";
     public static final String MESSAGE = "print the message";
     public static final String NOT_FOUND = "not find";
+    public static final String NOT_MARCHED = "not march";
     private final String id;
     private final int line;
     private final int column;

@@ -197,11 +197,11 @@ abstract class ExpressionParser extends DeclaratorIdParser {
 
         Expression newExpression = null;
 
-        if ( ctx.op.getType() == RIIF2Parser.T__15){
+        if ( ctx.op.getType() == RIIF2Parser.T__18){
             newExpression = expression.operation(Expression.OP_POSITIVE);
         }
 
-        if (ctx.op.getType() == RIIF2Parser.T__16){
+        if (ctx.op.getType() == RIIF2Parser.T__19){
             newExpression = expression.operation(Expression.OP_NEGATIVE);
         }
 
@@ -213,11 +213,11 @@ abstract class ExpressionParser extends DeclaratorIdParser {
     @Override
     public void exitExpWaveOrNot(RIIF2Parser.ExpWaveOrNotContext ctx) {
         Expression expression = this.getExpression(ctx.expression());
-        if (ctx.op.getType() == RIIF2Parser.T__17){
+        if (ctx.op.getType() == RIIF2Parser.T__20){
             expression.operation(Expression.OP_WAVE);
         }
 
-        if ( ctx.op.getType() == RIIF2Parser.T__18){
+        if ( ctx.op.getType() == RIIF2Parser.T__21){
             expression.operation(Expression.OP_NOT);
         }
 
@@ -233,17 +233,17 @@ abstract class ExpressionParser extends DeclaratorIdParser {
 
         Expression expression = null ;
         try {
-            if (ctx.op.getType() == RIIF2Parser.T__19) {
+            if (ctx.op.getType() == RIIF2Parser.T__22) {
                 expression = leftExp.operation(Expression.OP_STAR, rightExp);
                 return;
             }
 
-            if (ctx.op.getType() == RIIF2Parser.T__20) {
+            if (ctx.op.getType() == RIIF2Parser.T__23) {
                 expression = leftExp.operation(Expression.OP_DIV, rightExp);
                 return;
             }
 
-            if (ctx.op.getType() == RIIF2Parser.T__21) {
+            if (ctx.op.getType() == RIIF2Parser.T__24) {
                 expression = leftExp.operation(Expression.OP_MOD, rightExp);
             }
         }finally {
@@ -262,10 +262,10 @@ abstract class ExpressionParser extends DeclaratorIdParser {
 
         Expression expression = null;
         try {
-            if (ctx.op.getType() == RIIF2Parser.T__15) {
+            if (ctx.op.getType() == RIIF2Parser.T__18) {
                 expression = leftExp.operation(Expression.OP_PLUS, rightExp);
             }
-            if (ctx.op.getType() == RIIF2Parser.T__16) {
+            if (ctx.op.getType() == RIIF2Parser.T__19) {
                 expression = leftExp.operation(Expression.OP_MINUS, rightExp);
             }
 
@@ -285,18 +285,18 @@ abstract class ExpressionParser extends DeclaratorIdParser {
 
         Expression expression = null;
         try {
-            if (ctx.op.getType() == RIIF2Parser.T__22) {
+            if (ctx.op.getType() == RIIF2Parser.T__25) {
                 expression = leftExp.operation(Expression.OP_SM_EQ, rightExp);
                 return;
             }
-            if (ctx.op.getType() == RIIF2Parser.T__23) {
+            if (ctx.op.getType() == RIIF2Parser.T__26) {
                 expression = leftExp.operation(Expression.OP_BG_EQ, rightExp);
                 return;
             }
-            if (ctx.op.getType() == RIIF2Parser.T__1) {
+            if (ctx.op.getType() == RIIF2Parser.T__7) {
                 expression = leftExp.operation(Expression.OP_SM, rightExp);
             }
-            if (ctx.op.getType() == RIIF2Parser.T__2) {
+            if (ctx.op.getType() == RIIF2Parser.T__8) {
                 expression = leftExp.operation(Expression.OP_BG, rightExp);
             }
         }finally {
@@ -315,11 +315,11 @@ abstract class ExpressionParser extends DeclaratorIdParser {
 
         Expression expression = null;
         try {
-            if (ctx.op.getType() == RIIF2Parser.T__24) {
+            if (ctx.op.getType() == RIIF2Parser.T__27) {
                 expression = leftExp.operation(Expression.OP_EQ_EQ, rightExp);
                 return;
             }
-            if (ctx.op.getType() == RIIF2Parser.T__25) {
+            if (ctx.op.getType() == RIIF2Parser.T__28) {
                 expression = leftExp.operation(Expression.OP_NOT_EQ, rightExp);
             }
         }finally {
@@ -338,7 +338,7 @@ abstract class ExpressionParser extends DeclaratorIdParser {
 
         Expression expression = null;
         try {
-            if (ctx.op.getType() == RIIF2Parser.T__26) {
+            if (ctx.op.getType() == RIIF2Parser.T__29) {
                 expression = leftExp.operation(Expression.OP_SINGLE_AND, rightExp);
             }
         }finally {
@@ -357,7 +357,7 @@ abstract class ExpressionParser extends DeclaratorIdParser {
 
         Expression expression = null;
         try {
-            if (ctx.op.getType() == RIIF2Parser.T__27) {
+            if (ctx.op.getType() == RIIF2Parser.T__30) {
                 expression = leftExp.operation(Expression.OP_SINGLE_POWER, rightExp);
             }
 
@@ -377,7 +377,7 @@ abstract class ExpressionParser extends DeclaratorIdParser {
 
         Expression expression = null;
         try {
-            if (ctx.op.getType() == RIIF2Parser.T__28) {
+            if (ctx.op.getType() == RIIF2Parser.T__31) {
                 expression = leftExp.operation(Expression.OP_SINGLE_OR, rightExp);
             }
 
@@ -397,7 +397,7 @@ abstract class ExpressionParser extends DeclaratorIdParser {
 
         Expression expression = null;
         try {
-            if (ctx.op.getType() == RIIF2Parser.T__29) {
+            if (ctx.op.getType() == RIIF2Parser.T__32) {
                 expression = leftExp.operation(Expression.OP_DOUBLE_AND, rightExp);
             }
 
@@ -417,7 +417,7 @@ abstract class ExpressionParser extends DeclaratorIdParser {
 
         Expression expression = null;
         try {
-            if (ctx.op.getType() == RIIF2Parser.T__30) {
+            if (ctx.op.getType() == RIIF2Parser.T__33) {
                 expression = leftExp.operation(Expression.OP_DOUBLE_OR, rightExp);
             }
 

@@ -13,6 +13,7 @@ typeDeclaration
     | templateDeclaration      //RIIF-2: template
     | environmentDeclaration
     | requirementDeclaration
+    | bindDeclaration
     ;
 
 // §RIIF-2 component declaration
@@ -31,7 +32,7 @@ componentBodyElement
     | failModeDeclaration
     | assignmentDeclaration
     | setDeclaration
-    | assertion
+    //| assertion
     ;
 
 fieldDeclaration
@@ -59,10 +60,6 @@ assignmentDeclaration
 
 setDeclaration
     : SET aisDeclarator ';'
-    ;
-
-assertion
-    : ASSERT (attributeId) ('<' | '>') expression ';'
     ;
 
 aisDeclaration
@@ -136,6 +133,28 @@ requirementDeclaration
       END_REQUIREMENT
     ;
 
+assertion
+    : assertionDeclarator ';'
+    ;
+
+// §RIIF-2 bind
+
+bindDeclaration
+    : bindDeclarator ';'
+    ;
+
+bindDeclarator
+    : BIND bindDeclaratorId '(' bindContract* ')' ;
+
+bindDeclaratorId
+    : Identifier ':' Identifier
+    ;
+
+// type
+bindContract
+    : Identifier '=>' Identifier ';'
+    ;
+
 // §RIIF-2 declarator
 
 primitiveFieldDeclarator
@@ -168,6 +187,10 @@ failModeDeclarator
 
 aisDeclarator
     : aisDeclaratorId '=' aisInitializer
+    ;
+
+assertionDeclarator
+    : ASSERT (attributeId) op=('<' | '>') expression Identifier
     ;
 
 // §RIIF-2 initializer
@@ -272,7 +295,7 @@ associativeId
 
 attributeId
     : primitiveId attributeIndex #attributePrimitiveIdIndex
-    | associativeId attributeIndex #attributeAssociativeIdIndex
+    //| associativeId attributeIndex #attributeAssociativeIdIndex
     ;
 
 variableId
@@ -463,6 +486,8 @@ TYPE_TABLE: 'table';
 PLATFORM: 'platform';
 TRUE: 'true';
 FALSE: 'false';
+BIND: 'bind';
+
 /*Identification */
 Identifier
     : (LETTER) (LETTER|DIGIT|UNDERSCORE)*

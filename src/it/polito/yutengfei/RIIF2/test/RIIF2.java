@@ -206,6 +206,14 @@ public class RIIF2 {
                     System.out.println("----------------------------------------");
                     System.out.println("");
                 });
+
+        Repository.getBindRepository()
+                .forEach((s2, recorder2) -> {
+                    System.out.println(" <--------------------RECORDER " + s2 + " ------------------------------------>");
+                    System.out.print(( (RIIF2Recorder) recorder2).getDefinition() );
+                    System.out.println("----------------------------------------");
+                    System.out.println("");
+                });
     }
 
 }

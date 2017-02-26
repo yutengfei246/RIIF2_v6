@@ -5,9 +5,7 @@ import it.polito.yutengfei.RIIF2.initializer.ArrayInitializer;
 import it.polito.yutengfei.RIIF2.initializer.ArrayWrapperInitializer;
 import it.polito.yutengfei.RIIF2.initializer.ListInitializer;
 import it.polito.yutengfei.RIIF2.initializer.TableInitializer;
-import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
-import it.polito.yutengfei.RIIF2.test.RIIF2;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.Expression;
 import it.polito.yutengfei.RIIF2.util.utilityWrapper.TableValueOperator;
@@ -52,8 +50,9 @@ class ValueMember implements Serializable {
                 this.value = valueString;
 
             // is a unit attribute label
-            if (label instanceof Attribute && label.getName().equals(RIIF2Grammar.UNIT))
+            if (label instanceof Attribute && label.getName().equals(RIIF2Grammar.UNIT)) {
                 this.value = valueString;
+            }
         }
 
         // if is RIIF-2 Recorder
@@ -63,7 +62,7 @@ class ValueMember implements Serializable {
             if ( label instanceof ChildComponent )
                 this.value = recorder;
 
-            if (label.getType().equals(RIIF2Grammar.ENV))
+            if (label.isEnvironment())
                 this.value = recorder;
 
         }

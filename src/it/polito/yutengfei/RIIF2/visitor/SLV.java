@@ -7,6 +7,7 @@ import it.polito.yutengfei.RIIF2.parser.ComponentParser;
 import it.polito.yutengfei.RIIF2.parser.EnvironmentParser;
 import it.polito.yutengfei.RIIF2.parser.RequirementParser;
 import it.polito.yutengfei.RIIF2.parser.TemplateParser;
+import it.polito.yutengfei.RIIF2.parser.BindParser;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.recoder.Recorder;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -16,6 +17,8 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
  * Second Level Visitor
  */
 public class SLV extends RIIF2BaseVisitor<Boolean> implements Recorder{
+
+    private BindParser bindParser;
 
     public SLV(ParseTree parseTree, RIIF2Recorder recorder, RIIF2Parser parser){
         this.parseTree = parseTree;
@@ -84,12 +87,29 @@ public class SLV extends RIIF2BaseVisitor<Boolean> implements Recorder{
 
         this.recorder.setRequirement(true);
 
-
-        this.requirementParser = new RequirementParser();
+        this.requirementParser = new RequirementParser(this.recorder);
 
         this.moduleCounter++;
         ParseTree requirementParser = this.parseTree.getChild(this.moduleCounter);
         walker.walk(this.requirementParser,requirementParser);
+
+        // set the RIIF2 definition
+        this.recorder.setDefinition(this.parser.getTokenStream().getText(ctx));
+        // replace the recorder
+        this.recorder = this.recorder.getRIIF2Recorder();
+        return true;
+    }
+
+    @Override
+    public Boolean visitBindDeclaration(RIIF2Parser.BindDeclarationContext ctx) {
+        super.visitBindDeclaration(ctx);
+
+        this.recorder.setBind(true);
+        this.bindParser = new BindParser(this.recorder);
+
+        this.moduleCounter++;
+        ParseTree bindParser = this.parseTree.getChild(this.moduleCounter);
+        walker.walk(this.bindParser,bindParser);
 
         // set the RIIF2 definition
         this.recorder.setDefinition(this.parser.getTokenStream().getText(ctx));

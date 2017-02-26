@@ -108,16 +108,6 @@ public interface RIIF2Listener extends ParseTreeListener {
 	 */
 	void exitSetDeclaration(RIIF2Parser.SetDeclarationContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link RIIF2Parser#assertion}.
-	 * @param ctx the parse tree
-	 */
-	void enterAssertion(RIIF2Parser.AssertionContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link RIIF2Parser#assertion}.
-	 * @param ctx the parse tree
-	 */
-	void exitAssertion(RIIF2Parser.AssertionContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link RIIF2Parser#aisDeclaration}.
 	 * @param ctx the parse tree
 	 */
@@ -248,6 +238,56 @@ public interface RIIF2Listener extends ParseTreeListener {
 	 */
 	void exitRequirementDeclaration(RIIF2Parser.RequirementDeclarationContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link RIIF2Parser#assertion}.
+	 * @param ctx the parse tree
+	 */
+	void enterAssertion(RIIF2Parser.AssertionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RIIF2Parser#assertion}.
+	 * @param ctx the parse tree
+	 */
+	void exitAssertion(RIIF2Parser.AssertionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link RIIF2Parser#bindDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterBindDeclaration(RIIF2Parser.BindDeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RIIF2Parser#bindDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitBindDeclaration(RIIF2Parser.BindDeclarationContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link RIIF2Parser#bindDeclarator}.
+	 * @param ctx the parse tree
+	 */
+	void enterBindDeclarator(RIIF2Parser.BindDeclaratorContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RIIF2Parser#bindDeclarator}.
+	 * @param ctx the parse tree
+	 */
+	void exitBindDeclarator(RIIF2Parser.BindDeclaratorContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link RIIF2Parser#bindDeclaratorId}.
+	 * @param ctx the parse tree
+	 */
+	void enterBindDeclaratorId(RIIF2Parser.BindDeclaratorIdContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RIIF2Parser#bindDeclaratorId}.
+	 * @param ctx the parse tree
+	 */
+	void exitBindDeclaratorId(RIIF2Parser.BindDeclaratorIdContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link RIIF2Parser#bindContract}.
+	 * @param ctx the parse tree
+	 */
+	void enterBindContract(RIIF2Parser.BindContractContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RIIF2Parser#bindContract}.
+	 * @param ctx the parse tree
+	 */
+	void exitBindContract(RIIF2Parser.BindContractContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link RIIF2Parser#primitiveFieldDeclarator}.
 	 * @param ctx the parse tree
 	 */
@@ -317,6 +357,16 @@ public interface RIIF2Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAisDeclarator(RIIF2Parser.AisDeclaratorContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link RIIF2Parser#assertionDeclarator}.
+	 * @param ctx the parse tree
+	 */
+	void enterAssertionDeclarator(RIIF2Parser.AssertionDeclaratorContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RIIF2Parser#assertionDeclarator}.
+	 * @param ctx the parse tree
+	 */
+	void exitAssertionDeclarator(RIIF2Parser.AssertionDeclaratorContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link RIIF2Parser#fieldInitializer}.
 	 * @param ctx the parse tree
@@ -627,18 +677,6 @@ public interface RIIF2Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAttributePrimitiveIdIndex(RIIF2Parser.AttributePrimitiveIdIndexContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code attributeAssociativeIdIndex}
-	 * labeled alternative in {@link RIIF2Parser#attributeId}.
-	 * @param ctx the parse tree
-	 */
-	void enterAttributeAssociativeIdIndex(RIIF2Parser.AttributeAssociativeIdIndexContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code attributeAssociativeIdIndex}
-	 * labeled alternative in {@link RIIF2Parser#attributeId}.
-	 * @param ctx the parse tree
-	 */
-	void exitAttributeAssociativeIdIndex(RIIF2Parser.AttributeAssociativeIdIndexContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link RIIF2Parser#variableId}.
 	 * @param ctx the parse tree

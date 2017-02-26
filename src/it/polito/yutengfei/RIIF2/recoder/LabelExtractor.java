@@ -192,8 +192,7 @@ public class LabelExtractor {
             Id attributeId = declaratorId.getAttributeIndex();
             String attributeIndex = attributeId.getId();
 
-
-            if (label3.getType().equals(RIIF2Grammar.ENV)){
+            if (label3.isEnvironment()){
                 RIIF2Recorder recorder = (RIIF2Recorder) label3.getValue();
                 return recorder.getLabel(attributeIndex);
             }

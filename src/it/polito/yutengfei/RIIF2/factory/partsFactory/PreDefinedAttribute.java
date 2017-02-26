@@ -2,7 +2,7 @@ package it.polito.yutengfei.RIIF2.factory.partsFactory;
 
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Label;
 import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
-import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
+import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Attribute;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 
@@ -48,6 +48,16 @@ public class PreDefinedAttribute {
     }
 
     static void ListAttribute(Label<Label> fieldLabel) {
+
+    }
+
+    static void Assertion(Label<Label> assertion, String unitValue, RIIF2Recorder recorder) throws FieldTypeNotMarchException {
+
+        Attribute rate = createAttribute(RIIF2Grammar.RATE,RIIF2Grammar.DOUBLE,null,recorder);
+        Attribute unit = createAttribute(RIIF2Grammar.UNIT,RIIF2Grammar.USER_DEFINED,unitValue,recorder);
+
+        assertion.putAttribute(RIIF2Grammar.RATE,rate);
+        assertion.putAttribute(RIIF2Grammar.UNIT,unit);
 
     }
 }

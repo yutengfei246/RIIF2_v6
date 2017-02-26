@@ -1,4 +1,4 @@
-package it.polito.yutengfei.RIIF2.parser.typeUtility;
+package it.polito.yutengfei.RIIF2.RIIF2Modules.parts;
 
 
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Label;

@@ -5,7 +5,7 @@ package it.polito.yutengfei.RIIF2.recoder;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.*;
 import it.polito.yutengfei.RIIF2.mysql.MysqlBuilder;
 import it.polito.yutengfei.RIIF2.mysql.SQLConnector;
-import it.polito.yutengfei.RIIF2.parser.typeUtility.Attribute;
+import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Attribute;
 
 import org.apache.commons.codec.binary.Hex;
 

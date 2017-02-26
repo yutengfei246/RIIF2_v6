@@ -18,6 +18,7 @@ public abstract class Label<T extends Label> extends ValueMember{
     private Map<String,Attribute> attributeMap;
 
     private EnumType enumType;
+    private boolean environment;
 
     protected Label(RIIF2Recorder recorder) {
         this.recorder = recorder;
@@ -219,5 +220,13 @@ public abstract class Label<T extends Label> extends ValueMember{
         }
 
         return null;
+    }
+
+    public void setEnvironment(boolean environment) {
+        this.environment = environment;
+    }
+
+    public boolean isEnvironment() {
+        return environment;
     }
 }

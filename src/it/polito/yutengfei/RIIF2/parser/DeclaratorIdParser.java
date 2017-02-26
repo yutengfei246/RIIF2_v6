@@ -67,6 +67,7 @@ abstract class DeclaratorIdParser extends IdParser {
         this.putDeclaratorId(ctx,identifier);
     }
 
+
     @Override
     public void exitFailModeDeclaratorId1(RIIF2Parser.FailModeDeclaratorId1Context ctx) {
         DeclaratorId identifier = new DeclaratorId();
@@ -208,7 +209,7 @@ abstract class DeclaratorIdParser extends IdParser {
         this.putDeclaratorId(ctx,identifier);
     }
 
-    private void setPosition(ParserRuleContext ctx,  DeclaratorId id ){
+    private void setPosition(ParserRuleContext ctx, DeclaratorId id ){
         id.setLine( ctx.start.getLine());
         id.setColumn(ctx.start.getCharPositionInLine());
     }

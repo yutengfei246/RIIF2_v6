@@ -3,7 +3,6 @@ package it.polito.yutengfei.RIIF2.factory;
 import it.polito.yutengfei.RIIF2.factory.Exceptions.FieldTypeNotMarchException;
 import it.polito.yutengfei.RIIF2.factory.Exceptions.SomeVariableMissingException;
 import it.polito.yutengfei.RIIF2.factory.Exceptions.VeriableAlreadyExistException;
-import it.polito.yutengfei.RIIF2.factory.partsFactory.EnvironmentFactory;
 import it.polito.yutengfei.RIIF2.recoder.Recorder;
 
 public interface Factory {
@@ -13,6 +12,10 @@ public interface Factory {
 
     static EnvironmentFactory newEnvironmentFactory(Recorder recorder) {
         return new EnvironmentFactory(recorder);
+    }
+
+    static RequirementFactory newRequirementFactory(Recorder recorder) {
+        return new RequirementFactory(recorder);
     }
 
     void commit() throws SomeVariableMissingException, VeriableAlreadyExistException,  FieldTypeNotMarchException;

@@ -1,5 +1,6 @@
 // Example of generic requirements
+
 requirement HIGH_AVAIL_REQUIREMENTS;
-  assert REBOOT'rate < 100;
-  assert HARD_FAIL'MTTF < 100000;
+  assert REBOOT'rate < 100 FITS;
+  assert HARD_FAIL'rate < 100000 * REBOOT'RATE FITS;
 endrequirement // HIGH_AVAIL_REQUIREMENTS

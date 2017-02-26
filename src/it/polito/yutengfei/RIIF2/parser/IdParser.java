@@ -121,18 +121,6 @@ abstract class  IdParser extends TypeParser {
     }
 
     @Override
-    public void exitAttributeAssociativeIdIndex(RIIF2Parser.AttributeAssociativeIdIndexContext ctx) {
-
-        Id id;
-
-        Id associativeId = getId( ctx.associativeId() );
-        Id attributeIndex = getId( ctx.attributeIndex());
-
-        id = Id.attributeId( associativeId, attributeIndex);
-        this.putId(ctx,id);
-    }
-
-    @Override
     public void exitVariableId(RIIF2Parser.VariableIdContext ctx) {
 
         Id id = null;

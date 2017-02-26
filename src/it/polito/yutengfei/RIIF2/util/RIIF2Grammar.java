@@ -58,4 +58,6 @@ public class RIIF2Grammar {;
     public static final String OUTPUT = "output";
     public static final String INPUT = "input";
     public static final String ENV = "environment";
+    public static final String ASSERTION_SM = "<";
+    public static final String ASSERTION_BIG = ">";
 }

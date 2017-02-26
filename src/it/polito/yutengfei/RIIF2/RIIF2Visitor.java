@@ -71,12 +71,6 @@ public interface RIIF2Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitSetDeclaration(RIIF2Parser.SetDeclarationContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link RIIF2Parser#assertion}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAssertion(RIIF2Parser.AssertionContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link RIIF2Parser#aisDeclaration}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -155,6 +149,36 @@ public interface RIIF2Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitRequirementDeclaration(RIIF2Parser.RequirementDeclarationContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link RIIF2Parser#assertion}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAssertion(RIIF2Parser.AssertionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link RIIF2Parser#bindDeclaration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBindDeclaration(RIIF2Parser.BindDeclarationContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link RIIF2Parser#bindDeclarator}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBindDeclarator(RIIF2Parser.BindDeclaratorContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link RIIF2Parser#bindDeclaratorId}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBindDeclaratorId(RIIF2Parser.BindDeclaratorIdContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link RIIF2Parser#bindContract}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBindContract(RIIF2Parser.BindContractContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link RIIF2Parser#primitiveFieldDeclarator}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -196,6 +220,12 @@ public interface RIIF2Visitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitAisDeclarator(RIIF2Parser.AisDeclaratorContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link RIIF2Parser#assertionDeclarator}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAssertionDeclarator(RIIF2Parser.AssertionDeclaratorContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link RIIF2Parser#fieldInitializer}.
 	 * @param ctx the parse tree
@@ -379,13 +409,6 @@ public interface RIIF2Visitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitAttributePrimitiveIdIndex(RIIF2Parser.AttributePrimitiveIdIndexContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code attributeAssociativeIdIndex}
-	 * labeled alternative in {@link RIIF2Parser#attributeId}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAttributeAssociativeIdIndex(RIIF2Parser.AttributeAssociativeIdIndexContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link RIIF2Parser#variableId}.
 	 * @param ctx the parse tree
