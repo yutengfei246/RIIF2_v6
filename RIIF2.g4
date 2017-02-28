@@ -149,8 +149,6 @@ bindDeclarator
 bindDeclaratorId
     : Identifier ':' Identifier
     ;
-
-// type
 bindContract
     : Identifier '=>' Identifier ';'
     ;

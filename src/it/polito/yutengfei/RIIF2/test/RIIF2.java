@@ -54,14 +54,18 @@ public class RIIF2 {
             if (i < this.inputs.length && !this.inputs[i].startsWith("-")) in = new FileInputStream(this.inputs[i++] );
             else break;
 
+            // using ANTLRv.4 runtime inputStream
             ANTLRInputStream antlrInputStream = new ANTLRInputStream(in);
+            // start the tokenizer
             RIIF2Lexer riif2Lexer = new RIIF2Lexer(antlrInputStream);
+            // generating a tokenStream from RIIF2 tokenizer
             CommonTokenStream commonTokenStream = new CommonTokenStream(riif2Lexer);
+            // parser feeds off the token stream
             RIIF2Parser parser = new RIIF2Parser(commonTokenStream);
-
+            // start the rule and return the parse tree
             ParseTree parseTree = parser.program();
 
-
+            // initializing the visitor
             SLV secondLevelVisitor = new SLV(parseTree, recorder, parser);
             secondLevelVisitor.visit(parseTree); // start visit mechanism
 

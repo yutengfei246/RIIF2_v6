@@ -108,8 +108,8 @@ public class SLV extends RIIF2BaseVisitor<Boolean> implements Recorder{
         this.bindParser = new BindParser(this.recorder);
 
         this.moduleCounter++;
-        ParseTree bindParser = this.parseTree.getChild(this.moduleCounter);
-        walker.walk(this.bindParser,bindParser);
+        ParseTree bindParseTree = this.parseTree.getChild(this.moduleCounter);
+        walker.walk(this.bindParser,bindParseTree);
 
         // set the RIIF2 definition
         this.recorder.setDefinition(this.parser.getTokenStream().getText(ctx));
