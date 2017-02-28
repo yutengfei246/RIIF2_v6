@@ -3,7 +3,6 @@ package it.polito.yutengfei.RIIF2.parser;
 
 import it.polito.yutengfei.RIIF2.RIIF2BaseListener;
 import it.polito.yutengfei.RIIF2.RIIF2Parser;
-import it.polito.yutengfei.RIIF2.parser.typeUtility.BindContract;
 import it.polito.yutengfei.RIIF2.recoder.RIIF2Recorder;
 import it.polito.yutengfei.RIIF2.recoder.Repository;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -21,13 +20,9 @@ public class BindParser extends RIIF2BaseListener{
     @Override
     public void exitBindDeclaratorId(RIIF2Parser.BindDeclaratorIdContext ctx) {
 
-        BindContract bindContract = new BindContract();
 
         TerminalNode requirement = ctx.Identifier(0);
         TerminalNode component= ctx.Identifier(1);
-
-        bindContract.setRequireNode(requirement);
-        bindContract.setComponentNode(component);
 
 
         if (!Repository.containsRequirement(requirement.getText().toLowerCase())){
