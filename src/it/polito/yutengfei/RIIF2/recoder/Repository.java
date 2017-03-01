@@ -148,9 +148,20 @@ public interface Repository {
     /* the method for generating the class , each class has the name that stored in recorder*/
     static void generateDB(SQLConnector sqlConnector) {
 
+        // generate template
         tempRecorderMap.forEach((s, recorder) -> recorder.generateDB(sqlConnector));
 
+        // generate component
         componentRecorderMap.forEach((s, recorder) -> recorder.generateDB(sqlConnector));
+
+        // generate environment
+        envRecorderMap.forEach((s, recorder) -> recorder.generateDB(sqlConnector));
+
+        // generate requirement
+        requirementRecorderMap.forEach((s, recorder) -> recorder.generateDB(sqlConnector));
+
+        // generate bind
+        bindRecorderMap.forEach((s, recorder) -> recorder.generateDB(sqlConnector));
 
     }
 }

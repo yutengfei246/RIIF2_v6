@@ -107,6 +107,10 @@ public class RIIF2Recorder implements Recorder, Serializable {
         return parameterList;
     }
 
+    public List<Assertion> getAllAssertions(){
+        return this.assertions;
+    }
+
     public List<Constant> getAllConstants() {
         List<Constant> constantList = new LinkedList<>();
 

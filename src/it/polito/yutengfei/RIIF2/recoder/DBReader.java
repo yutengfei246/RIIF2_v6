@@ -34,6 +34,24 @@ public class DBReader {
         return false;
     }
 
+    int getTheDefinitionIdInDB(String s) {
+
+        int i = -1 ;
+
+        ResultSet resultSet = this.queryDefinition(" name = '" + s + "'");
+
+        try {
+            if (resultSet.next() ) {
+                i = resultSet.getInt("id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return i;
+
+    }
+
     public void read(String s) {
 
         if (s.contains(":")){
@@ -48,7 +66,7 @@ public class DBReader {
                 switch (command) {
                     case "def":
                         // second level command
-                        System.out.format("%-35s%s \n", "<Type>", "<Name>");
+                        //System.out.format("%-35s%s \n", "<Type>", "<Name>");
                         switch (parameter) {
                             case "all":
                                 ResultSet allResult = this.queryDefinition("1");
@@ -67,6 +85,27 @@ public class DBReader {
                                 ResultSet componentTemplate = this.queryDefinition(" type='component'" );
                                 List<Integer> componentIds= this.readDefinitionResult(componentTemplate, "definition");
                                 if (componentIds == null)
+                                    System.err.println("Warning : Database currently not contains templates ");
+                                break;
+
+                            case "binds" :
+                                ResultSet binds = this.queryDefinition(" type='bind'" );
+                                List<Integer> bindsIds= this.readDefinitionResult(binds, "definition");
+                                if (bindsIds == null)
+                                    System.err.println("Warning : Database currently not contains templates ");
+                                break;
+
+                            case "requirements" :
+                                ResultSet requirements= this.queryDefinition(" type='requirement'" );
+                                List<Integer> requirementIds= this.readDefinitionResult(requirements, "definition");
+                                if (requirementIds== null)
+                                    System.err.println("Warning : Database currently not contains templates ");
+                                break;
+
+                            case "environments" :
+                                ResultSet environemets = this.queryDefinition(" type='environment'" );
+                                List<Integer> environmentIds= this.readDefinitionResult(environemets, "definition");
+                                if (environmentIds == null)
                                     System.err.println("Warning : Database currently not contains templates ");
                                 break;
 
@@ -107,6 +146,21 @@ public class DBReader {
                 case "components":
                     System.out.println("<Component>");
                     this.readDefinitionResult( this.queryDefinition("type = '" + "component" + "'") , "name" );
+                    break;
+
+                case "binds":
+                    System.out.println("<bind>");
+                    this.readDefinitionResult( this.queryDefinition("type = '" + "bind" + "'") , "name" );
+                    break;
+
+                case "requirements":
+                    System.out.println("<requirement>");
+                    this.readDefinitionResult( this.queryDefinition("type = '" + "requirement" + "'") , "name" );
+                    break;
+
+                case "environments":
+                    System.out.println("<environment>");
+                    this.readDefinitionResult( this.queryDefinition("type = '" + "environment" + "'") , "name" );
                     break;
 
                 default:

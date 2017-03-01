@@ -16,6 +16,12 @@ public class MysqlBuilder {
     public static final String CONSTANTS = "constants";
     public static final String CHILDCOMPONENT = "childComponents";
     public static final String FAILMODE = "failModes";
+    public static final String ENVIRONMENTS = "environments";
+    public static final String REQUIREMENT = "requirement";
+    public static final String ENVIRONMENT = "environment";
+    public static final String BIND = "bind";
+    public static final String BINDS = "binds";
+    public static final String REQUIREMENTS = "requirements";
 
     public static SQLConnector getNewSQLConnector(){
 

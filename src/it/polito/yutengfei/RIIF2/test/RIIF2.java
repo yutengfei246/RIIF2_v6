@@ -160,8 +160,8 @@ public class RIIF2 {
 
         System.out.println(" -delete (<name> | all) : delete a named modular or all modular");
         System.out.println(" -lib ((<command>) | (<command>: (<Label>|<command>) ))\n"
-                            + " eg. -lib all|templates|components : shows all|templates|components 's names that has already stored in the database\n"
-                            + " eg. -lib def:<Label>|all|templates|components : show all|<label>|template|component 's definitions that has already stored in the database \n"
+                            + " eg. -lib list|templates|components|binds|requirements|environments : shows all|templates|components 's names that has already stored in the database\n"
+                            + " eg. -lib def:<Label>|all|templates|components|binds|requirements|environments : show all|<label>|template|component 's definitions that has already stored in the database \n"
                             + " eg. -lib parameters|components|childComponents|failModes:<Label>|all|templates|components : show all|<Label>|all|templates|components 's parameters|components|childComponents|failModes that has already stored in the database \n");
         System.out.println(" -libie <name>: show all hierarchy ");
         System.out.println(" -s: store template/component into Database, if success.");

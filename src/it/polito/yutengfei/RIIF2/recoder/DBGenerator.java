@@ -7,6 +7,7 @@ import it.polito.yutengfei.RIIF2.mysql.MysqlBuilder;
 import it.polito.yutengfei.RIIF2.mysql.SQLConnector;
 import it.polito.yutengfei.RIIF2.RIIF2Modules.parts.Attribute;
 
+import it.polito.yutengfei.RIIF2.util.RIIF2Grammar;
 import org.apache.commons.codec.binary.Hex;
 
 import java.sql.ResultSet;
@@ -40,7 +41,19 @@ class DBGenerator {
         // create the RIIF2 definition into the definitions table in DB
         generatedId = this.generateRIIF2Definition();
 
-        try {
+        if (this.recorder.isEnvironment()){
+            // generates the RIIF2's environment into the environments table in DB
+            this.generateRIIF2environments(generatedId);
+        }
+        else if (this.recorder.isRequirement()) {
+            // generates the RIIF2's requirement into the requirements table in DB
+            this.generateRIIF2requirements(generatedId);
+        }
+        else if (this.recorder.isBind()) {
+            // generate the RIIF2's hinds into the binds table in DB
+            this.generateRIIF2Binds(generatedId);
+        }
+        else try {
             // generates RIIF2's indexes into recorders table in DB
             this.generateRIIF2Index(generatedId);
 
@@ -60,6 +73,7 @@ class DBGenerator {
             e.printStackTrace();
         }
     }
+
 
     // two possibilities, one for associativeArray , one for pure
     private Boolean generateRIIF2FailMode(int definitionId) {
@@ -109,6 +123,65 @@ class DBGenerator {
         parameterList.forEach(parameter -> this.parameterAndConstantGenerator(parameter,MysqlBuilder.PARAMETER,definitionId));
 
         return true;
+    }
+
+    private boolean generateRIIF2environments(int definitionId) {
+
+        // store every environment
+        List<Parameter> parameterList = this.recorder.getAllParameters();
+        if (parameterList == null || parameterList.size() == 0)
+            return false;
+
+        parameterList.forEach(parameter -> this.environmentsGenerator(parameter,definitionId));
+
+        return true;
+    }
+
+    private boolean generateRIIF2requirements(int definitionId) {
+
+        //store every requirement
+        List<Assertion> assertionList = this.recorder.getAllAssertions();
+        if (assertionList == null || assertionList.size() == 0)
+            return false;
+
+        assertionList.forEach(assertion -> this.assertionsGenerator(assertion,definitionId));
+
+        return true;
+    }
+
+    private void generateRIIF2Binds(int generatedId) {
+
+        String identifier = this.recorder.getIdentifier();
+        String[] identifiers = identifier.split(":");
+
+
+        int requirement = this.reader.getTheDefinitionIdInDB(identifiers[0]);
+        int component = this.reader.getTheDefinitionIdInDB(identifiers[1]);
+
+
+        List<String> labels = new LinkedList<String>() {{
+            add("name"); add("requirementDefinitionId"); add("componentDefinitionId");add("definitionId");
+        }};
+
+        List<Object> values = new LinkedList<Object>() {{
+            add(identifier); add(requirement); add(component); add(generatedId);
+        }};
+
+
+        this.connector.insert(MysqlBuilder.BINDS,labels,values);
+
+    }
+
+    private void assertionsGenerator(Assertion assertion, int definitionId) {
+        List<String> labels = new LinkedList<String>() {{
+            add("name"); add("definitionId");
+        }};
+
+        int requirementId = this.connector.insert(MysqlBuilder.REQUIREMENTS,labels , new LinkedList<Object>(){{
+            add(assertion.getName()); add(definitionId);
+        }});
+
+        this.generateAttribute(assertion, MysqlBuilder.REQUIREMENTS, requirementId,definitionId);
     }
 
 
@@ -235,26 +308,102 @@ class DBGenerator {
         }
     }
 
+
+    private void environmentsGenerator(Label label, int definitionId) {
+        List<String> labels = new LinkedList<String>() {{
+            add("name"); add("type"); add("inputOutput");
+            add("isAssociative"); add("associativeId");
+            add("arrayLength");add("definitionId");
+        }};
+
+        Parameter parameter = (Parameter) label;
+        String inputOutput = parameter.getEnvironmentType();
+
+        if (label.isAssociative())  {
+
+            int associativeId = this.connector.insert(MysqlBuilder.ENVIRONMENTS, labels, new LinkedList<Object>() {{
+                add(label.getName()); add(label.getType()); add(inputOutput); add(1);add(0);add(0); add(definitionId);
+            }});
+
+            if (label.getAssociatives() != null ) {
+
+                label.getAssociatives().forEach(o -> {
+                    if (o instanceof Label) {
+
+                        Label cvtLabel = (Label) o;
+
+                        Object value1 = cvtLabel.getValue();
+                        if (value1 != null) {
+                            value1 = value1.toString();
+                        }
+
+                        int refersId = this.connector.insert(MysqlBuilder.ENVIRONMENTS, labels, new LinkedList<Object>() {
+                            {
+                                add(cvtLabel.getName());
+                                add(cvtLabel.getType());
+                                add(inputOutput);
+                                add(0);
+                                add(associativeId);
+                                add(0);
+                                add(definitionId);
+                            }
+                        });
+
+                        this.generateAttribute(cvtLabel,MysqlBuilder.ENVIRONMENTS,refersId,definitionId);
+                    }
+
+                });
+            }
+        }
+
+        else if (label.isVector()) {
+            this.connector.insert(MysqlBuilder.ENVIRONMENTS, labels, new LinkedList<Object>() {
+                {
+                    add(label.getName());
+                    add(label.getType());
+                    add(inputOutput);
+                    add(0);
+                    add(0);
+                    add(label.getVectorLength());
+                    add(definitionId);
+                }
+            });
+
+            //  this.generateAttribute(label,tableName,refersId,definitionId);
+        }
+
+        else {
+            int refersId = this.connector.insert(MysqlBuilder.ENVIRONMENTS, labels, new LinkedList<Object>() {
+                {
+                    add(label.getName());
+                    add(label.getType());
+                    add(inputOutput);
+                    add(0);
+                    add(0);
+                    add(0);
+                    add(definitionId);
+                }
+            });
+
+            this.generateAttribute(label, MysqlBuilder.ENVIRONMENTS, refersId, definitionId);
+        }
+
+
+    }
+
     // first insert the labels and get the generated Id, if it is associative array, then generate all subsequnce element
     private void parameterAndConstantGenerator(Label label, String tableName, int definitionId) {
 
         List<String> labels = new LinkedList<String>() {{
-            add("name"); add("type"); add("value"); add("isAssociative"); add("associativeId");add("arrayLength");add("definitionId");
+            add("name"); add("type"); add("value"); add("isAssociative");
+            add("associativeId");add("arrayLength");add("definitionId");
         }};
 
 
-
-        Object value = label.getValue();
-        if (value != null){
-            value = value.toString();
-        }
-
-        //TODO:
-        Object finalValue = null;
         if (label.isAssociative())  {
 
             int associativeId = this.connector.insert(tableName, labels, new LinkedList<Object>() {{
-                add(label.getName()); add(label.getType()); add(finalValue); add(1);add(0);add(0); add(definitionId);
+                add(label.getName()); add(label.getType()); add(null); add(1);add(0);add(0); add(definitionId);
             }});
 
             if (label.getAssociatives() != null ) {
@@ -295,14 +444,13 @@ class DBGenerator {
                  {
                      add(label.getName());
                      add(label.getType());
-                     add(finalValue);
+                     add(null);
                      add(0);
                      add(0);
                      add(label.getVectorLength());
                      add(definitionId);
                  }
              });
-
           //  this.generateAttribute(label,tableName,refersId,definitionId);
         }
 
@@ -311,7 +459,7 @@ class DBGenerator {
                 {
                     add(label.getName());
                     add(label.getType());
-                    add(finalValue);
+                    add(null);
                     add(0);
                     add(0);
                     add(0);
@@ -388,9 +536,19 @@ class DBGenerator {
 
         String type ;
 
-        if (this.recorder.isTemplate() ){
+        if (this.recorder.isEnvironment()){
+            type = MysqlBuilder.ENVIRONMENT;
+        }
+        else if (this.recorder.isRequirement()){
+            type = MysqlBuilder.REQUIREMENT;
+        }
+        else if (this.recorder.isBind()) {
+            type = MysqlBuilder.BIND;
+        }
+        else if (this.recorder.isTemplate() ){
             type = MysqlBuilder.TEMPLATE;
-        }else
+        }
+        else
             type = MysqlBuilder.COMPONENT;
 
         values.add(name); values.add(definition); values.add(type);
@@ -416,7 +574,12 @@ class DBGenerator {
                 //Object value = attribute.getValue();
 
                 Object value = null;
-                int id = this.connector.insert("attributes",labels, new LinkedList<Object>() {{ add(name); add(type) ; add(value); add(belongs) ; add(refersId); add(definitionId); }});
+                if ( name.equals(RIIF2Grammar.UNIT) ){
+                    value = attribute.getValue();
+                }
+                Object finalValue = value;
+                int id = this.connector.insert("attributes",labels, new LinkedList<Object>() {{
+                    add(name); add(type) ; add(finalValue); add(belongs) ; add(refersId); add(definitionId); }});
 
                 integers.add(id);
             });
