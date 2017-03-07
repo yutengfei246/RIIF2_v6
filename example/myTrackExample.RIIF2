@@ -1,33 +1,39 @@
 component mCom;
 
-parameter mPar : float := 10.0;
-parameter mPar[] : float  := {o, p, q } ;
-parameter mPar[Instance] ;
-parameter mPar[2:2] : float;
-parameter mPar'attr : float ;
-parameter mPar[instance]'attr : int := 10;
-parameter mPar[]'attribute : float ;
-parameter mPar[2:2]'attribute : float ;
+parameter mPar1 : float := 10.0;
+parameter mPar1'attr : float ;
 
-parameter Mo[i]'attribute : integer := {1,2,3,4};
+parameter mPar9[] : float  ;
+parameter mpar9[instance] := 10.0 ;
+parameter mPar9[instance ]' attribute : integer := 20;
 
-parameter mpar := {oi,oio,oo,ooio } ;
-parameter mPar : table;
+parameter mParA[1:2] : float;
+
+paramter m
+
+//parameter mPar[instance]'attr : int := 10;
+//parameter mPar[]'attribute : float ;
+//parameter mPar[2:2]'attribute : float ;
+//parameter mPar[Instance] ;
+//parameter Mo[i]'attribute : integer := {1,2,3,4};
+
+parameter mparl := {oi,oio,oo,ooio } ;
+parameter mPart : table;
 
 fail_mode mfailMode[];
 fail_mode mfailMode[instance];
-fail_mode mfailMode;
-fail_mode mfailMode[2:2];
+fail_mode mfailMode1;
+fail_mode mfailMode2[2:2];
 
 fail_mode mfailMode[instalce]'attribtue;
-fail_mode mfailMode'attribute;
-fail_mode mfailMode[]'attribute;
-fail_mode mfailMode[2:2]'attribtue;
+fail_mode mfailMode1'attribute;
+//fail_mode mfailMode4[]'attribute;
+//fail_mode mfailMode3[2:2]'attribtue;
 
 
-child_component PP mCC;
-child_component PP mCC[];
-child_component PP mCC[instance];
-child_component PP mCC[2:2];
+//child_component PP mCC1;
+//child_component PP mCC[];
+//child_component PP mCC[instance];
+//child_component PP mCC[2:2];
 
 endcomponent

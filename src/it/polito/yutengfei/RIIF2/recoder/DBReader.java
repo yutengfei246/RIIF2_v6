@@ -10,6 +10,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class DBReader {
 
@@ -547,6 +549,78 @@ public class DBReader {
         }};
 
         return this.connector.select(tableName,label,s);
+    }
+
+    private ResultSet queryRecorder(String s) {
+        List<String> label  = new LinkedList<String>() {{
+            add("id"); add("definitionId"); add("eiDefinitionId"); add("type");
+        }};
+
+        return this.connector.select("recorder", label, s);
+    }
+
+    public List<String> readHierDefinition(String libDefinition) throws SQLException, DecoderException {
+        List<String> definitions = new LinkedList<>();
+
+
+
+        int totTemp = 0, currTemp= 0;
+        List<Integer> tempList = new LinkedList<>();
+        Stack<Integer> finalIds = new Stack<>();
+        int stack = -1;
+        int rootId ;
+
+        // get the current definition Id
+        ResultSet resultSet = this.queryDefinition("name ='" + libDefinition + "'");
+
+        if (resultSet.next()) {
+            rootId = resultSet.getInt("id");
+
+            resultSet.close();
+        }else return null ;
+
+
+        tempList.add(rootId);
+        totTemp++;
+
+        finalIds.push(rootId);
+        stack++;
+
+
+        // start dynamic loop
+        while (currTemp < totTemp) {
+            Integer tempId = tempList.get(currTemp);
+            ResultSet eiIds  = this.queryRecorder("definitionId = " + tempId);
+
+            while (eiIds.next()) {
+                int eiId = eiIds.getInt("eiDefinitionId");
+                tempList.add(eiId);
+                totTemp++;
+                finalIds.push(eiId);
+                stack++;
+            }
+            eiIds.close();
+
+            currTemp ++;
+        }
+
+
+        // finalIds to
+
+        while (stack >= 0 ){
+            int definitionId = finalIds.pop();
+
+            ResultSet definitionResult  = this.queryDefinition("id = " + definitionId);
+            if (definitionResult.next()){
+                byte[] bytes = Hex.decodeHex(definitionResult.getString("definition").toCharArray());
+                definitions.add(new String(bytes));
+            }
+            definitionResult.close();
+        stack--;
+        }
+
+        return definitions;
 
     }
+
 }

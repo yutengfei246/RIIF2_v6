@@ -19,10 +19,10 @@ typeDeclaration
 // §RIIF-2 component declaration
 
 componentDeclaration
-    : COMPONENT Identifier
-      (extendsList)?
-      (implementsList)?  ';'
-      componentBodyElement*
+    : COMPONENT Identifier  // component 's name 
+      (extendsList)?  // list of extended components
+      (implementsList)?  ';'  // list of implemented templates
+      componentBodyElement*  // list of the body elements 
       END_COMPONENT
     ;
 
@@ -40,7 +40,7 @@ fieldDeclaration
     ;
 
 fieldDeclaratorType
-    : primitiveFieldDeclarator  // assocaitive,array structure declarator
+    : primitiveFieldDeclarator  // normal situation
     | associativeIndexDeclarator // the explicit associative declarator
     | tableFieldDeclarator  // table structure
     | listFieldDeclarator // generial list

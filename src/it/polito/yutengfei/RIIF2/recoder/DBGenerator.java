@@ -32,8 +32,8 @@ class DBGenerator {
     void generate(){
 
         if (this.reader.hasDefinitionInDB(this.recorder.getIdentifier())){
-            System.err.println("the targeted <" + this.recorder.getIdentifier() + "> has already stored in the DB");
-            System.exit(1);
+            //System.err.println("the targeted <" + this.recorder.getIdentifier() + "> has already stored in the DB");
+            return;
         }
 
         int generatedId;

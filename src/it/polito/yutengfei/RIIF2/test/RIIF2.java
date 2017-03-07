@@ -11,10 +11,13 @@ import it.polito.yutengfei.RIIF2.visitor.SLV;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.apache.commons.codec.DecoderException;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,41 +38,48 @@ public class RIIF2 {
 
         try {
             riif2Compiler.run();
-        } catch (IOException e) {
+
+        } catch (IOException |DecoderException | SQLException e) {
             e.printStackTrace();
         }
     }
 
     // iteratively access inputStream in order to have some separated data files
     // pay attention : need to translate the RIIF2 recorder from one to others.
-    private void run() throws IOException {
+    private void run() throws IOException, DecoderException, SQLException {
 
-        InputStream in ;
+        InputStream in = null;
         RIIF2Recorder recorder = new RIIF2Recorder();
 
 
         int i = 0;
 
         do {
-            if (i < this.inputs.length && !this.inputs[i].startsWith("-")) in = new FileInputStream(this.inputs[i++] );
+            if (i < this.inputs.length ) {
+
+                if (this.inputs[i].startsWith("--")) {
+                    String libDefinition = this.inputs[i++].substring(2);
+                    DBReader reader = new DBReader(connector);
+
+                    List<String> definitions = reader.readHierDefinition(libDefinition);
+
+                    if (definitions != null && definitions.size() != 0)
+
+                        for (String definition : definitions) {
+                            in = new ByteArrayInputStream(definition.getBytes());
+                            recorder = this.parse(in, recorder);
+                        }
+                }
+
+                else if (!this.inputs[i].startsWith("-")) {
+                    in = new FileInputStream(this.inputs[i++]);
+                    recorder = this.parse(in, recorder);
+                }
+
+                else break;
+            }
+
             else break;
-
-            // using ANTLRv.4 runtime inputStream
-            ANTLRInputStream antlrInputStream = new ANTLRInputStream(in);
-            // start the tokenizer
-            RIIF2Lexer riif2Lexer = new RIIF2Lexer(antlrInputStream);
-            // generating a tokenStream from RIIF2 tokenizer
-            CommonTokenStream commonTokenStream = new CommonTokenStream(riif2Lexer);
-            // parser feeds off the token stream
-            RIIF2Parser parser = new RIIF2Parser(commonTokenStream);
-            // start the rule and return the parse tree
-            ParseTree parseTree = parser.program();
-
-            // initializing the visitor
-            SLV secondLevelVisitor = new SLV(parseTree, recorder, parser);
-            secondLevelVisitor.visit(parseTree); // start visit mechanism
-
-            recorder = secondLevelVisitor.getRIIF2Recorder();
 
         } while (true);
 
@@ -80,7 +90,7 @@ public class RIIF2 {
                 List<String> parameters = new LinkedList<>();
                 String command = this.inputs[i];
 
-                if (command.equals("-lib")) {
+                if (command.equals("-lib") || command.equals("-libei") || command.equals("-delete")) {
                     while( ++i < this.inputs.length && !this.inputs[i].startsWith("-"))  parameters.add(this.inputs[i]);
 
                     if (parameters.size() == 0){
@@ -88,25 +98,34 @@ public class RIIF2 {
                         this.help();
                     }
                 }
-
-                if (command.equals("-delete")) {
-
-                    while( ++i < this.inputs.length && !this.inputs[i].startsWith("-"))  parameters.add(this.inputs[i]);
-
-                    if (parameters.size() == 0){
-                        System.err.println("Error: invalid command");
-                        this.help();
-                    }
-                }
-
                 this.executeCommand(command, parameters);
             }
-
             i++;
         }
     }
 
-    private void executeCommand(String command, List<String> parameters) {
+
+    private RIIF2Recorder parse(InputStream in, RIIF2Recorder recorder) throws IOException {
+
+        // using ANTLRv.4 runtime inputStream
+        ANTLRInputStream antlrInputStream = new ANTLRInputStream(in);
+        // start the tokenizer
+        RIIF2Lexer riif2Lexer = new RIIF2Lexer(antlrInputStream);
+        // generating a tokenStream from RIIF2 tokenizer
+        CommonTokenStream commonTokenStream = new CommonTokenStream(riif2Lexer);
+        // parser feeds off the token stream
+        RIIF2Parser parser = new RIIF2Parser(commonTokenStream);
+        // start the rule and return the parse tree
+        ParseTree parseTree = parser.program();
+
+        // initializing the visitor
+        SLV secondLevelVisitor = new SLV(parseTree, recorder, parser);
+        secondLevelVisitor.visit(parseTree); // start visit mechanism
+
+        return secondLevelVisitor.getRIIF2Recorder();
+    }
+
+    private void executeCommand(String command, List<String> parameters) throws DecoderException, SQLException {
 
         switch (command){
 
@@ -119,7 +138,10 @@ public class RIIF2 {
                 if (parameters == null || parameters.size() == 0) this.help();
                 else this.library(parameters);
                 break;
-
+            case "-libei":
+                if (parameters == null || parameters.size() == 0) this.help();
+                else this.libei(parameters);
+                break;
             case "-s":
                 this.toDB();
                 break;
@@ -143,6 +165,19 @@ public class RIIF2 {
         }
     }
 
+    private void libei(List<String> parameters) throws DecoderException, SQLException {
+        DBReader reader = new DBReader(connector);
+
+        for (String parameter : parameters) {
+            List<String> definitions = reader.readHierDefinition(parameter);
+
+            if (definitions != null && definitions.size() != 0)
+                definitions.forEach(System.out::println);
+        }
+
+
+    }
+
     private void delete(List<String> parameters) {
         DBReader reader = new DBReader(connector);
 
@@ -157,13 +192,14 @@ public class RIIF2 {
     }
 
     private void help() {
-
-        System.out.println(" -delete (<name> | all) : delete a named modular or all modular");
+        System.out.println("RIIF-2 Parser Version 6 ....");
         System.out.println(" -lib ((<command>) | (<command>: (<Label>|<command>) ))\n"
                             + " eg. -lib list|templates|components|binds|requirements|environments : shows all|templates|components 's names that has already stored in the database\n"
                             + " eg. -lib def:<Label>|all|templates|components|binds|requirements|environments : show all|<label>|template|component 's definitions that has already stored in the database \n"
                             + " eg. -lib parameters|components|childComponents|failModes:<Label>|all|templates|components : show all|<Label>|all|templates|components 's parameters|components|childComponents|failModes that has already stored in the database \n");
-        System.out.println(" -libie <name>: show all hierarchy ");
+        System.out.println(" -libie <name>: show module's hierarchy ");
+        System.out.println(" double dash --<name> for accessing database");
+        System.out.println(" -delete (<name> | all) : delete a named modular or all modular");
         System.out.println(" -s: store template/component into Database, if success.");
         System.out.println(" -p: literally print out the parse result.");
         System.out.println(" -h: show help.");
